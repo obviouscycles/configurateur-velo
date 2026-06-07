@@ -632,10 +632,7 @@ function renderPosts() {
 function togglePost(id) { openPost = openPost === id ? null : id; renderPosts(); }
 
 function selectOpt(postId, optId) {
-  selOpts[postId] = optId; openPost = null;
-  const idx = POST_META.findIndex(p => p.id === postId);
-  const next = POST_META[idx + 1];
-  if (next && !selOpts[next.id]) openPost = next.id;
+  selOpts[postId] = optId;
   renderPosts(); updateRecap();
 }
 
