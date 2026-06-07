@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Configurateur de vélo</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --bg2: #f8f9fa;
+    --bg3: #f1f0eb;
+    --text1: #1a1a1a;
+    --text2: #555550;
+    --text3: #999990;
+    --border: rgba(0,0,0,0.12);
+    --border2: rgba(0,0,0,0.22);
+    --blue: #185FA5;
+    --blue-light: #E6F1FB;
+    --blue-dark: #042C53;
+    --green: #3B6D11;
+    --green-light: #EAF3DE;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1c1c1e;
+      --bg2: #2c2c2e;
+      --bg3: #3a3a3c;
+      --text1: #f2f2f7;
+      --text2: #aeaeb2;
+      --text3: #636366;
+      --border: rgba(255,255,255,0.12);
+      --border2: rgba(255,255,255,0.22);
+      --blue-light: #0c2d4a;
+      --blue-dark: #85b7eb;
+      --green-light: #1a3008;
+    }
+  }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg3);
+    color: var(--text1);
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  header {
+    background: var(--bg);
+    border-bottom: 0.5px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .logo { font-size: 16px; font-weight: 500; color: var(--text1); letter-spacing: -.01em; }
+  .logo span { color: var(--blue); }
+
+  .main { max-width: 760px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+  .tab-bar {
+    display: flex; gap: 2px;
+    border-bottom: 0.5px solid var(--border);
+    margin-bottom: 2rem;
+  }
+  .tab {
+    padding: 10px 16px; font-size: 13px; font-weight: 500;
+    color: var(--text2); cursor: pointer;
+    border-bottom: 2px solid transparent; margin-bottom: -1px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .tab:hover { color: var(--text1); }
+  .tab.active { color: var(--blue); border-bottom-color: var(--blue); }
+  .count-badge {
+    font-size: 11px; background: var(--blue-light); color: var(--blue);
+    padding: 1px 7px; border-radius: 20px;
+  }
+
+  .view { display: none; }
+  .view.active { display: block; }
+
+  .step-label {
+    font-size: 11px; font-weight: 500; color: var(--text3);
+    letter-spacing: .08em; text-transform: uppercase; margin-bottom: .4rem;
+  }
+  .section-title {
+    font-size: 18px; font-weight: 500; color: var(--text1); margin-bottom: 1rem;
+  }
+
+  .model-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 10px; margin-bottom: 2rem;
+  }
+  .model-card {
+    border: 0.5px solid var(--border); border-radius: var(--radius-lg);
+    padding: 14px 13px; cursor: pointer; background: var(--bg);
+    transition: border-color .15s, background .15s;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .model-card:hover { border-color: var(--border2); background: var(--bg2); }
+  .model-card.sel { border: 2px solid var(--blue); background: var(--blue-light); }
+  .model-card.sel .mc-name { color: var(--blue-dark); }
+  .mc-badge { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: .06em; }
+  .mc-name { font-size: 14px; font-weight: 500; color: var(--text1); }
+  .mc-desc { font-size: 11px; color: var(--text2); line-height: 1.4; margin-top: 3px; }
+  .mc-price { font-size: 12px; font-weight: 500; color: var(--text2); margin-top: 6px; }
+  .model-card.sel .mc-price { color: var(--blue); }
+
+  .prog-wrap { margin-bottom: 1.5rem; }
+  .prog-bar { display: flex; gap: 4px; margin-top: 6px; }
+  .prog-step { flex: 1; height: 3px; border-radius: 2px; background: var(--border); transition: background .3s; }
+  .prog-step.done { background: var(--blue); }
+
+  .post-block {
+    border: 0.5px solid var(--border); border-radius: var(--radius-lg);
+    margin-bottom: 8px; overflow: hidden; background: var(--bg);
+  }
+  .post-hdr {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 16px; cursor: pointer;
+  }
+  .post-hdr:hover { background: var(--bg2); }
+  .ph-icon { font-size: 16px; color: var(--text2); width: 20px; text-align: center; }
+  .ph-name { font-size: 14px; font-weight: 500; color: var(--text1); flex: 1; }
+  .ph-sel { font-size: 12px; color: var(--text2); max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ph-pending { font-size: 12px; color: var(--text3); }
+  .ph-chev { font-size: 15px; color: var(--text3); transition: transform .2s; }
+  .ph-chev.open { transform: rotate(180deg); }
+
+  .post-opts { border-top: 0.5px solid var(--border); padding: 12px 16px; display: none; }
+  .post-opts.open { display: block; }
+  .opt-list { display: flex; flex-direction: column; gap: 7px; }
+  .opt-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px; border: 0.5px solid var(--border);
+    border-radius: var(--radius-md); cursor: pointer;
+    transition: border-color .15s, background .15s; background: var(--bg);
+  }
+  .opt-item:hover { background: var(--bg2); border-color: var(--border2); }
+  .opt-item.sel { border: 2px solid var(--blue); background: var(--blue-light); }
+  .opt-item.sel .oi-name { color: var(--blue-dark); }
+  .opt-radio {
+    width: 14px; height: 14px; border-radius: 50%;
+    border: 1.5px solid var(--border2); flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .opt-item.sel .opt-radio { border-color: var(--blue); background: var(--blue); }
+  .radio-dot { width: 5px; height: 5px; border-radius: 50%; background: white; display: none; }
+  .opt-item.sel .radio-dot { display: block; }
+  .oi-info { flex: 1; min-width: 0; }
+  .oi-name { font-size: 13px; font-weight: 500; color: var(--text1); }
+  .oi-desc { font-size: 11px; color: var(--text2); margin-top: 2px; }
+  .oi-meta { text-align: right; flex-shrink: 0; }
+  .oi-price { font-size: 13px; font-weight: 500; color: var(--text1); }
+  .oi-weight { font-size: 11px; color: var(--text3); }
+  .incl-badge {
+    font-size: 10px; background: #F1EFE8; color: #5F5E5A;
+    border-radius: 20px; padding: 1px 7px;
+    display: inline-flex; align-items: center; gap: 3px;
+    margin-left: 6px; vertical-align: middle;
+  }
+
+  .recap-box {
+    border: 0.5px solid var(--border); border-radius: var(--radius-lg);
+    padding: 1.2rem; background: var(--bg2); margin-bottom: 1.25rem;
+  }
+  .recap-row {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-size: 13px; padding: 3px 0; gap: 10px;
+  }
+  .rr-label { color: var(--text2); white-space: nowrap; }
+  .rr-val { color: var(--text1); font-weight: 500; text-align: right; }
+  .rr-sub { font-weight: 400; color: var(--text3); font-size: 11px; }
+  .recap-div { border: none; border-top: 0.5px solid var(--border); margin: 10px 0; }
+  .totals-row { display: flex; gap: 10px; margin-top: .8rem; }
+  .tot-card {
+    flex: 1; background: var(--bg); border: 0.5px solid var(--border);
+    border-radius: var(--radius-md); padding: 10px 12px; text-align: center;
+  }
+  .tot-label { font-size: 11px; color: var(--text2); margin-bottom: 3px; }
+  .tot-val { font-size: 20px; font-weight: 500; color: var(--text1); }
+  .tot-val.price { color: var(--blue); }
+
+  .btn-row { display: flex; flex-direction: column; gap: 8px; }
+  .btn {
+    width: 100%; padding: 13px; font-size: 13px; font-weight: 500;
+    border-radius: var(--radius-lg); border: 0.5px solid var(--border2);
+    background: var(--bg); color: var(--text1);
+    cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+    font-family: var(--font);
+  }
+  .btn:hover { background: var(--bg2); }
+  .btn.primary { background: var(--blue); border-color: var(--blue); color: white; }
+  .btn.primary:hover { background: #0C447C; }
+  .btn.success { background: var(--green); border-color: var(--green); color: white; }
+  .btn.success:hover { background: #27500A; }
+
+  .save-form {
+    border: 0.5px solid var(--border); border-radius: var(--radius-lg);
+    padding: 1rem; background: var(--bg); display: none;
+  }
+  .save-form.open { display: block; }
+  .save-label { font-size: 13px; color: var(--text2); margin-bottom: 8px; }
+  .save-input-row { display: flex; gap: 8px; }
+  .save-input-row input {
+    flex: 1; padding: 9px 12px; font-size: 13px;
+    border: 0.5px solid var(--border2); border-radius: var(--radius-md);
+    background: var(--bg2); color: var(--text1); font-family: var(--font);
+    outline: none;
+  }
+  .save-input-row input:focus { border-color: var(--blue); }
+  .save-input-row button {
+    padding: 9px 16px; font-size: 13px; font-weight: 500;
+    border-radius: var(--radius-md); border: none;
+    background: var(--blue); color: white; cursor: pointer; font-family: var(--font);
+    white-space: nowrap;
+  }
+  .save-input-row button:hover { background: #0C447C; }
+  .toast {
+    font-size: 12px; color: var(--green); background: var(--green-light);
+    border-radius: var(--radius-md); padding: 6px 10px; margin-top: 8px; display: none;
+  }
+
+  .saved-card {
+    border: 0.5px solid var(--border); border-radius: var(--radius-lg);
+    padding: 14px 16px; background: var(--bg); margin-bottom: 10px;
+  }
+  .sc-head { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; }
+  .sc-name { font-size: 15px; font-weight: 500; color: var(--text1); }
+  .sc-meta { font-size: 11px; color: var(--text3); margin-top: 2px; }
+  .sc-delete {
+    margin-left: auto; font-size: 15px; color: var(--text3); cursor: pointer;
+    padding: 3px; border-radius: 4px; background: none; border: none; flex-shrink: 0;
+  }
+  .sc-delete:hover { color: #A32D2D; background: #FCEBEB; }
+  .sc-detail { font-size: 12px; color: var(--text2); line-height: 1.7; }
+  .sc-totals { display: flex; gap: 8px; margin-top: 10px; }
+  .sc-tot {
+    font-size: 12px; background: var(--bg2); border-radius: var(--radius-md);
+    padding: 4px 12px; color: var(--text2);
+  }
+  .sc-tot strong { color: var(--text1); }
+  .sc-actions { display: flex; gap: 8px; margin-top: 12px; }
+  .sc-btn {
+    flex: 1; padding: 8px; font-size: 12px; font-weight: 500;
+    border-radius: var(--radius-md); border: 0.5px solid var(--border2);
+    background: var(--bg); color: var(--text1); cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+    font-family: var(--font);
+  }
+  .sc-btn:hover { background: var(--bg2); }
+  .sc-btn.blue { border-color: var(--blue); color: var(--blue); }
+  .sc-btn.blue:hover { background: var(--blue-light); }
+  .empty-saved {
+    font-size: 13px; color: var(--text3); text-align: center;
+    padding: 2.5rem 1rem;
+    border: 0.5px dashed var(--border2); border-radius: var(--radius-lg);
+    line-height: 1.8;
+  }
+
+  /* EMAIL MODAL */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.45); z-index: 100;
+    align-items: center; justify-content: center; padding: 1rem;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--bg); border-radius: var(--radius-lg);
+    padding: 1.5rem; width: 100%; max-width: 480px;
+    border: 0.5px solid var(--border);
+  }
+  .modal h3 { font-size: 16px; font-weight: 500; margin-bottom: .25rem; }
+  .modal p { font-size: 13px; color: var(--text2); margin-bottom: 1rem; }
+  .field { margin-bottom: 12px; }
+  .field label { font-size: 12px; font-weight: 500; color: var(--text2); display: block; margin-bottom: 4px; }
+  .field input, .field textarea {
+    width: 100%; padding: 9px 12px; font-size: 13px;
+    border: 0.5px solid var(--border2); border-radius: var(--radius-md);
+    background: var(--bg2); color: var(--text1); font-family: var(--font);
+    outline: none; resize: vertical;
+  }
+  .field input:focus, .field textarea:focus { border-color: var(--blue); }
+  .modal-actions { display: flex; gap: 8px; margin-top: 1rem; }
+  .modal-actions button {
+    flex: 1; padding: 11px; font-size: 13px; font-weight: 500;
+    border-radius: var(--radius-md); cursor: pointer; font-family: var(--font);
+  }
+  .modal-actions .btn-cancel { border: 0.5px solid var(--border2); background: var(--bg); color: var(--text1); }
+  .modal-actions .btn-cancel:hover { background: var(--bg2); }
+  .modal-actions .btn-send { border: none; background: var(--blue); color: white; }
+  .modal-actions .btn-send:hover { background: #0C447C; }
+
+  @media (max-width: 600px) {
+    header { padding: 0 1rem; }
+    .main { padding: 1.5rem 1rem 3rem; }
+    .model-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Vélo<span>Config</span></div>
+  <div style="font-size:12px;color:var(--text3)">Configurateur sur mesure</div>
+</header>
+
+<main class="main">
+
+  <div class="tab-bar">
+    <div class="tab active" id="tab-config" onclick="switchTab('config')">
+      <i class="ti ti-settings"></i> Configurer
+    </div>
+    <div class="tab" id="tab-saved" onclick="switchTab('saved')">
+      <i class="ti ti-bookmark"></i> Mes configurations
+      <span class="count-badge" id="saved-count">0</span>
+    </div>
+  </div>
+
+  <!-- VUE CONFIGURATEUR -->
+  <div class="view active" id="view-config">
+    <div class="step-label">Étape 1 sur 2</div>
+    <p class="section-title">Choisissez votre modèle de base</p>
+    <div class="model-grid" id="model-grid"></div>
+
+    <div id="posts-section" style="display:none">
+      <div class="prog-wrap">
+        <div class="step-label">Étape 2 — configurez vos composants</div>
+        <div class="prog-bar" id="prog-bar"></div>
+      </div>
+      <div id="posts-list"></div>
+    </div>
+
+    <div id="recap-section" style="display:none">
+      <p class="section-title" style="margin-top:.75rem">Votre configuration</p>
+      <div class="recap-box">
+        <div id="recap-rows"></div>
+        <hr class="recap-div">
+        <div class="totals-row">
+          <div class="tot-card">
+            <div class="tot-label">Prix total</div>
+            <div class="tot-val price" id="total-price">—</div>
+          </div>
+          <div class="tot-card">
+            <div class="tot-label">Poids estimé</div>
+            <div class="tot-val" id="total-weight">—</div>
+          </div>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn primary" onclick="openOrderModal()">
+          <i class="ti ti-send"></i> Envoyer cette configuration
+        </button>
+        <button class="btn success" onclick="toggleSaveForm()">
+          <i class="ti ti-bookmark"></i> Sauvegarder cette configuration
+        </button>
+        <div class="save-form" id="save-form">
+          <div class="save-label">Donnez un nom à cette configuration :</div>
+          <div class="save-input-row">
+            <input type="text" id="save-name-input" placeholder="Ex : Mon gravel bikepacking" maxlength="60" />
+            <button onclick="saveConfig()">Sauvegarder</button>
+          </div>
+          <div class="toast" id="save-toast"><i class="ti ti-check"></i> Configuration sauvegardée !</div>
+        </div>
+        <button class="btn" onclick="resetConfig()">
+          <i class="ti ti-refresh"></i> Recommencer
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- VUE SAUVEGARDES -->
+  <div class="view" id="view-saved">
+    <p class="section-title">Mes configurations sauvegardées</p>
+    <div id="saved-list"></div>
+  </div>
+
+</main>
+
+<!-- MODAL COMMANDE -->
+<div class="modal-overlay" id="order-modal">
+  <div class="modal">
+    <h3><i class="ti ti-mail"></i> Envoyer ma configuration</h3>
+    <p>Renseignez vos coordonnées et nous vous recontacterons pour finaliser votre commande.</p>
+    <div class="field">
+      <label>Votre nom</label>
+      <input type="text" id="order-name" placeholder="Prénom Nom" />
+    </div>
+    <div class="field">
+      <label>Votre email</label>
+      <input type="email" id="order-email" placeholder="vous@example.com" />
+    </div>
+    <div class="field">
+      <label>Message (optionnel)</label>
+      <textarea id="order-msg" rows="3" placeholder="Questions, précisions..."></textarea>
+    </div>
+    <div class="field">
+      <label>Votre configuration</label>
+      <textarea id="order-config-display" rows="5" readonly style="font-size:11px;color:var(--text2);background:var(--bg3)"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeOrderModal()">Annuler</button>
+      <button class="btn-send" onclick="sendOrder()"><i class="ti ti-send"></i> Envoyer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── DONNÉES ────────────────────────────────────────────────────────────────
+
+const MODELS = [
+  { id: 'ON/OFF', name: 'ON/OFF Gravel Racing', badge: 'Gravel', desc: 'Cadre titane, géométrie sport, fourche carbone, intégration complète', basePrice: 2749, baseWeight: 1700, type: 'gravel_racing' },
+  { id: 'OUT/QUEST', name: 'OUT/QUEST Gravel Aventure', badge: 'Bikepacking', desc: 'Cadre titane, géométrie confort / longue distance, nombreux points d\'accroche', basePrice: 2749, baseWeight: 1700, type: 'gravel_aventure' },
+  { id: '/OFF', name: '/OFF Enduro HT', badge: 'Trail / Enduro', desc: 'Cadre titane semi-rigide, géométrie enduro, fourche 140/150 mm, boost 148 mm', basePrice: 2549, baseWeight: 1900, type: 'vtt' },
+  { id: 'ON/', name: 'ON/ Route', badge: 'Route', desc: 'Cadre titane, fourche carbone, sportif et polyvalent', basePrice: 2849, baseWeight: 1600, type: 'route' },
+];
+
+const ALL_OPTIONS = {
+  roues: [
+    { id: 'roue_gr_ob_35', name: 'Obvious GR35-S', desc: 'Carbone hyper polyvalente, moyeu DT350, rayons profilés', price: 1350, weight: 1840, types: ['gravel_racing','gravel_aventure'] },
+    { id: 'roue_gr_fu_soa', name: 'Fulcrum Soniq ALX', desc: 'Aluminium, la meilleure solution gravel aluminium', price: 600, weight: 1680, types: ['gravel_racing','gravel_aventure'] },
+    { id: 'roue_gr_fu_sgr', name: 'Fulcrum Sharq GR', desc: 'Roue compétition gravel, largeur interne 30 mm', price: 1990, weight: 1550, types: ['gravel_racing','gravel_aventure'] },
+    { id: 'roue_rd_ob_35', name: 'Obvious RD-35-R', desc: 'Carbone compétition, moyeu DT350, rayons profilés, marquage laser', price: 1450, weight: 1520, types: ['route'] },
+    { id: 'roue_rd_fu_w57', name: 'Fulcrum Wind 57', desc: 'Carbone profil haut', price: 1410, weight: 1510, types: ['route'] },
+    { id: 'roue_mtb_ob_30', name: 'Obvious MT30-S', desc: 'Roue Enduro Carbone, ultralégère et indestructible', price: 1350, weight: 1240, types: ['vtt'] },
+    { id: 'roue_mtb_fu_rm5', name: 'Fulcrum Red Metal 5', desc: 'Roue Enduro aluminium, à toute épreuve', price: 430, weight: 1240, types: ['vtt'] },
+  ],
+  pneus: [
+    { id: 'pneu_gr_sc_r', name: 'Schwalbe G-ONE R PRO transparent', desc: 'Pneu gravel polyvalent', price: 90, weight: 1600, types: ['gravel_racing','gravel_aventure'] },
+    { id: 'pneu_gr_sc_rx', name: 'Schwalbe G-ONE RX PRO noir', desc: 'Le meilleur grip pour le gravel', price: 90, weight: 1600, types: ['gravel_racing','gravel_aventure'] },
+    { id: 'pneu_gr_sc_sp', name: 'Schwalbe G-ONE Speed NOIR', desc: 'Idéal en all-road, terrains roulants', price: 85, weight: 1650, types: ['gravel_racing','gravel_aventure'] },
+    { id: 'pneu_rd_co_gp', name: 'Continental GP5000 S TR transparent', desc: 'Le meilleur pneu route du moment', price: 90, weight: 1100, types: ['route'] },
+    { id: 'pneu_mtb_sc_gra', name: 'Schwalbe Magic Mary Gravity', desc: 'Le pneu le plus agressif pour les enduristes', price: 100, weight: 2700, types: ['vtt'] },
+  ],
+  transmission: [
+    { id: 'trans_gr_sh_821', name: 'SHIMANO GRX 820 1x12V', desc: '1x12v, à câble, haut de gamme Shimano', price: 900, weight: 1050, types: ['gravel_racing','gravel_aventure'] },
+    { id: 'trans_gr_sh_822', name: 'SHIMANO GRX 820 2x12V', desc: '2x12v, à câble, haut de gamme Shimano', price: 900, weight: 1200, types: ['gravel_racing','gravel_aventure'] },
+    { id: 'trans_gr_sh_cud', name: 'SHIMANO CUES U600 DROP 1x11v', desc: 'Hyper polyvalent 11v, cintre drop', price: 550, weight: 1150, types: ['gravel_racing','gravel_aventure'] },
+    { id: 'trans_gr_sh_cuf', name: 'SHIMANO CUES U600 FLAT 1x11v', desc: 'Hyper polyvalent 11v, cintre plat', price: 550, weight: 1150, types: ['gravel_aventure'] },
+    { id: 'trans_gr_sr_ri', name: 'SRAM RIVAL AXS XPLR 1x13v', desc: '1x13v sans fil, solution robuste SRAM', price: 1000, weight: 1350, types: ['gravel_racing','gravel_aventure'] },
+    { id: 'trans_gr_sr_fo', name: 'SRAM FORCE AXS XPLR 1x13v', desc: '1x13v sans fil, bon compromis SRAM', price: 1600, weight: 1280, types: ['gravel_racing','gravel_aventure'] },
+    { id: 'trans_gr_sr_re', name: 'SRAM RED AXS XPLR 1x13v', desc: '1x13v sans fil, hyper performant', price: 2400, weight: 1120, types: ['gravel_racing','gravel_aventure'] },
+    { id: 'trans_gr_ca_ek', name: 'CAMPAGNOLO EKAR 1x13v', desc: '1x13v à câble, constructeur italien', price: 900, weight: 1050, types: ['gravel_racing','gravel_aventure'] },
+    { id: 'trans_gr_ca_rx', name: 'CAMPAGNOLO RECORD X 1x13v', desc: '1x13v sans fil, constructeur italien', price: 2000, weight: 1000, types: ['gravel_racing','gravel_aventure'] },
+    { id: 'trans_rd_sh_105', name: 'SHIMANO 105 Di2 2x12v', desc: '2x12v, accessibilité et performance', price: 1000, weight: 1200, types: ['route'] },
+    { id: 'trans_rd_sh_ul', name: 'SHIMANO ULTEGRA Di2 2x12v', desc: '2x12v, le meilleur du Di2 Shimano', price: 1700, weight: 1100, types: ['route'] },
+    { id: 'trans_rd_sh_da', name: 'SHIMANO DURA ACE Di2 2x12v', desc: '2x12v, le choix des pros', price: 2800, weight: 1000, types: ['route'] },
+    { id: 'trans_rd_sr_ri', name: 'SRAM RIVAL AXS 2x12v', desc: '2x12v, accessibilité et performance', price: 280, weight: 920, types: ['route'] },
+    { id: 'trans_rd_sr_fo', name: 'SRAM FORCE AXS 2x12v', desc: '2x12v, le meilleur AXS', price: 480, weight: 780, types: ['route'] },
+    { id: 'trans_rd_sr_re', name: 'SRAM RED AXS 2x12v', desc: '2x12v, le choix des pros', price: 2800, weight: 720, types: ['route'] },
+    { id: 'trans_rd_ca_re', name: 'CAMPAGNOLO RECORD ALL-ROAD 2x13v', desc: '2x13v sans fil', price: 2000, weight: 1000, types: ['route'] },
+    { id: 'trans_rd_ca_sre', name: 'CAMPAGNOLO SUPER RECORD 2x13v', desc: '2x13v, orfèvrerie italienne', price: 3000, weight: 900, types: ['route'] },
+    { id: 'trans_mtb_sh_m6', name: 'SHIMANO M6100', desc: 'Le choix accessible', price: 450, weight: 1300, types: ['vtt'] },
+    { id: 'trans_mtb_sh_slx', name: 'SHIMANO SLX', desc: 'Performance et accessibilité', price: 600, weight: 1200, types: ['vtt'] },
+    { id: 'trans_mtb_sh_xt', name: 'SHIMANO XT M8100', desc: 'Performance et polyvalence', price: 900, weight: 1050, types: ['vtt'] },
+    { id: 'trans_mtb_sh_xte', name: 'SHIMANO XT 8200 Di2', desc: 'Shimano XT, sans fil', price: 1800, weight: 1100, types: ['vtt'] },
+    { id: 'trans_mtb_sh_xtr', name: 'SHIMANO XTR M9100', desc: 'La solution compétition de Shimano', price: 1700, weight: 1000, types: ['vtt'] },
+    { id: 'trans_mtb_sh_xtre', name: 'SHIMANO XTR M9200 Di2', desc: 'Shimano XTR, sans fil', price: 2800, weight: 1050, types: ['vtt'] },
+    { id: 'trans_mtb_sr_e70', name: 'SRAM EAGLE 70', desc: 'Le choix accessible', price: 500, weight: 1350, types: ['vtt'] },
+    { id: 'trans_mtb_sr_gx', name: 'SRAM GX EAGLE', desc: 'VTT accessible, montage T-Type', price: 750, weight: 1350, types: ['vtt'] },
+    { id: 'trans_mtb_sr_x0', name: 'SRAM XO EAGLE', desc: 'Performance et polyvalence T-Type', price: 900, weight: 1300, types: ['vtt'] },
+    { id: 'trans_mtb_sr_xxs', name: 'SRAM XX SL EAGLE', desc: 'La solution compétition de SRAM', price: 1500, weight: 1100, types: ['vtt'] },
+  ],
+  pilotage: [
+    { id: 'pilotage_rd_ala', name: 'Combo Deda Alanera DCR', desc: 'Ensemble combiné carbone', price: 800, weight: 300, types: ['route'] },
+    { id: 'pilotage_rd_suz_car', name: 'Cintre Deda SuperZero Carbon + Potence SuperBox', desc: 'Cintre route carbone profilé', price: 400, weight: 340, types: ['route'] },
+    { id: 'pilotage_rd_suz_alu', name: 'Cintre Deda SuperZero Alu + Potence SuperBox', desc: 'Cintre route aluminium profilé', price: 250, weight: 440, types: ['route'] },
+    { id: 'pilotage_grv_suz_car', name: 'Cintre Deda SuperZero Carbon + Potence SuperBox', desc: 'Cintre gravel carbone, flare 8°', price: 400, weight: 340, types: ['gravel_racing','gravel_aventure'] },
+    { id: 'pilotage_grv_suz_alu', name: 'Cintre Deda SuperZero Alu + Potence SuperBox', desc: 'Cintre gravel aluminium, flare 8°', price: 250, weight: 440, types: ['gravel_racing','gravel_aventure'] },
+    { id: 'pilotage_gr_ger_alu', name: 'Cintre Deda Gera Alu + Potence Zero100', desc: 'Cintre gravel aluminium, multiposition, flare 12°', price: 210, weight: 450, types: ['gravel_racing','gravel_aventure'] },
+    { id: 'pilotage_gr_flat_ext', name: 'Cintre gravel plat', desc: 'Cintre plat pour plus de confort', price: 165, weight: 380, types: ['gravel_aventure'] },
+    { id: 'pilotage_mtb_end', name: 'Cintre et potence Truvativ Descendant', desc: 'Potence 50 mm, Ø35 mm / Cintre 780 mm, 25 mm rise', price: 200, weight: 400, types: ['vtt'] },
+  ],
+  selle: [
+    { id: 'selle_fz_arg_x5', name: 'Fizik Argo R5', desc: 'Gravel, Route, XC — rail manganèse', price: 80, weight: 310, types: ['gravel_racing','gravel_aventure','route'] },
+    { id: 'selle_fz_arg_x1', name: 'Fizik Argo R1 adaptive', desc: 'Gravel, Route, XC — structure 3D, rails carbone', price: 120, weight: 260, types: ['gravel_racing','gravel_aventure','route'] },
+    { id: 'selle_fz_ari_r5', name: 'Fizik Aliante R5', desc: 'Route — rail manganèse', price: 80, weight: 310, types: ['route'] },
+    { id: 'selle_fz_ali_r1', name: 'Fizik Aliante R1 adaptive', desc: 'Route — structure 3D, rails carbone', price: 80, weight: 310, types: ['route'] },
+    { id: 'selle_fz_tun_m5', name: 'Fizik Tundra M5', desc: 'VTT — rail manganèse', price: 80, weight: 260, types: ['vtt'] },
+    { id: 'selle_fz_tun_m1', name: 'Fizik Tundra M1', desc: 'VTT — rail alliage léger, coupe anatomique', price: 180, weight: 220, types: ['vtt'] },
+    { id: 'selle_br_b17_ho', name: 'Brooks B17 honey', desc: 'Cuir, touring', price: 140, weight: 420, types: ['gravel_aventure'] },
+    { id: 'selle_ber_asp_bk', name: 'Berthoud Aspin ouverte noir', desc: 'Cuir, fabrication française, longue distance', price: 240, weight: 380, types: ['gravel_aventure'] },
+  ],
+  fourche: [
+    { id: 'fourche_rd_car_00', name: 'Fourche incluse avec le cadre', desc: 'Fourche carbone pivot conique', price: 0, weight: 0, locked: true, types: ['route'] },
+    { id: 'fourche_gr_car_00', name: 'Fourche incluse — sans inserts', desc: 'Fourche gravel carbone, pivot conique, pneu max 50 mm', price: 0, weight: 0, locked: true, types: ['gravel_racing','gravel_aventure'] },
+    { id: 'fourche_gr_car_ins', name: 'Fourche incluse — avec inserts', desc: 'Fourche gravel carbone avec inserts, pneu max 50 mm', price: 0, weight: 0, locked: true, types: ['gravel_racing','gravel_aventure'] },
+    { id: 'fourche_vtt_fox_fac_36_150', name: 'Fox Factory 36 150 mm', desc: 'Suspendue Fox Factory Kashima Grip2', price: 1500, weight: 1780, types: ['vtt'] },
+    { id: 'fourche_vtt_rs_lyr_ult_150', name: 'Rockshox Lyrik Ultimate 150 mm', desc: 'Suspendue Rockshox Lyrik Ultimate', price: 900, weight: 1750, types: ['vtt'] },
+    { id: 'fourche_vtt_rs_lyr_sel_150', name: 'Rockshox Lyrik Select 150 mm', desc: 'Suspendue Rockshox Lyrik Select', price: 580, weight: 1800, types: ['vtt'] },
+  ],
+};
+
+const POST_META = [
+  { id: 'roues',        name: 'Roues',             icon: 'ti-circle' },
+  { id: 'pneus',        name: 'Pneus',             icon: 'ti-circle-dotted' },
+  { id: 'transmission', name: 'Transmission',      icon: 'ti-settings' },
+  { id: 'pilotage',     name: 'Poste de pilotage', icon: 'ti-adjustments-horizontal' },
+  { id: 'selle',        name: 'Selle',             icon: 'ti-armchair' },
+  { id: 'fourche',      name: 'Fourche',           icon: 'ti-git-fork' },
+];
+
+// ─── ÉTAT ────────────────────────────────────────────────────────────────────
+let selModel = null, selOpts = {}, openPost = null, savedConfigs = [];
+
+// ─── STOCKAGE LOCAL ───────────────────────────────────────────────────────────
+function loadSaved() {
+  try { savedConfigs = JSON.parse(localStorage.getItem('velo_configs') || '[]'); } catch(e) { savedConfigs = []; }
+  updateSavedCount();
+}
+function persistSaved() {
+  try { localStorage.setItem('velo_configs', JSON.stringify(savedConfigs)); } catch(e) {}
+}
+function updateSavedCount() {
+  document.getElementById('saved-count').textContent = savedConfigs.length;
+}
+
+// ─── UTILITAIRES ─────────────────────────────────────────────────────────────
+function modelType(id) { return MODELS.find(m => m.id === id)?.type || ''; }
+function optionsFor(postId, modelId) {
+  const type = modelType(modelId);
+  return ALL_OPTIONS[postId].filter(o => o.types.includes(type));
+}
+function autoSelectLocked(modelId) {
+  POST_META.forEach(p => {
+    const locked = optionsFor(p.id, modelId).find(o => o.locked);
+    if (locked && !selOpts[p.id]) selOpts[p.id] = locked.id;
+  });
+}
+function computeTotals(modelId, opts) {
+  const model = MODELS.find(m => m.id === modelId);
+  let price = model.basePrice, weight = model.baseWeight;
+  POST_META.forEach(p => {
+    const opt = optionsFor(p.id, modelId).find(o => o.id === opts[p.id]);
+    if (opt && !opt.locked) { price += opt.price; weight += opt.weight; }
+  });
+  return { price, weight };
+}
+function buildConfigText(modelId, opts) {
+  const model = MODELS.find(m => m.id === modelId);
+  const { price, weight } = computeTotals(modelId, opts);
+  let lines = [`Modèle : ${model.name}`];
+  POST_META.forEach(p => {
+    const opt = optionsFor(p.id, modelId).find(o => o.id === opts[p.id]);
+    if (opt) lines.push(`${p.name} : ${opt.name}${opt.locked ? ' (inclus)' : ' (+' + opt.price.toLocaleString('fr-FR') + ' €)'}`);
+  });
+  lines.push(`Prix total : ${price.toLocaleString('fr-FR')} €`);
+  lines.push(`Poids estimé : ${(weight/1000).toFixed(2)} kg`);
+  return lines.join('\n');
+}
+
+// ─── NAVIGATION ───────────────────────────────────────────────────────────────
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  document.getElementById('view-' + tab).classList.add('active');
+  if (tab === 'saved') renderSaved();
+}
+
+// ─── RENDU MODÈLES ────────────────────────────────────────────────────────────
+function renderModels() {
+  document.getElementById('model-grid').innerHTML = MODELS.map(m => `
+    <div class="model-card ${selModel === m.id ? 'sel' : ''}" onclick="selectModel('${m.id}')">
+      <span class="mc-badge">${m.badge}</span>
+      <span class="mc-name">${m.name}</span>
+      <span class="mc-desc">${m.desc}</span>
+      <span class="mc-price">à partir de ${m.basePrice.toLocaleString('fr-FR')} €</span>
+    </div>`).join('');
+}
+
+function selectModel(id) {
+  selModel = id; selOpts = {}; openPost = null;
+  autoSelectLocked(id);
+  renderModels(); renderPosts();
+  document.getElementById('posts-section').style.display = 'block';
+  document.getElementById('recap-section').style.display = 'none';
+  document.getElementById('save-form').classList.remove('open');
+  document.getElementById('posts-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ─── RENDU POSTES ─────────────────────────────────────────────────────────────
+function renderPosts() {
+  document.getElementById('prog-bar').innerHTML = POST_META.map(p =>
+    `<div class="prog-step ${selOpts[p.id] ? 'done' : ''}"></div>`).join('');
+
+  document.getElementById('posts-list').innerHTML = POST_META.map(p => {
+    const opts = optionsFor(p.id, selModel);
+    const sel = selOpts[p.id] ? opts.find(o => o.id === selOpts[p.id]) : null;
+    const isOpen = openPost === p.id;
+    return `
+    <div class="post-block">
+      <div class="post-hdr" onclick="togglePost('${p.id}')">
+        <i class="ti ${p.icon} ph-icon"></i>
+        <span class="ph-name">${p.name}</span>
+        ${sel
+          ? `<span class="ph-sel">${sel.name}</span>`
+          : `<span class="ph-pending">choisir →</span>`}
+        <i class="ti ti-chevron-down ph-chev ${isOpen ? 'open' : ''}"></i>
+      </div>
+      <div class="post-opts ${isOpen ? 'open' : ''}">
+        <div class="opt-list">
+          ${opts.map(o => `
+            <div class="opt-item ${selOpts[p.id] === o.id ? 'sel' : ''}" onclick="selectOpt('${p.id}','${o.id}')">
+              <div class="opt-radio"><div class="radio-dot"></div></div>
+              <div class="oi-info">
+                <div class="oi-name">${o.name}${o.locked ? '<span class="incl-badge"><i class="ti ti-lock" style="font-size:9px"></i> inclus</span>' : ''}</div>
+                <div class="oi-desc">${o.desc}</div>
+              </div>
+              <div class="oi-meta">
+                <div class="oi-price">${o.locked ? '—' : '+' + o.price.toLocaleString('fr-FR') + ' €'}</div>
+                ${!o.locked ? `<div class="oi-weight">${o.weight} g</div>` : ''}
+              </div>
+            </div>`).join('')}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function togglePost(id) { openPost = openPost === id ? null : id; renderPosts(); }
+
+function selectOpt(postId, optId) {
+  selOpts[postId] = optId; openPost = null;
+  const idx = POST_META.findIndex(p => p.id === postId);
+  const next = POST_META[idx + 1];
+  if (next && !selOpts[next.id]) openPost = next.id;
+  renderPosts(); updateRecap();
+}
+
+// ─── RÉCAPITULATIF ────────────────────────────────────────────────────────────
+function updateRecap() {
+  const model = MODELS.find(m => m.id === selModel);
+  if (!model) return;
+  const allDone = POST_META.every(p => !!selOpts[p.id]);
+  document.getElementById('recap-section').style.display = allDone ? 'block' : 'none';
+  if (!allDone) return;
+  const { price, weight } = computeTotals(selModel, selOpts);
+  let html = `<div class="recap-row"><span class="rr-label">Cadre — ${model.name}</span><span class="rr-val">${model.basePrice.toLocaleString('fr-FR')} €</span></div>`;
+  POST_META.forEach(p => {
+    const opt = optionsFor(p.id, selModel).find(o => o.id === selOpts[p.id]);
+    if (!opt) return;
+    const priceStr = opt.locked ? 'inclus' : '+' + opt.price.toLocaleString('fr-FR') + ' €';
+    html += `<div class="recap-row"><span class="rr-label">${p.name}</span><span class="rr-val">${opt.name} <span class="rr-sub">(${priceStr})</span></span></div>`;
+  });
+  document.getElementById('recap-rows').innerHTML = html;
+  document.getElementById('total-price').textContent = price.toLocaleString('fr-FR') + ' €';
+  document.getElementById('total-weight').textContent = (weight / 1000).toFixed(2) + ' kg';
+}
+
+function resetConfig() {
+  selModel = null; selOpts = {}; openPost = null;
+  document.getElementById('posts-section').style.display = 'none';
+  document.getElementById('recap-section').style.display = 'none';
+  document.getElementById('save-form').classList.remove('open');
+  renderModels();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─── SAUVEGARDE ───────────────────────────────────────────────────────────────
+function toggleSaveForm() {
+  const f = document.getElementById('save-form');
+  f.classList.toggle('open');
+  if (f.classList.contains('open')) {
+    const model = MODELS.find(m => m.id === selModel);
+    document.getElementById('save-name-input').value = model.name + ' — ma configuration';
+    document.getElementById('save-toast').style.display = 'none';
+    setTimeout(() => document.getElementById('save-name-input').focus(), 50);
+  }
+}
+
+function saveConfig() {
+  const name = document.getElementById('save-name-input').value.trim();
+  if (!name) return;
+  const model = MODELS.find(m => m.id === selModel);
+  const { price, weight } = computeTotals(selModel, selOpts);
+  const details = POST_META.map(p => {
+    const opt = optionsFor(p.id, selModel).find(o => o.id === selOpts[p.id]);
+    return { post: p.name, option: opt ? opt.name : '—', locked: opt ? !!opt.locked : false, price: opt && !opt.locked ? opt.price : 0 };
+  });
+  const entry = { id: Date.now(), name, modelName: model.name, modelBadge: model.badge, date: new Date().toLocaleDateString('fr-FR'), price, weight, details, selModel, selOpts: { ...selOpts } };
+  savedConfigs.unshift(entry);
+  persistSaved();
+  updateSavedCount();
+  document.getElementById('save-toast').style.display = 'block';
+  setTimeout(() => {
+    document.getElementById('save-form').classList.remove('open');
+    document.getElementById('save-toast').style.display = 'none';
+  }, 1800);
+}
+
+function deleteConfig(id) {
+  if (!confirm('Supprimer cette configuration ?')) return;
+  savedConfigs = savedConfigs.filter(c => c.id !== id);
+  persistSaved();
+  updateSavedCount();
+  renderSaved();
+}
+
+function restoreConfig(id) {
+  const cfg = savedConfigs.find(c => c.id === id);
+  if (!cfg) return;
+  selModel = cfg.selModel; selOpts = { ...cfg.selOpts }; openPost = null;
+  switchTab('config');
+  renderModels(); renderPosts(); updateRecap();
+  document.getElementById('posts-section').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderSaved() {
+  const el = document.getElementById('saved-list');
+  if (!savedConfigs.length) {
+    el.innerHTML = '<div class="empty-saved"><i class="ti ti-bookmark" style="font-size:24px;display:block;margin-bottom:10px;opacity:.4"></i>Aucune configuration sauvegardée.<br>Complétez une configuration et cliquez sur "Sauvegarder".</div>';
+    return;
+  }
+  el.innerHTML = savedConfigs.map(c => `
+    <div class="saved-card">
+      <div class="sc-head">
+        <div>
+          <div class="sc-name">${c.name}</div>
+          <div class="sc-meta">${c.modelBadge} · sauvegardé le ${c.date}</div>
+        </div>
+        <button class="sc-delete" onclick="deleteConfig(${c.id})" title="Supprimer"><i class="ti ti-trash"></i></button>
+      </div>
+      <div class="sc-detail">${c.details.map(d => `<span style="opacity:.6">${d.post} :</span> ${d.option}`).join(' &nbsp;·&nbsp; ')}</div>
+      <div class="sc-totals">
+        <div class="sc-tot">Prix : <strong>${c.price.toLocaleString('fr-FR')} €</strong></div>
+        <div class="sc-tot">Poids : <strong>${(c.weight/1000).toFixed(2)} kg</strong></div>
+      </div>
+      <div class="sc-actions">
+        <button class="sc-btn blue" onclick="restoreConfig(${c.id})"><i class="ti ti-edit"></i> Reprendre / modifier</button>
+        <button class="sc-btn" onclick="openOrderModalFrom(${c.id})"><i class="ti ti-send"></i> Commander</button>
+      </div>
+    </div>`).join('');
+}
+
+// ─── MODAL COMMANDE ───────────────────────────────────────────────────────────
+function openOrderModal() {
+  document.getElementById('order-config-display').value = buildConfigText(selModel, selOpts);
+  document.getElementById('order-modal').classList.add('open');
+}
+function openOrderModalFrom(id) {
+  const cfg = savedConfigs.find(c => c.id === id);
+  if (!cfg) return;
+  document.getElementById('order-config-display').value = buildConfigText(cfg.selModel, cfg.selOpts);
+  document.getElementById('order-modal').classList.add('open');
+}
+function closeOrderModal() {
+  document.getElementById('order-modal').classList.remove('open');
+}
+function sendOrder() {
+  const name = document.getElementById('order-name').value.trim();
+  const email = document.getElementById('order-email').value.trim();
+  const msg = document.getElementById('order-msg').value.trim();
+  const config = document.getElementById('order-config-display').value;
+  if (!name || !email) { alert('Merci de renseigner votre nom et votre email.'); return; }
+
+  // Construction du lien mailto — à remplacer par l'adresse réelle
+  const subject = encodeURIComponent('Configuration vélo sur mesure — ' + name);
+  const body = encodeURIComponent(
+    'Bonjour,\n\nJe souhaite commander la configuration suivante :\n\n' +
+    config +
+    (msg ? '\n\nMessage : ' + msg : '') +
+    '\n\nNom : ' + name +
+    '\nEmail : ' + email
+  );
+  // ⚠️ REMPLACEZ contact@votresite.fr par votre vraie adresse email
+  window.location.href = `mailto:contact@votresite.fr?subject=${subject}&body=${body}`;
+  closeOrderModal();
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+loadSaved();
+renderModels();
+</script>
+</body>
+</html>
