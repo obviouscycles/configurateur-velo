@@ -18,12 +18,12 @@
     --border: rgba(0,0,0,0.12);
     --border2: rgba(0,0,0,0.22);
     --blue: #185FA5;
-    --blue-light: #E6F1FB;
-    --blue-dark: #042C53;
+    --blue-light: #FFF8D6;
+    --blue-dark: #3D3000;
     --green: #3B6D11;
     --green-light: #EAF3DE;
-    --radius-md: 8px;
-    --radius-lg: 12px;
+    --radius-md: 0px;
+    --radius-lg: 0px;
     --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   }
 
@@ -37,8 +37,8 @@
       --text3: #636366;
       --border: rgba(255,255,255,0.12);
       --border2: rgba(255,255,255,0.22);
-      --blue-light: #0c2d4a;
-      --blue-dark: #85b7eb;
+      --blue-light: #3D3000;
+      --blue-dark: #FFF8D6;
       --green-light: #1a3008;
     }
   }
@@ -52,8 +52,8 @@
   }
 
   header {
-    background: var(--bg);
-    border-bottom: 0.5px solid var(--border);
+    background: #000000;
+    border-bottom: 0.5px solid #333333;
     padding: 0 2rem;
     display: flex;
     align-items: center;
@@ -63,7 +63,7 @@
     top: 0;
     z-index: 10;
   }
-  .logo { font-size: 16px; font-weight: 500; color: var(--text1); letter-spacing: -.01em; }
+  .logo { font-size: 16px; font-weight: 500; color: #ffffff; letter-spacing: -.01em; }
   .logo span { color: var(--blue); }
 
   .main { max-width: 760px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
@@ -80,10 +80,10 @@
     display: flex; align-items: center; gap: 6px;
   }
   .tab:hover { color: var(--text1); }
-  .tab.active { color: var(--blue); border-bottom-color: var(--blue); }
+  .tab.active { color: #9a7a00; border-bottom-color: #F5C400; }
   .count-badge {
-    font-size: 11px; background: var(--blue-light); color: var(--blue);
-    padding: 1px 7px; border-radius: 20px;
+    font-size: 11px; background: #FFF8D6; color: #7a5f00;
+    padding: 1px 7px; border-radius: 0px;
   }
 
   .view { display: none; }
@@ -120,7 +120,7 @@
   .prog-wrap { margin-bottom: 1.5rem; }
   .prog-bar { display: flex; gap: 4px; margin-top: 6px; }
   .prog-step { flex: 1; height: 3px; border-radius: 2px; background: var(--border); transition: background .3s; }
-  .prog-step.done { background: var(--blue); }
+  .prog-step.done { background: #F5C400; }
 
   .post-block {
     border: 0.5px solid var(--border); border-radius: var(--radius-lg);
@@ -201,8 +201,8 @@
     font-family: var(--font);
   }
   .btn:hover { background: var(--bg2); }
-  .btn.primary { background: var(--blue); border-color: var(--blue); color: white; }
-  .btn.primary:hover { background: #0C447C; }
+  .btn.primary { background: var(--blue); border-color: var(--blue); color: #1a1a00; font-weight: 500; }
+  .btn.primary:hover { background: #d4a900; }
   .btn.success { background: var(--green); border-color: var(--green); color: white; }
   .btn.success:hover { background: #27500A; }
 
@@ -223,10 +223,10 @@
   .save-input-row button {
     padding: 9px 16px; font-size: 13px; font-weight: 500;
     border-radius: var(--radius-md); border: none;
-    background: var(--blue); color: white; cursor: pointer; font-family: var(--font);
+    background: var(--blue); color: #1a1a00; cursor: pointer; font-family: var(--font);
     white-space: nowrap;
   }
-  .save-input-row button:hover { background: #0C447C; }
+  .save-input-row button:hover { background: #d4a900; }
   .toast {
     font-size: 12px; color: var(--green); background: var(--green-light);
     border-radius: var(--radius-md); padding: 6px 10px; margin-top: 8px; display: none;
@@ -260,8 +260,8 @@
     font-family: var(--font);
   }
   .sc-btn:hover { background: var(--bg2); }
-  .sc-btn.blue { border-color: var(--blue); color: var(--blue); }
-  .sc-btn.blue:hover { background: var(--blue-light); }
+  .sc-btn.blue { border-color: #b38f00; color: #7a5f00; }
+  .sc-btn.blue:hover { background: #FFF8D6; }
   .empty-saved {
     font-size: 13px; color: var(--text3); text-align: center;
     padding: 2.5rem 1rem;
@@ -291,7 +291,7 @@
     background: var(--bg2); color: var(--text1); font-family: var(--font);
     outline: none; resize: vertical;
   }
-  .field input:focus, .field textarea:focus { border-color: var(--blue); }
+  .field input:focus, .field textarea:focus { border-color: #F5C400; }
   .modal-actions { display: flex; gap: 8px; margin-top: 1rem; }
   .modal-actions button {
     flex: 1; padding: 11px; font-size: 13px; font-weight: 500;
@@ -299,8 +299,8 @@
   }
   .modal-actions .btn-cancel { border: 0.5px solid var(--border2); background: var(--bg); color: var(--text1); }
   .modal-actions .btn-cancel:hover { background: var(--bg2); }
-  .modal-actions .btn-send { border: none; background: var(--blue); color: white; }
-  .modal-actions .btn-send:hover { background: #0C447C; }
+  .modal-actions .btn-send { border: none; background: var(--blue); color: #1a1a00; }
+  .modal-actions .btn-send:hover { background: #d4a900; }
 
   @media (max-width: 600px) {
     header { padding: 0 1rem; }
@@ -312,8 +312,8 @@
 <body>
 
 <header>
-  <div class="logo">Vélo<span>Config</span></div>
-  <div style="font-size:12px;color:var(--text3)">Configurateur sur mesure</div>
+  <div class="logo">OBVIOUS <span>Configurateur</span></div>
+  <div style="font-size:12px;color:#888888">Configurateur sur mesure</div>
 </header>
 
 <main class="main">
@@ -775,8 +775,8 @@ function sendOrder() {
     '\n\nNom : ' + name +
     '\nEmail : ' + email
   );
-  // ⚠️ REMPLACEZ contact@votresite.fr par votre vraie adresse email
-  window.location.href = `mailto:contact@votresite.fr?subject=${subject}&body=${body}`;
+  // ⚠️ REMPLACEZ info@obviouscycles.com par votre vraie adresse email
+  window.location.href = `mailto:info@obviouscycles.com?subject=${subject}&body=${body}`;
   closeOrderModal();
 }
 
