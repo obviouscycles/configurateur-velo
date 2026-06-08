@@ -101,13 +101,14 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
     gap: 10px; margin-bottom: 2rem;
+    align-items: stretch;
   }
   .model-card {
     border: 0.5px solid var(--border); border-radius: var(--radius-lg);
     padding: 0; cursor: pointer; background: var(--bg);
     transition: border-color .15s, background .15s;
     display: flex; flex-direction: column; gap: 0;
-    overflow: hidden;
+    overflow: hidden; height: 100%;
   }
   .mc-text { padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
   .model-card:hover { border-color: var(--border2); background: var(--bg2); }
@@ -120,7 +121,7 @@
   .mc-photo {
     width: 100%; height: 120px; object-fit: cover;
     border-radius: 0;
-    margin-bottom: 8px;
+    margin-bottom: 0;
     display: block;
   }
   .model-card.sel .mc-photo { opacity: 1; }
