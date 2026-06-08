@@ -109,15 +109,14 @@
     display: flex; flex-direction: column; gap: 0;
     overflow: hidden;
   }
-
-  .mc-text { padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; flex: 1; }  
+  .mc-text { padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; }
   .model-card:hover { border-color: var(--border2); background: var(--bg2); }
   .model-card.sel { border: 2px solid var(--blue); background: #f0f0f0; }
   .model-card.sel .mc-name { color: var(--text1); }
   .mc-badge { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: .06em; }
   .mc-name { font-size: 14px; font-weight: 500; color: var(--text1); }
   .mc-desc { font-size: 11px; color: var(--text2); line-height: 1.4; margin-top: 3px; }
-  .mc-price { font-size: 12px; font-weight: 500; color: var(--text2); margin-top: auto; padding-top: 8px; }
+  .mc-price { font-size: 12px; font-weight: 500; color: var(--text2); margin-top: 6px; }
   .mc-photo {
     width: 100%; height: 120px; object-fit: cover;
     border-radius: 0;
@@ -437,14 +436,6 @@ const MODELS = [
 ];
 
 const ALL_OPTIONS = {
-  fourche: [
-    { id: 'fourche_rd_car_00', name: 'Fourche incluse avec le cadre', desc: 'Fourche carbone pivot conique', price: 0, weight: 0, locked: true, types: ['route'] },
-    { id: 'fourche_gr_car_00', name: 'Fourche incluse — sans inserts', desc: 'Fourche gravel carbone, pivot conique, pneu max 50 mm', price: 0, weight: 0, locked: true, types: ['gravel_racing','gravel_aventure'] },
-    { id: 'fourche_gr_car_ins', name: 'Fourche incluse — avec inserts', desc: 'Fourche gravel carbone avec inserts, pneu max 50 mm', price: 0, weight: 0, locked: true, types: ['gravel_racing','gravel_aventure'] },
-    { id: 'fourche_vtt_fox_fac_36_150', name: 'Fox Factory 36 150 mm', desc: 'Suspendue Fox Factory Kashima Grip2', price: 1500, weight: 1780, types: ['vtt'] },
-    { id: 'fourche_vtt_rs_lyr_ult_150', name: 'Rockshox Lyrik Ultimate 150 mm', desc: 'Suspendue Rockshox Lyrik Ultimate', price: 900, weight: 1750, types: ['vtt'] },
-    { id: 'fourche_vtt_rs_lyr_sel_150', name: 'Rockshox Lyrik Select 150 mm', desc: 'Suspendue Rockshox Lyrik Select', price: 580, weight: 1800, types: ['vtt'] },
-  ],
   roues: [
     { id: 'roue_gr_ob_35', name: 'Obvious GR35-S', desc: 'Carbone hyper polyvalente, moyeu DT350, rayons profilés', price: 1350, weight: 1840, types: ['gravel_racing','gravel_aventure'] },
     { id: 'roue_gr_fu_soa', name: 'Fulcrum Soniq ALX', desc: 'Aluminium, la meilleure solution gravel aluminium', price: 600, weight: 1680, types: ['gravel_racing','gravel_aventure'] },
@@ -510,15 +501,23 @@ const ALL_OPTIONS = {
     { id: 'selle_br_b17_ho', name: 'Brooks B17 honey', desc: 'Cuir, touring', price: 140, weight: 420, types: ['gravel_aventure'] },
     { id: 'selle_ber_asp_bk', name: 'Berthoud Aspin ouverte noir', desc: 'Cuir, fabrication française, longue distance', price: 240, weight: 380, types: ['gravel_aventure'] },
   ],
+  fourche: [
+    { id: 'fourche_rd_car_00', name: 'Fourche incluse avec le cadre', desc: 'Fourche carbone pivot conique', price: 0, weight: 0, locked: true, types: ['route'] },
+    { id: 'fourche_gr_car_00', name: 'Fourche incluse — sans inserts', desc: 'Fourche gravel carbone, pivot conique, pneu max 50 mm', price: 0, weight: 0, locked: true, types: ['gravel_racing','gravel_aventure'] },
+    { id: 'fourche_gr_car_ins', name: 'Fourche incluse — avec inserts', desc: 'Fourche gravel carbone avec inserts, pneu max 50 mm', price: 0, weight: 0, locked: true, types: ['gravel_racing','gravel_aventure'] },
+    { id: 'fourche_vtt_fox_fac_36_150', name: 'Fox Factory 36 150 mm', desc: 'Suspendue Fox Factory Kashima Grip2', price: 1500, weight: 1780, types: ['vtt'] },
+    { id: 'fourche_vtt_rs_lyr_ult_150', name: 'Rockshox Lyrik Ultimate 150 mm', desc: 'Suspendue Rockshox Lyrik Ultimate', price: 900, weight: 1750, types: ['vtt'] },
+    { id: 'fourche_vtt_rs_lyr_sel_150', name: 'Rockshox Lyrik Select 150 mm', desc: 'Suspendue Rockshox Lyrik Select', price: 580, weight: 1800, types: ['vtt'] },
+  ],
 };
 
 const POST_META = [
-  { id: 'fourche',      name: 'Fourche',           icon: 'ti-git-fork' },
   { id: 'roues',        name: 'Roues',             icon: 'ti-circle' },
   { id: 'pneus',        name: 'Pneus',             icon: 'ti-circle-dotted' },
   { id: 'transmission', name: 'Transmission',      icon: 'ti-settings' },
   { id: 'pilotage',     name: 'Poste de pilotage', icon: 'ti-adjustments-horizontal' },
   { id: 'selle',        name: 'Selle',             icon: 'ti-armchair' },
+  { id: 'fourche',      name: 'Fourche',           icon: 'ti-git-fork' },
 ];
 
 // ─── ÉTAT ────────────────────────────────────────────────────────────────────
@@ -769,25 +768,44 @@ function openOrderModalFrom(id) {
 function closeOrderModal() {
   document.getElementById('order-modal').classList.remove('open');
 }
-function sendOrder() {
+async function sendOrder() {
   const name = document.getElementById('order-name').value.trim();
   const email = document.getElementById('order-email').value.trim();
   const msg = document.getElementById('order-msg').value.trim();
   const config = document.getElementById('order-config-display').value;
   if (!name || !email) { alert('Merci de renseigner votre nom et votre email.'); return; }
 
-  // Construction du lien mailto — à remplacer par l'adresse réelle
-  const subject = encodeURIComponent('Configuration vélo sur mesure — ' + name);
-  const body = encodeURIComponent(
-    'Bonjour,\n\nJe souhaite commander la configuration suivante :\n\n' +
-    config +
-    (msg ? '\n\nMessage : ' + msg : '') +
-    '\n\nNom : ' + name +
-    '\nEmail : ' + email
-  );
-  // ⚠️ REMPLACEZ info@obviouscycles.com par votre vraie adresse email
-  window.location.href = `mailto:info@obviouscycles.com?subject=${subject}&body=${body}`;
-  closeOrderModal();
+  const btnSend = document.querySelector('.btn-send');
+  btnSend.textContent = 'Envoi en cours...';
+  btnSend.disabled = true;
+
+  try {
+    const response = await fetch('https://formspree.io/f/mqeoqewy', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        nom: name,
+        email: email,
+        configuration: config,
+        message: msg || '—',
+      })
+    });
+
+    if (response.ok) {
+      closeOrderModal();
+      document.getElementById('order-name').value = '';
+      document.getElementById('order-email').value = '';
+      document.getElementById('order-msg').value = '';
+      alert('✅ Votre configuration a bien été envoyée ! Nous vous recontacterons rapidement.');
+    } else {
+      alert("Une erreur s'est produite. Merci de réessayer ou de nous contacter directement à info@obviouscycles.com");
+    }
+  } catch(e) {
+    alert("Impossible d'envoyer le formulaire. Vérifiez votre connexion internet.");
+  } finally {
+    btnSend.textContent = '↗ Envoyer';
+    btnSend.disabled = false;
+  }
 }
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
