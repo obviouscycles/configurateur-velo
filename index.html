@@ -388,6 +388,21 @@
     font-size: 28px; font-weight: 500; color: #ffffff; letter-spacing: -.02em;
   }
   .recap-total-val.price { color: #F5C400; }
+
+  .recap-model-card {
+    background: #1e1e1e;
+    border: 0.5px solid #F5C400;
+    padding: 10px 12px;
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 8px;
+  }
+  .recap-model-photo {
+    width: 80px; height: 54px; object-fit: cover; flex-shrink: 0;
+  }
+  .recap-model-info { flex: 1; min-width: 0; }
+  .recap-model-badge { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: .07em; }
+  .recap-model-name { font-size: 15px; font-weight: 500; color: #f2f2f2; margin-top: 2px; }
+  .recap-model-price { font-size: 12px; color: #888; margin-top: 3px; }
 </style>
 </head>
 <body>
@@ -805,6 +820,14 @@ function updateRecap() {
   const recapHTML =
     '<div class="recap-visual">' +
       '<div class="recap-visual-title">Votre configuration</div>' +
+      '<div class="recap-model-card">' +
+        (model.photo ? '<img class="recap-model-photo" src="' + model.photo + '" alt="' + model.name + '">' : '') +
+        '<div class="recap-model-info">' +
+          '<div class="recap-model-badge">' + model.badge + '</div>' +
+          '<div class="recap-model-name">' + model.name + '</div>' +
+          '<div class="recap-model-price">Base : ' + model.basePrice.toLocaleString('fr-FR') + ' €</div>' +
+        '</div>' +
+      '</div>' +
       '<div class="recap-cards">' + cards + '</div>' +
       '<div class="recap-price-block">' +
         details +
