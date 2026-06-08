@@ -109,14 +109,15 @@
     display: flex; flex-direction: column; gap: 0;
     overflow: hidden;
   }
-  .mc-text { padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; }
+
+  .mc-text { padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; flex: 1; }  
   .model-card:hover { border-color: var(--border2); background: var(--bg2); }
   .model-card.sel { border: 2px solid var(--blue); background: #f0f0f0; }
   .model-card.sel .mc-name { color: var(--text1); }
   .mc-badge { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: .06em; }
   .mc-name { font-size: 14px; font-weight: 500; color: var(--text1); }
   .mc-desc { font-size: 11px; color: var(--text2); line-height: 1.4; margin-top: 3px; }
-  .mc-price { font-size: 12px; font-weight: 500; color: var(--text2); margin-bottom: 6px; }
+  .mc-price { font-size: 12px; font-weight: 500; color: var(--text2); margin-top: auto; padding-top: 8px; }
   .mc-photo {
     width: 100%; height: 120px; object-fit: cover;
     border-radius: 0;
