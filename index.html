@@ -318,6 +318,76 @@
     .main { padding: 1.5rem 1rem 3rem; }
     .model-grid { grid-template-columns: repeat(2, 1fr); }
   }
+
+  /* ── RÉCAPITULATIF VISUEL ─────────────────────────────── */
+  .recap-visual {
+    background: #111111;
+    border-radius: 0;
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+    color: #ffffff;
+  }
+  .recap-visual-title {
+    font-size: 11px; font-weight: 500; letter-spacing: .1em;
+    text-transform: uppercase; color: #888; margin-bottom: 1.25rem;
+  }
+  .recap-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 8px;
+    margin-bottom: 1.5rem;
+  }
+  .recap-card {
+    background: #1e1e1e;
+    border: 0.5px solid #333;
+    padding: 10px 12px;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .recap-card-header {
+    display: flex; align-items: center; gap: 7px;
+    font-size: 10px; font-weight: 500; color: #888;
+    text-transform: uppercase; letter-spacing: .07em;
+  }
+  .recap-card-header i { font-size: 13px; color: var(--blue); }
+  .recap-card-name {
+    font-size: 13px; font-weight: 500; color: #f2f2f2;
+    line-height: 1.3;
+  }
+  .recap-card-price {
+    font-size: 12px; margin-top: 2px;
+  }
+  .recap-card-price.incl { color: #666; }
+  .recap-card-price.pos  { color: #F5C400; }
+  .recap-card-price.neg  { color: #7ecf5a; }
+  .recap-card-price.zero { color: #666; }
+  .recap-price-block {
+    border-top: 0.5px solid #2a2a2a;
+    padding-top: 1.1rem;
+    margin-top: .25rem;
+  }
+  .recap-price-detail {
+    display: flex; justify-content: space-between;
+    font-size: 12px; color: #888; padding: 2px 0;
+  }
+  .recap-price-detail span:last-child { color: #ccc; }
+  .recap-price-detail.upgrade span:last-child { color: #F5C400; }
+  .recap-price-detail.saving span:last-child { color: #7ecf5a; }
+  .recap-price-divider { border: none; border-top: 0.5px solid #333; margin: 8px 0; }
+  .recap-total-block {
+    display: flex; gap: 12px; margin-top: .5rem;
+  }
+  .recap-total-card {
+    flex: 1; text-align: center; padding: 1rem;
+    background: #000; border: 0.5px solid #333;
+  }
+  .recap-total-label {
+    font-size: 10px; text-transform: uppercase;
+    letter-spacing: .1em; color: #666; margin-bottom: 6px;
+  }
+  .recap-total-val {
+    font-size: 28px; font-weight: 500; color: #ffffff; letter-spacing: -.02em;
+  }
+  .recap-total-val.price { color: #F5C400; }
 </style>
 </head>
 <body>
@@ -355,20 +425,7 @@
 
     <div id="recap-section" style="display:none">
       <p class="section-title" style="margin-top:.75rem">Votre configuration</p>
-      <div class="recap-box">
-        <div id="recap-rows"></div>
-        <hr class="recap-div">
-        <div class="totals-row">
-          <div class="tot-card">
-            <div class="tot-label">Prix total</div>
-            <div class="tot-val price" id="total-price">—</div>
-          </div>
-          <div class="tot-card">
-            <div class="tot-label">Poids estimé</div>
-            <div class="tot-val" id="total-weight">—</div>
-          </div>
-        </div>
-      </div>
+      <div id="recap-box-container"></div>
       <div class="btn-row">
         <button class="btn primary" onclick="openOrderModal()">
           <i class="ti ti-send"></i> Envoyer cette configuration
@@ -707,21 +764,59 @@ function updateRecap() {
   const allDone = POST_META.every(p => !!selOpts[p.id]);
   document.getElementById('recap-section').style.display = allDone ? 'block' : 'none';
   if (!allDone) return;
+
   const { price, weight } = computeTotals(selModel, selOpts);
-  let html = `<div class="recap-row"><span class="rr-label">Cadre — ${model.name}</span><span class="rr-val">${model.basePrice.toLocaleString('fr-FR')} €</span></div>`;
+
+  const postIcons = {
+    fourche: 'ti-git-fork', roues: 'ti-circle', pneus: 'ti-circle-dotted',
+    transmission: 'ti-settings', pilotage: 'ti-adjustments-horizontal', selle: 'ti-armchair'
+  };
+
+  // Build cards
+  let cards = '';
   POST_META.forEach(p => {
     const opt = optionsFor(p.id, selModel).find(o => o.id === selOpts[p.id]);
     if (!opt) return;
-    let priceStr;
-    if (opt.locked) priceStr = 'inclus';
-    else if (opt.price === 0) priceStr = '±0 €';
-    else if (opt.price > 0) priceStr = '+' + opt.price.toLocaleString('fr-FR') + ' €';
-    else priceStr = opt.price.toLocaleString('fr-FR') + ' €';
-    html += `<div class="recap-row"><span class="rr-label">${p.name}</span><span class="rr-val">${opt.name} <span class="rr-sub">(${priceStr})</span></span></div>`;
+    let priceLabel = '', priceClass = '';
+    if (opt.locked)       { priceLabel = 'Inclus';                                     priceClass = 'incl'; }
+    else if (opt.price === 0) { priceLabel = '±0 €';                                   priceClass = 'zero'; }
+    else if (opt.price > 0)   { priceLabel = '+' + opt.price.toLocaleString('fr-FR') + ' €'; priceClass = 'pos';  }
+    else                      { priceLabel = opt.price.toLocaleString('fr-FR') + ' €'; priceClass = 'neg';  }
+
+    cards += '<div class="recap-card">' +
+      '<div class="recap-card-header"><i class="ti ' + (postIcons[p.id]||'ti-point') + '"></i>' + p.name + '</div>' +
+      '<div class="recap-card-name">' + opt.name + '</div>' +
+      '<div class="recap-card-price ' + priceClass + '">' + priceLabel + '</div>' +
+    '</div>';
   });
-  document.getElementById('recap-rows').innerHTML = html;
-  document.getElementById('total-price').textContent = price.toLocaleString('fr-FR') + ' €';
-  document.getElementById('total-weight').textContent = (weight / 1000).toFixed(2) + ' kg';
+
+  // Build price detail
+  let details = '<div class="recap-price-detail"><span>Cadre — ' + model.name + '</span><span>' + model.basePrice.toLocaleString('fr-FR') + ' €</span></div>';
+  POST_META.forEach(p => {
+    const opt = optionsFor(p.id, selModel).find(o => o.id === selOpts[p.id]);
+    if (!opt || opt.locked) return;
+    let cls = '', label = '';
+    if (opt.price === 0)      { cls = ''; label = '±0 €'; }
+    else if (opt.price > 0)   { cls = 'upgrade'; label = '+' + opt.price.toLocaleString('fr-FR') + ' €'; }
+    else                      { cls = 'saving';  label = opt.price.toLocaleString('fr-FR') + ' €'; }
+    details += '<div class="recap-price-detail ' + cls + '"><span>' + p.name + ' — ' + opt.name + '</span><span>' + label + '</span></div>';
+  });
+
+  const recapHTML =
+    '<div class="recap-visual">' +
+      '<div class="recap-visual-title">Votre configuration</div>' +
+      '<div class="recap-cards">' + cards + '</div>' +
+      '<div class="recap-price-block">' +
+        details +
+        '<hr class="recap-price-divider">' +
+        '<div class="recap-total-block">' +
+          '<div class="recap-total-card"><div class="recap-total-label">Prix total</div><div class="recap-total-val price">' + price.toLocaleString('fr-FR') + ' €</div></div>' +
+          '<div class="recap-total-card"><div class="recap-total-label">Poids estimé</div><div class="recap-total-val">' + (weight/1000).toFixed(2) + ' kg</div></div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+
+  document.getElementById('recap-box-container').innerHTML = recapHTML;
 }
 
 function resetConfig() {
