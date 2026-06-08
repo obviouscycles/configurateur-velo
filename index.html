@@ -591,6 +591,7 @@ const ALL_OPTIONS = {
     { id: 'tige_vtt_ou_tel', name: 'Tige de selle One-Up Dropper V3', desc: 'Tige de selle téléscopique', price: 0, weight: 0, locked: true, compat: [{mid:'vtt_enduro',rec:true},{mid:'vtt_xc',rec:true}], incompat: [] },
   ],
   frein: [
+    { id: 'frein_all', name: 'Freins inclus avec la transmission', desc: '', price: 0, weight: 0, locked: true, compat: [{mid:'route',rec:false},{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: ['trans_mtb_sr_e70','trans_mtb_sr_gx','trans_mtb_sr_x0','trans_mtb_sr_xxs'] },
     { id: 'frein_vtt_sr_db4', name: 'Freins SRAM DB4', desc: 'Freinage puissant, entrée de gamme', price: 0, weight: 0, locked: true, compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_rx','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_mtb_sh_m6','trans_mtb_sh_slx','trans_mtb_sh_xt','trans_mtb_sh_xte','trans_mtb_sh_xtr','trans_mtb_sh_xtre'] },
     { id: 'frein_vtt_sr_db8', name: 'Freins SRAM DB8', desc: '4 pistons, simple et robuste', price: 0, weight: 0, locked: false, compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_rx','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_mtb_sh_m6','trans_mtb_sh_slx','trans_mtb_sh_xt','trans_mtb_sh_xte','trans_mtb_sh_xtr','trans_mtb_sh_xtre'] },
     { id: 'frein_vtt_sr_mvs', name: 'Freins SRAM Maven Silver', desc: 'Le frein des disciplines Gravity', price: 0, weight: 0, locked: false, compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_rx','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_mtb_sh_m6','trans_mtb_sh_slx','trans_mtb_sh_xt','trans_mtb_sh_xte','trans_mtb_sh_xtr','trans_mtb_sh_xtre'] },
@@ -803,8 +804,39 @@ function renderPosts() {
 
 function togglePost(id) { openPost = openPost === id ? null : id; renderPosts(); }
 
+// Règles de sélection forcée bidirectionnelle
+const FORCE_SELECT = [
+  { if_selected: 'trans_gr_sh_cuf',       force: { pilotage: 'pilotage_gr_flat_ext' } },
+  { if_selected: 'pilotage_gr_flat_ext',  force: { transmission: 'trans_gr_sh_cuf' } },
+];
+
 function selectOpt(postId, optId) {
   selOpts[postId] = optId;
+
+  // 1. Sélections forcées bidirectionnelles
+  FORCE_SELECT.forEach(rule => {
+    if (rule.if_selected === optId) {
+      Object.entries(rule.force).forEach(([forcePost, forceId]) => {
+        const available = optionsFor(forcePost, selModel);
+        if (available.find(o => o.id === forceId)) {
+          selOpts[forcePost] = forceId;
+        }
+      });
+    }
+  });
+
+  // 2. Effacer les sélections incompatibles dans les autres postes
+  POST_META.forEach(p => {
+    if (p.id === postId) return;
+    if (!selOpts[p.id]) return;
+    const allIncompat = POST_META.reduce((acc, pp) => {
+      if (!selOpts[pp.id]) return acc;
+      const o = ALL_OPTIONS[pp.id]?.find(x => x.id === selOpts[pp.id]);
+      return o ? acc.concat(o.incompat) : acc;
+    }, []);
+    if (allIncompat.includes(selOpts[p.id])) selOpts[p.id] = null;
+  });
+
   renderPosts(); updateRecap();
 }
 
