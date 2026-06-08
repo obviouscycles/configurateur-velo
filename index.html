@@ -2,6 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<link rel="icon" type="image/png" href="https://www.obviouscycles.com/wp-content/uploads/2023/04/favicon-512.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Configurateur de vélo</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
@@ -403,12 +404,38 @@
   .recap-model-badge { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: .07em; }
   .recap-model-name { font-size: 15px; font-weight: 500; color: #f2f2f2; margin-top: 2px; }
   .recap-model-price { font-size: 12px; color: #888; margin-top: 3px; }
+
+  /* Model cards sur fond noir */
+  #view-config > div:first-child .model-card {
+    background: #1e1e1e;
+    border-color: #333;
+    color: #f2f2f2;
+  }
+  #view-config > div:first-child .model-card:hover {
+    background: #2a2a2a;
+    border-color: #555;
+  }
+  #view-config > div:first-child .model-card.sel {
+    border: 2px solid var(--blue);
+    background: #2a2200;
+  }
+  #view-config > div:first-child .mc-name { color: #f2f2f2; }
+  #view-config > div:first-child .mc-badge { color: #888; }
+  #view-config > div:first-child .mc-desc { color: #aaa; }
+  #view-config > div:first-child .mc-price { color: #aaa; }
+  #view-config > div:first-child .model-card.sel .mc-name { color: #fff8d6; }
+  #view-config > div:first-child .model-card.sel .mc-price { color: #F5C400; }
+  #view-config > div:first-child .step-label { color: #888; }
+  #view-config > div:first-child .mc-text { background: transparent; }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="logo">OBVIOUS <span>Configurateur</span></div>
+  <div class="logo" style="display:flex;align-items:center;gap:10px;">
+    <img src="https://www.obviouscycles.com/wp-content/uploads/2023/04/favicon-512.png" alt="Obvious Cycles" style="height:32px;width:32px;object-fit:contain;">
+    <span>OBVIOUS <span style="color:#ffffff;opacity:.6">Configurateur</span></span>
+  </div>
   <div style="font-size:12px;color:#ffffff;opacity:.7">Configurateur sur mesure</div>
 </header>
 
@@ -426,9 +453,11 @@
 
   <!-- VUE CONFIGURATEUR -->
   <div class="view active" id="view-config">
-    <div class="step-label">Étape 1 sur 2</div>
-    <p class="section-title">Choisissez votre modèle de base</p>
-    <div class="model-grid" id="model-grid"></div>
+    <div style="background:#111111;padding:1.5rem;margin-bottom:1.5rem;">
+      <div class="step-label" style="color:#888;">Étape 1 sur 2</div>
+      <p class="section-title" style="color:#f2f2f2;">Choisissez votre modèle de base</p>
+      <div class="model-grid" id="model-grid"></div>
+    </div>
 
     <div id="posts-section" style="display:none">
       <div class="prog-wrap">
@@ -625,11 +654,11 @@ const POST_META = [
   { id: 'fourche',      name: 'Fourche',             icon: 'ti-git-fork' },
   { id: 'roues',        name: 'Roues',               icon: 'ti-circle' },
   { id: 'pneus',        name: 'Pneus',               icon: 'ti-circle-dotted' },
+  { id: 'frein',        name: 'Freins',              icon: 'ti-hand-stop' },
   { id: 'transmission', name: 'Transmission',        icon: 'ti-settings' },
   { id: 'pilotage',     name: 'Poste de pilotage',   icon: 'ti-adjustments-horizontal' },
   { id: 'selle',        name: 'Selle',               icon: 'ti-armchair' },
   { id: 'tige',         name: 'Tige de selle',       icon: 'ti-arrows-vertical' },
-  { id: 'frein',        name: 'Freins',              icon: 'ti-hand-stop' },
   { id: 'pedales',      name: 'Pédales',             icon: 'ti-rotate-clockwise' },
 ];
 
