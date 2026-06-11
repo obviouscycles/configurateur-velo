@@ -374,6 +374,8 @@
   .recap-price-detail.upgrade span:last-child { color: #F5C400; }
   .recap-price-detail.saving span:last-child { color: #7ecf5a; }
   .recap-price-divider { border: none; border-top: 0.5px solid #333; margin: 8px 0; }
+  .recap-price-detail.assembly { border-top: 0.5px solid #333; margin-top: 6px; padding-top: 8px; color: #aaa; }
+  .recap-price-detail.assembly span:last-child { color: #F5C400 !important; }
   .recap-total-block {
     display: flex; gap: 12px; margin-top: .5rem;
   }
@@ -532,10 +534,10 @@
 // ─── DONNÉES ────────────────────────────────────────────────────────────────
 
 const MODELS = [
-  { id: 'gravel_racing',     name: 'ON/OFF Gravel Racing',      badge: 'Gravel',         desc: 'Cadre titane, géométrie sport, fourche carbone, intégration complète',                 basePrice: 4590, photo: 'https://www.obviouscycles.com/wp-content/uploads/2024/03/onoff-2024-6-655x427.webp?m=1711027780' },
-  { id: 'gravel_bikepacking',name: 'OUT/QUEST Gravel Aventure', badge: 'Bikepacking',    desc: "Cadre titane, géométrie confort / longue distance, nombreux points d'accroche",         basePrice: 4290, photo: 'https://www.obviouscycles.com/wp-content/uploads/2024/11/outquest-1-655x450.webp?m=1730756293' },
-  { id: 'vtt_enduro',        name: '/OFF Enduro HT',            badge: 'Trail / Enduro', desc: 'Cadre titane semi-rigide, géométrie enduro, fourche 140/150 mm, boost 148 mm',          basePrice: 5090, photo: 'https://www.obviouscycles.com/wp-content/uploads/2024/12/off-x0-1-1-655x404.webp?m=1733503243' },
-  { id: 'route',             name: 'ON/ Route',                 badge: 'Route',          desc: 'Cadre titane, fourche carbone, sportif et polyvalent',                                  basePrice: 6690, photo: 'https://www.obviouscycles.com/wp-content/uploads/2025/05/on-da-1-mifi-655x460.jpg?m=1747931996' },
+  { id: 'gravel_racing',     name: 'ON/OFF Gravel Racing',      badge: 'Gravel',         desc: 'Cadre titane, géométrie sport, fourche carbone, intégration complète',                 basePrice: 4590, assembly: 300, photo: 'https://www.obviouscycles.com/wp-content/uploads/2024/03/onoff-2024-6-655x427.webp?m=1711027780' },
+  { id: 'gravel_bikepacking',name: 'OUT/QUEST Gravel Aventure', badge: 'Bikepacking',    desc: "Cadre titane, géométrie confort / longue distance, nombreux points d'accroche",         basePrice: 4290, assembly: 300, photo: 'https://www.obviouscycles.com/wp-content/uploads/2024/11/outquest-1-655x450.webp?m=1730756293' },
+  { id: 'vtt_enduro',        name: '/OFF Enduro HT',            badge: 'Trail / Enduro', desc: 'Cadre titane semi-rigide, géométrie enduro, fourche 140/150 mm, boost 148 mm',          basePrice: 5090, assembly: 300, photo: 'https://www.obviouscycles.com/wp-content/uploads/2024/12/off-x0-1-1-655x404.webp?m=1733503243' },
+  { id: 'route',             name: 'ON/ Route',                 badge: 'Route',          desc: 'Cadre titane, fourche carbone, sportif et polyvalent',                                  basePrice: 6690, assembly: 300, photo: 'https://www.obviouscycles.com/wp-content/uploads/2025/05/on-da-1-mifi-655x460.jpg?m=1747931996' },
 ];
 
 const ALL_OPTIONS = {
@@ -574,7 +576,7 @@ const ALL_OPTIONS = {
     { id: 'trans_gr_sh_822', name: 'SHIMANO GRX 820 2x12V', desc: '2x12v, à câble, haut de gamme Shimano', price: 335, weight: 0, locked: false, compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [] },
     { id: 'trans_gr_sh_611', name: 'SHIMANO GRX 820/610 1x12V', desc: '1x12v, à câble, le 12 vitesses accessible', price: 0, weight: 0, locked: true, compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [] },
     { id: 'trans_gr_sh_cud', name: 'SHIMANO CUES U6040 DROP 1x11v', desc: 'Hyper polyvalent 11 vitesses', price: -155, weight: 0, locked: false, compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [] },
-    { id: 'trans_gr_sh_cuf', name: 'SHIMANO CUES U6040 FLAT 1x11v', desc: 'Hyper polyvalent 11 vitesses pour cintre plat', price: -155, weight: 0, locked: false, compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: ['pilotage_rd_ala','pilotage_rd_suz_car','pilotage_rd_suz_alu','pilotage_grv_suz_car','pilotage_grv_suz_alu','pilotage_gr_ger_alu'] },
+    { id: 'trans_gr_sh_cuf', name: 'SHIMANO CUES U6040 FLAT 1x11v', desc: 'Hyper polyvalent 11 vitesses pour cintre plat', price: -155, weight: 0, locked: false, compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: ['pilotage_rd_ala','pilotage_rd_suz_car','pilotage_rd_suz_alu','pilotage_grv_suz_car','pilotage_grv_suz_alu','pilotage_gr_ger_alu','pilotage_gr_drp_alu'] },
     { id: 'trans_gr_sr_ri', name: 'SRAM RIVAL AXS XPLR 1x13v', desc: '1x13v sans fil, la solution robuste de SRAM', price: 300, weight: 0, locked: false, compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [] },
     { id: 'trans_gr_sr_fo', name: 'SRAM FORCE AXS XPLR 1x13v', desc: '1x13v sans fil, le bon compromis SRAM', price: 670, weight: 0, locked: false, compat: [{mid:'gravel_racing',rec:true},{mid:'gravel_bikepacking',rec:false}], incompat: [] },
     { id: 'trans_gr_sr_re', name: 'SRAM RED AXS XPLR 1x13v', desc: '1x13v sans fil, hyper performant', price: 2040, weight: 0, locked: false, compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [] },
@@ -606,15 +608,15 @@ const ALL_OPTIONS = {
     { id: 'pilotage_grv_suz_car', name: 'Cintre Deda SuperZero Carbon / Potence Deda SuperBox', desc: 'Cintre gravel carbone, profilé, flare 8°', price: 150, weight: 0, locked: false, compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [] },
     { id: 'pilotage_grv_suz_alu', name: 'Cintre Deda SuperZero Alu / Potence Deda SuperBox', desc: 'Cintre gravel aluminium, profilé, flare 8°', price: 0, weight: 0, locked: true, compat: [{mid:'gravel_racing',rec:true},{mid:'gravel_bikepacking',rec:false}], incompat: [] },
     { id: 'pilotage_gr_ger_alu', name: 'Cintre Deda Gera Alu / Potence Deda Zero100', desc: 'Cintre gravel aluminium, multiposition, flare 12°', price: 95, weight: 0, locked: false, compat: [{mid:'gravel_bikepacking',rec:true},{mid:'gravel_racing',rec:false}], incompat: [] },
-    { id: 'pilotage_gr_drp_alu', name: 'Cintre gravel Randonneur Ergotec', desc: 'Cintre gravel aluminium, flare 12°', price: 0, weight: 0, locked: true, compat: [{mid:'gravel_bikepacking',rec:false}], incompat: [] },
-    { id: 'pilotage_gr_flat_ext', name: 'Cintre gravel plat Ergotec', desc: 'Cintre plat pour plus de confort', price: -20, weight: 0, locked: false, compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_cud','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_rx'] },
+    { id: 'pilotage_gr_drp_alu', name: 'Cintre gravel Randonneur Ergotec', desc: 'Cintre gravel aluminium, flare 12°', price: 0, weight: 0, locked: true, compat: [{mid:'gravel_bikepacking',rec:false}], incompat: ['trans_gr_sh_cuf'] },
+    { id: 'pilotage_gr_flat_ext', name: 'Cintre gravel plat Ergotec', desc: 'Cintre plat pour plus de confort', price: -20, weight: 0, locked: false, compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_rx'] },
     { id: 'pilotage_mtb_end', name: 'Cintre et potence Truvativ Descendant', desc: 'Potence 50 mm, Ø35 mm / Cintre 780 mm, 25 mm rise', price: 0, weight: 0, locked: true, compat: [{mid:'vtt_enduro',rec:false}], incompat: [] },
   ],
   selle: [
     { id: 'selle_rd_ant_r5', name: 'Fizik Antares R5', desc: 'Course route et VTT', price: 0, weight: 0, locked: true, compat: [{mid:'route',rec:false},{mid:'vtt_xc',rec:false}], incompat: [] },
     { id: 'selle_rd_ant_r3', name: 'Fizik Antares R3', desc: 'Course route et VTT, rail titane', price: 50, weight: 0, locked: false, compat: [{mid:'route',rec:false},{mid:'vtt_xc',rec:false}], incompat: [] },
     { id: 'selle_rd_ant_r1', name: 'Fizik Antares R1', desc: 'Course route et VTT, rail carbone', price: 90, weight: 0, locked: false, compat: [{mid:'route',rec:false},{mid:'vtt_xc',rec:false}], incompat: [] },
-    { id: 'selle_gr_ali_r5', name: 'Fizik Aliante R5', desc: 'Route et gravel', price: 0, weight: 0, locked: false, compat: [{mid:'route',rec:false},{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [] },
+    { id: 'selle_gr_ali_r5', name: 'Fizik Aliante R5', desc: 'Route et gravel', price: 0, weight: 0, locked: true, compat: [{mid:'route',rec:false},{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [] },
     { id: 'selle_gr_ali_r3', name: 'Fizik Aliante R3', desc: 'Route et gravel, rail titane', price: 50, weight: 0, locked: true, compat: [{mid:'route',rec:false},{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [] },
     { id: 'selle_rd_ari_r3', name: 'Fizik Arione R3', desc: 'Course route, rail titane', price: 50, weight: 0, locked: false, compat: [{mid:'route',rec:false},{mid:'vtt_xc',rec:false}], incompat: [] },
     { id: 'selle_rd_ari_r00', name: 'Fizik Arione R00', desc: 'Course route, rail et coque carbone', price: 175, weight: 0, locked: false, compat: [{mid:'route',rec:false},{mid:'vtt_xc',rec:false}], incompat: [] },
@@ -729,7 +731,7 @@ function autoSelectLocked(modelId) {
 
 function computeTotals(modelId, opts) {
   const model = MODELS.find(m => m.id === modelId);
-  let price = model.basePrice, weight = model.baseWeight;
+  let price = model.basePrice + (model.assembly || 0), weight = 0;
   POST_META.forEach(p => {
     const allOpts = ALL_OPTIONS[p.id] || [];
     const opt = allOpts.find(o => o.id === opts[p.id]);
@@ -747,6 +749,7 @@ function buildConfigText(modelId, opts) {
     const opt = allOpts.find(o => o.id === opts[p.id]);
     if (opt) lines.push(p.name + ' : ' + opt.name + (opt.locked ? ' (inclus)' : (opt.price >= 0 ? ' (+' + opt.price.toLocaleString('fr-FR') + ' €)' : ' (' + opt.price.toLocaleString('fr-FR') + ' €)')));
   });
+  if (model.assembly) lines.push('Assemblage & mise en route : ' + model.assembly.toLocaleString('fr-FR') + ' €');
   lines.push('Prix total : ' + price.toLocaleString('fr-FR') + ' €');
 
   return lines.join('\n');
@@ -770,7 +773,7 @@ function renderModels() {
         <span class="mc-badge">${m.badge}</span>
         <span class="mc-name">${m.name}</span>
         <span class="mc-desc">${m.desc}</span>
-        <span class="mc-price">à partir de ${m.basePrice.toLocaleString('fr-FR')} €</span>
+        <span class="mc-price">à partir de ${(m.basePrice + (m.assembly||0)).toLocaleString('fr-FR')} €</span>
       </div>
     </div>`).join('');
 }
@@ -797,7 +800,7 @@ function renderPosts() {
     const selOpt = selOpts[p.id] ? opts.find(o => o.id === selOpts[p.id]) : null;
     const isOpen = openPost === p.id;
 
-    return '<div class="post-block">' +
+    return '<div class="post-block" data-post-id="' + p.id + '">' +
       '<div class="post-hdr" onclick="togglePost(\'' + p.id + '\')">' +
         '<i class="ti ' + p.icon + ' ph-icon"></i>' +
         '<span class="ph-name">' + p.name + '</span>' +
@@ -834,7 +837,16 @@ function renderPosts() {
   }).join('');
 }
 
-function togglePost(id) { openPost = openPost === id ? null : id; renderPosts(); }
+function togglePost(id) {
+  openPost = openPost === id ? null : id;
+  renderPosts();
+  if (openPost) {
+    setTimeout(() => {
+      const el = document.querySelector('[data-post-id="' + openPost + '"]');
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
+  }
+}
 
 // Règles de sélection forcée bidirectionnelle
 const FORCE_SELECT = [
@@ -908,6 +920,9 @@ function updateRecap() {
 
   // Build price detail
   let details = '<div class="recap-price-detail"><span>Cadre — ' + model.name + '</span><span>' + model.basePrice.toLocaleString('fr-FR') + ' €</span></div>';
+  if (model.assembly) {
+    details += '<div class="recap-price-detail assembly"><span>Assemblage &amp; mise en route</span><span>' + model.assembly.toLocaleString('fr-FR') + ' €</span></div>';
+  }
   POST_META.forEach(p => {
     const opt = optionsFor(p.id, selModel).find(o => o.id === selOpts[p.id]);
     if (!opt || opt.locked) return;
