@@ -429,6 +429,16 @@
   #view-config > div:first-child .model-card.sel .mc-price { color: #F5C400; }
   #view-config > div:first-child .step-label { color: #888; }
   #view-config > div:first-child .mc-text { background: transparent; }
+
+  .force-undo {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; color: #b38f00; cursor: pointer;
+    padding: 8px 16px 10px;
+    border-top: 0.5px solid var(--border);
+    background: #fffbee;
+  }
+  .force-undo:hover { background: #fff8d6; }
+  .force-undo i { font-size: 13px; }
 </style>
 </head>
 <body>
@@ -837,6 +847,12 @@ function renderPosts() {
             '</div>';
           }).join('') +
         '</div>' +
+        // Bouton annuler duo forcé cintre plat ↔ CUES FLAT
+        ((p.id === 'transmission' || p.id === 'pilotage') &&
+         selOpts['transmission'] === 'trans_gr_sh_cuf' &&
+         selOpts['pilotage'] === 'pilotage_gr_flat_ext'
+          ? '<div class="force-undo" onclick="resetFlatBarForce()"><i class="ti ti-rotate-left"></i> Changer ce choix (réinitialise aussi ' + (p.id === 'transmission' ? 'le cintre' : 'la transmission') + ')</div>'
+          : '') +
       '</div>' +
     '</div>';
   }).join('');
@@ -847,8 +863,11 @@ function togglePost(id) {
   renderPosts();
   if (openPost) {
     setTimeout(() => {
-      const el = document.querySelector('[data-post-id="' + openPost + '"] .post-hdr');
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const el = document.querySelector('[data-post-id="' + openPost + '"]');
+      if (el) {
+        const top = el.getBoundingClientRect().top + window.scrollY - 70;
+        window.scrollTo({ top, behavior: 'smooth' });
+      }
     }, 50);
   }
 }
@@ -1101,6 +1120,22 @@ async function sendOrder() {
     btnSend.textContent = '↗ Envoyer';
     btnSend.disabled = false;
   }
+}
+
+
+// Réinitialiser le duo forcé cintre plat ↔ CUES FLAT
+function resetFlatBarForce() {
+  selOpts['transmission'] = null;
+  selOpts['pilotage'] = null;
+  openPost = 'transmission';
+  renderPosts(); updateRecap();
+  setTimeout(() => {
+    const el = document.querySelector('[data-post-id="transmission"]');
+    if (el) {
+      const top = el.getBoundingClientRect().top + window.scrollY - 70;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }
+  }, 50);
 }
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
