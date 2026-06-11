@@ -613,17 +613,22 @@ const ALL_OPTIONS = {
     { id: 'pilotage_mtb_end', name: 'Cintre et potence Truvativ Descendant', desc: 'Potence 50 mm, Ø35 mm / Cintre 780 mm, 25 mm rise', price: 0, weight: 0, locked: true, compat: [{mid:'vtt_enduro',rec:false}], incompat: [] },
   ],
   selle: [
-    { id: 'selle_rd_ant_r5', name: 'Fizik Antares R5', desc: 'Course route et VTT', price: 0, weight: 0, locked: true, compat: [{mid:'route',rec:false},{mid:'vtt_xc',rec:false}], incompat: [] },
-    { id: 'selle_rd_ant_r3', name: 'Fizik Antares R3', desc: 'Course route et VTT, rail titane', price: 50, weight: 0, locked: false, compat: [{mid:'route',rec:false},{mid:'vtt_xc',rec:false}], incompat: [] },
-    { id: 'selle_rd_ant_r1', name: 'Fizik Antares R1', desc: 'Course route et VTT, rail carbone', price: 90, weight: 0, locked: false, compat: [{mid:'route',rec:false},{mid:'vtt_xc',rec:false}], incompat: [] },
-    { id: 'selle_gr_ali_r5', name: 'Fizik Aliante R5', desc: 'Route et gravel', price: 0, weight: 0, locked: true, compat: [{mid:'route',rec:false},{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [] },
-    { id: 'selle_gr_ali_r3', name: 'Fizik Aliante R3', desc: 'Route et gravel, rail titane', price: 50, weight: 0, locked: true, compat: [{mid:'route',rec:false},{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [] },
-    { id: 'selle_rd_ari_r3', name: 'Fizik Arione R3', desc: 'Course route, rail titane', price: 50, weight: 0, locked: false, compat: [{mid:'route',rec:false},{mid:'vtt_xc',rec:false}], incompat: [] },
-    { id: 'selle_rd_ari_r00', name: 'Fizik Arione R00', desc: 'Course route, rail et coque carbone', price: 175, weight: 0, locked: false, compat: [{mid:'route',rec:false},{mid:'vtt_xc',rec:false}], incompat: [] },
-    { id: 'selle_vtt_alpt_x5', name: 'Fizik Alpaca Terra X5', desc: 'VTT, rail alliage léger, coupe anatomique', price: 0, weight: 0, locked: false, compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: [] },
-    { id: 'selle_br_b17_ho', name: 'Brooks B17 honey', desc: 'Cuir, touring', price: 55, weight: 0, locked: false, compat: [{mid:'gravel_bikepacking',rec:false}], incompat: [] },
-    { id: 'selle_ber_asp_bk', name: 'Berthoud Aravis ouverte noir', desc: 'Cuir, fabrication française, longue distance + couvre selle', price: 250, weight: 0, locked: false, compat: [{mid:'route',rec:false},{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [] },
-    { id: 'selle_bek_lup', name: 'Selle Berk Lupina Short noir', desc: '99 gr, full carbone, revêtement cuir synthétique', price: 240, weight: 0, locked: false, compat: [{mid:'route',rec:false},{mid:'vtt_xc',rec:false}], incompat: [] },
+    { id: 'selle_rd_ant_r5',   name: 'Fizik Antares R5',             desc: 'Course route et VTT',                                          price: 0,   weight: 0, locked: true,  compat: [{mid:'route',rec:true},{mid:'vtt_xc',rec:false}],                                                              incompat: [] },
+    { id: 'selle_rd_ant_r3',   name: 'Fizik Antares R3',             desc: 'Course route et VTT, rail titane',                             price: 50,  weight: 0, locked: false, compat: [{mid:'route',rec:false},{mid:'vtt_xc',rec:false}],                                                             incompat: [] },
+    { id: 'selle_rd_ant_r1',   name: 'Fizik Antares R1',             desc: 'Course route et VTT, rail carbone',                            price: 90,  weight: 0, locked: false, compat: [{mid:'route',rec:false},{mid:'vtt_xc',rec:false}],                                                             incompat: [] },
+    { id: 'selle_gr_ali_r5',   name: 'Fizik Aliante R5',             desc: 'Route et gravel',                                              price: 0,   weight: 0, locked: true,  compat: [{mid:'gravel_racing',rec:true},{mid:'gravel_bikepacking',rec:false},{mid:'route',rec:false}],                   incompat: [] },
+    { id: 'selle_gr_ali_r3',   name: 'Fizik Aliante R3',             desc: 'Route et gravel, rail titane',                                 price: 50,  weight: 0, locked: false, compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false},{mid:'route',rec:false}],                  incompat: [] },
+    { id: 'selle_rd_arg_r3',   name: 'Fizik Vento Argo R3',          desc: 'Course route et gravel, selle courte, rail titane',            price: 50,  weight: 0, locked: false, compat: [{mid:'route',rec:false},{mid:'gravel_racing',rec:false}],                                                      incompat: [] },
+    { id: 'selle_rd_arg_r1',   name: 'Fizik Vento Argo R1 Light',    desc: 'Course route et gravel, selle courte, rail carbone',           price: 90,  weight: 0, locked: false, compat: [{mid:'route',rec:false},{mid:'gravel_racing',rec:false}],                                                      incompat: [] },
+    { id: 'selle_rd_arg_r00',  name: 'Fizik Vento Argo R00',         desc: 'Course route et gravel, selle courte, rail et coque carbone',  price: 175, weight: 0, locked: false, compat: [{mid:'route',rec:false},{mid:'gravel_racing',rec:false}],                                                      incompat: [] },
+    { id: 'selle_gr_arg_x5',   name: 'Fizik Terra Argo X5',          desc: 'Gravel, selle courte',                                         price: 0,   weight: 0, locked: true,  compat: [{mid:'gravel_bikepacking',rec:true},{mid:'gravel_racing',rec:false}],                                          incompat: [] },
+    { id: 'selle_gr_arg_x3',   name: 'Fizik Terra Argo X3',          desc: 'Gravel, selle courte, rail titane',                            price: 50,  weight: 0, locked: false, compat: [{mid:'gravel_bikepacking',rec:false},{mid:'gravel_racing',rec:false}],                                         incompat: [] },
+    { id: 'selle_rd_ari_r3',   name: 'Fizik Arione R3',              desc: 'Course route, rail titane',                                    price: 50,  weight: 0, locked: false, compat: [{mid:'route',rec:false},{mid:'vtt_xc',rec:false}],                                                             incompat: [] },
+    { id: 'selle_rd_ari_r00',  name: 'Fizik Arione R00',             desc: 'Course route, rail et coque carbone',                          price: 175, weight: 0, locked: false, compat: [{mid:'route',rec:false},{mid:'vtt_xc',rec:false}],                                                             incompat: [] },
+    { id: 'selle_vtt_alpt_x5', name: 'Fizik Alpaca Terra X5',        desc: 'VTT, rail alliage léger, coupe anatomique',                    price: 0,   weight: 0, locked: true,  compat: [{mid:'vtt_enduro',rec:true},{mid:'vtt_xc',rec:false}],                                                        incompat: [] },
+    { id: 'selle_br_b17_ho',   name: 'Brooks B17 honey',             desc: 'Cuir, touring',                                                price: 55,  weight: 0, locked: false, compat: [{mid:'gravel_bikepacking',rec:false}],                                                                          incompat: [] },
+    { id: 'selle_ber_asp_bk',  name: 'Berthoud Aravis ouverte noir', desc: 'Cuir, fabrication française, longue distance + couvre selle',  price: 250, weight: 0, locked: false, compat: [{mid:'route',rec:false},{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}],                 incompat: [] },
+    { id: 'selle_bek_lup',     name: 'Selle Berk Lupina Short noir', desc: '99 gr, full carbone, revêtement cuir synthétique',             price: 240, weight: 0, locked: false, compat: [{mid:'route',rec:false},{mid:'vtt_xc',rec:false}],                                                            incompat: [] },
   ],
   tige: [
     { id: 'tige_rd_ob_car', name: 'Tige de selle Obvious carbone CS25', desc: 'Diamètre 27,2 mm, recul 25 mm. Compatible rail rond ou oval', price: 0, weight: 0, locked: true, compat: [{mid:'route',rec:true},{mid:'gravel_racing',rec:true},{mid:'gravel_bikepacking',rec:false}], incompat: [] },
@@ -842,7 +847,7 @@ function togglePost(id) {
   renderPosts();
   if (openPost) {
     setTimeout(() => {
-      const el = document.querySelector('[data-post-id="' + openPost + '"]');
+      const el = document.querySelector('[data-post-id="' + openPost + '"] .post-hdr');
       if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 50);
   }
