@@ -439,6 +439,33 @@
   }
   .force-undo:hover { background: #fff8d6; }
   .force-undo i { font-size: 13px; }
+
+  /* Bouton retour flottant — PC et tablette uniquement */
+  .back-btn {
+    display: none;
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    z-index: 50;
+    background: #000000;
+    color: #ffffff;
+    border: 0.5px solid #444;
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    align-items: center;
+    gap: 7px;
+    font-family: var(--font);
+    box-shadow: 0 2px 12px rgba(0,0,0,.25);
+    text-decoration: none;
+  }
+  .back-btn:hover { background: #1a1a1a; border-color: #F5C400; color: #F5C400; }
+  @media (min-width: 768px) { .back-btn { display: flex; } }
+
+  /* Mode single-modèle : carte unique plus grande */
+  .model-grid.single .model-card { max-width: 320px; }
+  .model-grid.single .mc-photo { height: 200px; }
 </style>
 </head>
 <body>
@@ -781,7 +808,21 @@ function switchTab(tab) {
 
 // ─── RENDU MODÈLES ────────────────────────────────────────────────────────────
 function renderModels() {
-  document.getElementById('model-grid').innerHTML = MODELS.map(m => `
+  const models = window._singleModel
+    ? MODELS.filter(m => m.id === window._singleModel)
+    : MODELS;
+
+  // Adapter le titre de l'étape 1
+  const stepLabel = document.querySelector('#view-config > div:first-child .step-label');
+  const stepTitle = document.querySelector('#view-config > div:first-child .section-title');
+  if (window._singleModel && stepLabel && stepTitle) {
+    const m = MODELS.find(x => x.id === window._singleModel);
+    stepLabel.textContent = 'Étape 1 sur 2';
+    stepTitle.textContent = 'Configurer votre ' + m.name;
+  }
+
+  document.getElementById('model-grid').className = 'model-grid' + (window._singleModel ? ' single' : '');
+  document.getElementById('model-grid').innerHTML = models.map(m => `
     <div class="model-card ${selModel === m.id ? 'sel' : ''}" onclick="selectModel('${m.id}')">
       ${m.photo ? `<img class="mc-photo" src="${m.photo}" alt="${m.name}" loading="lazy">` : ''}
       <div class="mc-text">
@@ -1141,6 +1182,28 @@ function resetFlatBarForce() {
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 loadSaved();
 renderModels();
+
+// Présélection du modèle via paramètre URL (?modele=ON/ ou ?modele=gravel_racing)
+const ALIASES = {
+  'ON/':       'route',
+  'ON/OFF':    'gravel_racing',
+  'OUT/QUEST': 'gravel_bikepacking',
+  '/OFF':      'vtt_enduro',
+};
+const urlParams = new URLSearchParams(window.location.search);
+const modeleParam = urlParams.get('modele');
+if (modeleParam) {
+  const decoded = decodeURIComponent(modeleParam);
+  const resolvedId = ALIASES[decoded] || ALIASES[modeleParam] || decoded || modeleParam;
+  const modeleAuto = MODELS.find(m => m.id === resolvedId);
+  if (modeleAuto) {
+    window._singleModel = modeleAuto.id;
+    renderModels(); // re-render avec mode single
+    selectModel(modeleAuto.id);
+  }
+}
 </script>
+
+<button class="back-btn" onclick="window.history.back()" title="Retour à la page précédente"><i class="ti ti-arrow-left"></i> Retour</button>
 </body>
 </html>
