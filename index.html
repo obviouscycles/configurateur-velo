@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <link rel="icon" type="image/png" href="https://www.obviouscycles.com/wp-content/uploads/2023/04/favicon-512.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Configurateur de vélo</title>
+<title>OBVIOUS-ON-DEMAND — Montage à la carte</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -485,9 +485,9 @@
 <header>
   <div class="logo" style="display:flex;align-items:center;gap:10px;">
     <img src="https://www.obviouscycles.com/wp-content/uploads/2023/04/favicon-512.png" alt="Obvious Cycles" style="height:32px;width:32px;object-fit:contain;">
-    <span>OBVIOUS <span style="color:#ffffff;opacity:.6">Configurateur</span></span>
+    <span>OBVIOUS-ON-DEMAND</span>
   </div>
-  <div style="font-size:12px;color:#ffffff;opacity:.7">Configurateur sur mesure</div>
+  <div style="font-size:12px;color:#ffffff;opacity:.7">Montage à la carte</div>
 </header>
 
 <main class="main">
@@ -761,11 +761,23 @@ function updateSavedCount() {
 // ─── UTILITAIRES ─────────────────────────────────────────────────────────────
 function optionsFor(postId, modelId) {
   const incompatFromOthers = getIncompatFromSelections(postId);
-  const opts = ALL_OPTIONS[postId].filter(o => {
+  let opts = ALL_OPTIONS[postId].filter(o => {
     const compatible = o.compat.some(c => c.mid === modelId);
     const blocked = incompatFromOthers.includes(o.id);
     return compatible && !blocked;
   });
+
+  // Filtre power : n'afficher que pwr_all + le powermeter de la transmission choisie
+  if (postId === 'power' && selOpts['transmission']) {
+    const transId = selOpts['transmission'];
+    const linkedPwr = FORCE_SELECT.find(r => r.if_selected !== 'pwr_all' &&
+      r.force && r.force.transmission === transId);
+    if (linkedPwr) {
+      opts = opts.filter(o => o.id === 'pwr_all' || o.id === linkedPwr.if_selected);
+    } else {
+      opts = opts.filter(o => o.id === 'pwr_all');
+    }
+  }
   return opts.sort((a, b) => {
     const aRec = isRecommended(a, modelId) ? 0 : 1;
     const bRec = isRecommended(b, modelId) ? 0 : 1;
@@ -934,16 +946,11 @@ function renderPosts() {
             const other = p.id === 'transmission' ? 'le cintre' : 'la transmission';
             return '<div class="force-undo" onclick="resetFlatBarForce()"><i class="ti ti-rotate-left"></i> Changer ce choix (réinitialise aussi ' + other + ')</div>';
           }
-          // Powermeter ↔ transmission
-          if (p.id === 'power' || p.id === 'transmission') {
+          // Powermeter forcé → bouton visible uniquement sur le poste power
+          if (p.id === 'power') {
             const pwrId = selOpts['power'];
-            const transId = selOpts['transmission'];
-            if (pwrId && pwrId !== 'pwr_all' && transId) {
-              const rule = FORCE_SELECT.find(r => r.if_selected === pwrId && r.force.transmission);
-              if (rule && rule.force.transmission === transId) {
-                const other = p.id === 'power' ? 'la transmission' : 'le powermeter';
-                return '<div class="force-undo" onclick="resetForceLink(\'power\',\'transmission\',\'transmission\')"><i class="ti ti-rotate-left"></i> Changer ce choix (réinitialise aussi ' + other + ')</div>';
-              }
+            if (pwrId && pwrId !== 'pwr_all') {
+              return '<div class="force-undo" onclick="resetForceLink(\'power\',\'transmission\',\'transmission\')"><i class="ti ti-rotate-left"></i> Changer ce choix (réinitialise la transmission et le powermeter)</div>';
             }
           }
           return '';
@@ -969,40 +976,41 @@ function togglePost(id) {
 
 // Règles de sélection forcée bidirectionnelle
 const FORCE_SELECT = [
+  // Cintre plat ↔ CUES FLAT (exclusivité totale bidirectionnelle)
   { if_selected: 'trans_gr_sh_cuf',       force: { pilotage: 'pilotage_gr_flat_ext' } },
   { if_selected: 'pilotage_gr_flat_ext',  force: { transmission: 'trans_gr_sh_cuf' } },
-  { if_selected: 'trans_gr_sr_ri', force: { power: 'pwr_gr_sr_ri' } },
+  // Powermeter → transmission uniquement (pas l'inverse)
   { if_selected: 'pwr_gr_sr_ri', force: { transmission: 'trans_gr_sr_ri' } },
-  { if_selected: 'trans_gr_sr_fo', force: { power: 'pwr_gr_sr_fo' } },
   { if_selected: 'pwr_gr_sr_fo', force: { transmission: 'trans_gr_sr_fo' } },
-  { if_selected: 'trans_gr_sr_re', force: { power: 'pwr_gr_sr_re' } },
   { if_selected: 'pwr_gr_sr_re', force: { transmission: 'trans_gr_sr_re' } },
-  { if_selected: 'trans_gr_ca_re', force: { power: 'pwr_gr_ca_re' } },
   { if_selected: 'pwr_gr_ca_re', force: { transmission: 'trans_gr_ca_re' } },
-  { if_selected: 'trans_rd_sr_ri', force: { power: 'pwr_rd_sr_ri' } },
   { if_selected: 'pwr_rd_sr_ri', force: { transmission: 'trans_rd_sr_ri' } },
-  { if_selected: 'trans_rd_sr_fo', force: { power: 'pwr_rd_sr_fo' } },
   { if_selected: 'pwr_rd_sr_fo', force: { transmission: 'trans_rd_sr_fo' } },
-  { if_selected: 'trans_rd_sr_re', force: { power: 'pwr_rd_sr_re' } },
   { if_selected: 'pwr_rd_sr_re', force: { transmission: 'trans_rd_sr_re' } },
-  { if_selected: 'trans_rd_sh_ul', force: { power: 'pwr_rd_sh_ul' } },
   { if_selected: 'pwr_rd_sh_ul', force: { transmission: 'trans_rd_sh_ul' } },
-  { if_selected: 'trans_rd_sh_da', force: { power: 'pwr_rd_sh_da' } },
   { if_selected: 'pwr_rd_sh_da', force: { transmission: 'trans_rd_sh_da' } },
-  { if_selected: 'trans_rd_ca_re', force: { power: 'pwr_rd_ca_re' } },
   { if_selected: 'pwr_rd_ca_re', force: { transmission: 'trans_rd_ca_re' } },
-  { if_selected: 'trans_rd_ca_sre', force: { power: 'pwr_rd_ca_sre' } },
   { if_selected: 'pwr_rd_ca_sre', force: { transmission: 'trans_rd_ca_sre' } },
-  { if_selected: 'trans_mtb_sr_x0', force: { power: 'pwr_vtt_sr_x0' } },
   { if_selected: 'pwr_vtt_sr_x0', force: { transmission: 'trans_mtb_sr_x0' } },
-  { if_selected: 'trans_mtb_sr_xxs', force: { power: 'pwr_vtt_sr_xxs' } },
   { if_selected: 'pwr_vtt_sr_xxs', force: { transmission: 'trans_mtb_sr_xxs' } },
 ];
 
 function selectOpt(postId, optId) {
   selOpts[postId] = optId;
 
-  // 1. Sélections forcées bidirectionnelles
+  // 1. Si on change de transmission → remettre power sur pwr_all (sauf si pwr_all déjà)
+  if (postId === 'transmission') {
+    const currentPwr = selOpts['power'];
+    if (currentPwr && currentPwr !== 'pwr_all') {
+      // Le powermeter actuel est-il compatible avec la nouvelle transmission ?
+      const pwrRule = FORCE_SELECT.find(r => r.if_selected === currentPwr && r.force.transmission);
+      if (!pwrRule || pwrRule.force.transmission !== optId) {
+        selOpts['power'] = 'pwr_all';
+      }
+    }
+  }
+
+  // 2. Sélections forcées (power → transmission, cintre plat ↔ CUES FLAT)
   FORCE_SELECT.forEach(rule => {
     if (rule.if_selected === optId) {
       Object.entries(rule.force).forEach(([forcePost, forceId]) => {
@@ -1014,7 +1022,7 @@ function selectOpt(postId, optId) {
     }
   });
 
-  // 2. Effacer les sélections incompatibles dans les autres postes
+  // 3. Effacer les sélections incompatibles dans les autres postes
   POST_META.forEach(p => {
     if (p.id === postId) return;
     if (!selOpts[p.id]) return;
