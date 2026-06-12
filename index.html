@@ -518,6 +518,9 @@
       <div id="posts-list"></div>
     </div>
 
+    <div id="contact-hint" style="display:none;padding:0 0 1rem;font-size:13px;color:var(--text2);">
+      Pour tout autre montage, <a href="https://www.obviouscycles.com/contact/" target="_blank" style="color:var(--blue);text-decoration:none;font-weight:500;">contactez-nous</a>.
+    </div>
     <div id="recap-section" style="display:none">
       <p class="section-title" style="margin-top:.75rem">Votre configuration</p>
       <div id="recap-box-container"></div>
@@ -657,7 +660,6 @@ const ALL_OPTIONS = {
     { id: 'pwr_gr_sr_fo', name: 'SRAM Force XPLR AXS', desc: 'Capteur dans l\'axe de pédalier (mono-jambe)', price: 205, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_rx','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_mtb_sh_m6','trans_mtb_sh_slx','trans_mtb_sh_xt','trans_mtb_sh_xte','trans_mtb_sh_xtr','trans_mtb_sh_xtre','trans_mtb_sr_e70','trans_mtb_sr_gx','trans_mtb_sr_x0','trans_mtb_sr_xxs'] },
     { id: 'pwr_gr_sr_re', name: 'SRAM Red XPLR AXS', desc: 'Capteur Quarq dans l\'étoile du pédalier', price: 500, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_ca_ek','trans_gr_ca_rx','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_mtb_sh_m6','trans_mtb_sh_slx','trans_mtb_sh_xt','trans_mtb_sh_xte','trans_mtb_sh_xtr','trans_mtb_sh_xtre','trans_mtb_sr_e70','trans_mtb_sr_gx','trans_mtb_sr_x0','trans_mtb_sr_xxs'] },
     { id: 'pwr_gr_ca_re', name: 'Campagnolo Record 1x13', desc: 'Capteur sur chaque manivelle', price: 550, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_rx','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_mtb_sh_m6','trans_mtb_sh_slx','trans_mtb_sh_xt','trans_mtb_sh_xte','trans_mtb_sh_xtr','trans_mtb_sh_xtre','trans_mtb_sr_e70','trans_mtb_sr_gx','trans_mtb_sr_x0','trans_mtb_sr_xxs'] },
-    { id: 'pwr_gr_ca_sre', name: 'Campagnolo Super Record 1x13', desc: 'Capteur sur chaque manivelle', price: 550, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_rx','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_mtb_sh_m6','trans_mtb_sh_slx','trans_mtb_sh_xt','trans_mtb_sh_xte','trans_mtb_sh_xtr','trans_mtb_sh_xtre','trans_mtb_sr_e70','trans_mtb_sr_gx','trans_mtb_sr_x0','trans_mtb_sr_xxs'] },
     { id: 'pwr_rd_sr_ri', name: 'SRAM Rival AXS 2x12', desc: 'Capteur dans l\'axe de pédalier (mono-jambe)', price: 200, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_rx','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_mtb_sh_m6','trans_mtb_sh_slx','trans_mtb_sh_xt','trans_mtb_sh_xte','trans_mtb_sh_xtr','trans_mtb_sh_xtre','trans_mtb_sr_e70','trans_mtb_sr_gx','trans_mtb_sr_x0','trans_mtb_sr_xxs'] },
     { id: 'pwr_rd_sr_fo', name: 'SRAM Force AXS 2x12', desc: 'Capteur Quarq dans l\'étoile du pédalier', price: 360, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_rx','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_mtb_sh_m6','trans_mtb_sh_slx','trans_mtb_sh_xt','trans_mtb_sh_xte','trans_mtb_sh_xtr','trans_mtb_sh_xtre','trans_mtb_sr_e70','trans_mtb_sr_gx','trans_mtb_sr_x0','trans_mtb_sr_xxs'] },
     { id: 'pwr_rd_sr_re', name: 'SRAM Red AXS 2x12', desc: 'Capteur Quarq dans l\'étoile du pédalier', price: 540, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_rx','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_ca_re','trans_rd_ca_sre','trans_mtb_sh_m6','trans_mtb_sh_slx','trans_mtb_sh_xt','trans_mtb_sh_xte','trans_mtb_sh_xtr','trans_mtb_sh_xtre','trans_mtb_sr_e70','trans_mtb_sr_gx','trans_mtb_sr_x0','trans_mtb_sr_xxs'] },
@@ -923,12 +925,29 @@ function renderPosts() {
             '</div>';
           }).join('') +
         '</div>' +
-        // Bouton annuler duo forcé cintre plat ↔ CUES FLAT
-        ((p.id === 'transmission' || p.id === 'pilotage') &&
-         selOpts['transmission'] === 'trans_gr_sh_cuf' &&
-         selOpts['pilotage'] === 'pilotage_gr_flat_ext'
-          ? '<div class="force-undo" onclick="resetFlatBarForce()"><i class="ti ti-rotate-left"></i> Changer ce choix (réinitialise aussi ' + (p.id === 'transmission' ? 'le cintre' : 'la transmission') + ')</div>'
-          : '') +
+        // Bouton annuler duo forcé
+        (function() {
+          // Cintre plat ↔ CUES FLAT
+          if ((p.id === 'transmission' || p.id === 'pilotage') &&
+              selOpts['transmission'] === 'trans_gr_sh_cuf' &&
+              selOpts['pilotage'] === 'pilotage_gr_flat_ext') {
+            const other = p.id === 'transmission' ? 'le cintre' : 'la transmission';
+            return '<div class="force-undo" onclick="resetFlatBarForce()"><i class="ti ti-rotate-left"></i> Changer ce choix (réinitialise aussi ' + other + ')</div>';
+          }
+          // Powermeter ↔ transmission
+          if (p.id === 'power' || p.id === 'transmission') {
+            const pwrId = selOpts['power'];
+            const transId = selOpts['transmission'];
+            if (pwrId && pwrId !== 'pwr_all' && transId) {
+              const rule = FORCE_SELECT.find(r => r.if_selected === pwrId && r.force.transmission);
+              if (rule && rule.force.transmission === transId) {
+                const other = p.id === 'power' ? 'la transmission' : 'le powermeter';
+                return '<div class="force-undo" onclick="resetForceLink(\'power\',\'transmission\',\'transmission\')"><i class="ti ti-rotate-left"></i> Changer ce choix (réinitialise aussi ' + other + ')</div>';
+              }
+            }
+          }
+          return '';
+        })() +
       '</div>' +
     '</div>';
   }).join('');
@@ -952,6 +971,32 @@ function togglePost(id) {
 const FORCE_SELECT = [
   { if_selected: 'trans_gr_sh_cuf',       force: { pilotage: 'pilotage_gr_flat_ext' } },
   { if_selected: 'pilotage_gr_flat_ext',  force: { transmission: 'trans_gr_sh_cuf' } },
+  { if_selected: 'trans_gr_sr_ri', force: { power: 'pwr_gr_sr_ri' } },
+  { if_selected: 'pwr_gr_sr_ri', force: { transmission: 'trans_gr_sr_ri' } },
+  { if_selected: 'trans_gr_sr_fo', force: { power: 'pwr_gr_sr_fo' } },
+  { if_selected: 'pwr_gr_sr_fo', force: { transmission: 'trans_gr_sr_fo' } },
+  { if_selected: 'trans_gr_sr_re', force: { power: 'pwr_gr_sr_re' } },
+  { if_selected: 'pwr_gr_sr_re', force: { transmission: 'trans_gr_sr_re' } },
+  { if_selected: 'trans_gr_ca_re', force: { power: 'pwr_gr_ca_re' } },
+  { if_selected: 'pwr_gr_ca_re', force: { transmission: 'trans_gr_ca_re' } },
+  { if_selected: 'trans_rd_sr_ri', force: { power: 'pwr_rd_sr_ri' } },
+  { if_selected: 'pwr_rd_sr_ri', force: { transmission: 'trans_rd_sr_ri' } },
+  { if_selected: 'trans_rd_sr_fo', force: { power: 'pwr_rd_sr_fo' } },
+  { if_selected: 'pwr_rd_sr_fo', force: { transmission: 'trans_rd_sr_fo' } },
+  { if_selected: 'trans_rd_sr_re', force: { power: 'pwr_rd_sr_re' } },
+  { if_selected: 'pwr_rd_sr_re', force: { transmission: 'trans_rd_sr_re' } },
+  { if_selected: 'trans_rd_sh_ul', force: { power: 'pwr_rd_sh_ul' } },
+  { if_selected: 'pwr_rd_sh_ul', force: { transmission: 'trans_rd_sh_ul' } },
+  { if_selected: 'trans_rd_sh_da', force: { power: 'pwr_rd_sh_da' } },
+  { if_selected: 'pwr_rd_sh_da', force: { transmission: 'trans_rd_sh_da' } },
+  { if_selected: 'trans_rd_ca_re', force: { power: 'pwr_rd_ca_re' } },
+  { if_selected: 'pwr_rd_ca_re', force: { transmission: 'trans_rd_ca_re' } },
+  { if_selected: 'trans_rd_ca_sre', force: { power: 'pwr_rd_ca_sre' } },
+  { if_selected: 'pwr_rd_ca_sre', force: { transmission: 'trans_rd_ca_sre' } },
+  { if_selected: 'trans_mtb_sr_x0', force: { power: 'pwr_vtt_sr_x0' } },
+  { if_selected: 'pwr_vtt_sr_x0', force: { transmission: 'trans_mtb_sr_x0' } },
+  { if_selected: 'trans_mtb_sr_xxs', force: { power: 'pwr_vtt_sr_xxs' } },
+  { if_selected: 'pwr_vtt_sr_xxs', force: { transmission: 'trans_mtb_sr_xxs' } },
 ];
 
 function selectOpt(postId, optId) {
@@ -990,6 +1035,7 @@ function updateRecap() {
   if (!model) return;
   const allDone = POST_META.every(p => !!selOpts[p.id]);
   document.getElementById('recap-section').style.display = allDone ? 'block' : 'none';
+  document.getElementById('contact-hint').style.display = allDone ? 'block' : 'none';
   if (!allDone) return;
 
   const { price, weight } = computeTotals(selModel, selOpts);
@@ -1200,20 +1246,22 @@ async function sendOrder() {
 }
 
 
-// Réinitialiser le duo forcé cintre plat ↔ CUES FLAT
-function resetFlatBarForce() {
-  selOpts['transmission'] = null;
-  selOpts['pilotage'] = null;
-  openPost = 'transmission';
+// Réinitialiser un duo forcé (cintre plat ↔ CUES FLAT, powermeter ↔ transmission)
+function resetForceLink(postA, postB, scrollTo) {
+  selOpts[postA] = null;
+  selOpts[postB] = null;
+  openPost = scrollTo || postA;
   renderPosts(); updateRecap();
   setTimeout(() => {
-    const el = document.querySelector('[data-post-id="transmission"]');
+    const el = document.querySelector('[data-post-id="' + (scrollTo || postA) + '"]');
     if (el) {
       const top = el.getBoundingClientRect().top + window.scrollY - 70;
       window.scrollTo({ top, behavior: 'smooth' });
     }
   }, 50);
 }
+// Alias pour compatibilité
+function resetFlatBarForce() { resetForceLink('transmission','pilotage','transmission'); }
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 loadSaved();
