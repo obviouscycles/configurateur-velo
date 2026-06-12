@@ -144,7 +144,7 @@
   .post-hdr:hover { background: var(--bg2); }
   .ph-icon { font-size: 16px; color: var(--text2); width: 20px; text-align: center; }
   .ph-name { font-size: 14px; font-weight: 500; color: var(--text1); flex: 1; }
-  .ph-sel { font-size: 12px; color: var(--text2); max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ph-sel { font-size: 12px; color: var(--text1); max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .ph-pending { font-size: 12px; color: var(--text3); }
   .ph-chev { font-size: 15px; color: var(--text3); transition: transform .2s; }
   .ph-chev.open { transform: rotate(180deg); }
@@ -421,6 +421,7 @@
     border: 2px solid var(--blue);
     background: #2a2200;
   }
+  #view-config > div:first-child .model-card.sel .mc-name { color: #FFF8D6; }
   #view-config > div:first-child .mc-name { color: #f2f2f2; }
   #view-config > div:first-child .mc-badge { color: #888; }
   #view-config > div:first-child .mc-desc { color: #aaa; }
@@ -466,6 +467,17 @@
   /* Mode single-modèle : carte unique plus grande */
   .model-grid.single .model-card { max-width: 320px; }
   .model-grid.single .mc-photo { height: 200px; }
+
+  @media (prefers-color-scheme: dark) {
+    .opt-item.sel { background: #2a2200 !important; border-color: var(--blue) !important; }
+    .opt-item.sel .oi-name { color: #FFF8D6 !important; }
+    .opt-item.sel .oi-desc { color: #c8b870 !important; }
+    .opt-item.sel .opt-radio { border-color: var(--blue) !important; background: var(--blue) !important; }
+    .model-card.sel .mc-name { color: #FFF8D6 !important; }
+    .model-card.sel .mc-desc { color: #c8b870 !important; }
+    .model-card.sel .mc-price { color: var(--blue) !important; }
+    .ph-sel { color: #f2f2f2 !important; }
+  }
 </style>
 </head>
 <body>
@@ -587,13 +599,14 @@ const ALL_OPTIONS = {
     { id: 'fourche_vtt_rs_lyr_sel_150', name: 'Rockshox Lyrik Select 150 mm', desc: 'Suspendue Rockshox Lyrik Select', price: 0, weight: 0, locked: true, compat: [{mid:'vtt_enduro',rec:false}], incompat: [] },
   ],
   roues: [
-    { id: 'roue_gr_ob_35', name: 'Obvious GR35-S', desc: 'Carbone hyper polyvalente, moyeu DT350, rayons profilés', price: 765, weight: 0, locked: false, compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [] },
-    { id: 'roue_gr_fu_soa', name: 'Fulcrum Soniq ALX', desc: 'Aluminium, la meilleure solution all-road et gravel aluminium', price: 0, weight: 0, locked: true, compat: [{mid:'gravel_bikepacking',rec:true},{mid:'gravel_racing',rec:false},{mid:'route',rec:false}], incompat: [] },
-    { id: 'roue_gr_fu_sgr', name: 'Fulcrum Sharq GR', desc: 'Roue compétition gravel, largeur interne 30 mm', price: 1400, weight: 0, locked: false, compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [] },
-    { id: 'roue_rd_ob_35', name: 'Obvious RD-35-R', desc: 'Carbone compétition hyper polyvalente, moyeu DT350, rayons profilés, marquage laser', price: 0, weight: 0, locked: true, compat: [{mid:'route',rec:false}], incompat: [] },
-    { id: 'roue_rd_fu_w57', name: 'Fulcrum Wind 57', desc: 'Carbone profil haut', price: 80, weight: 0, locked: false, compat: [{mid:'route',rec:false}], incompat: [] },
-    { id: 'roue_mtb_ob_30', name: 'Obvious MT30-S', desc: 'Roue Enduro Carbone, ultralégère et indestructible', price: 920, weight: 0, locked: false, compat: [{mid:'vtt_enduro',rec:false}], incompat: [] },
-    { id: 'roue_mtb_fu_rm5', name: 'Fulcrum Red Metal 5', desc: 'Roue Enduro aluminium, à toute épreuve', price: 0, weight: 0, locked: true, compat: [{mid:'vtt_enduro',rec:false}], incompat: [] },
+    { id: 'roue_gr_ob_35',   name: 'Obvious GR35-S',       desc: 'Carbone hyper polyvalente, moyeu DT350, rayons profilés',                              price: 765,  weight: 0, locked: false, compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [] },
+    { id: 'roue_gr_fu_soa',  name: 'Fulcrum Soniq ALX',    desc: 'Aluminium, la meilleure solution all-road et gravel aluminium',                       price: 0,    weight: 0, locked: true,  compat: [{mid:'gravel_bikepacking',rec:true},{mid:'gravel_racing',rec:false}],                       incompat: [] },
+    { id: 'roue_gr_fu_sgr',  name: 'Fulcrum Sharq GR',     desc: 'Roue compétition gravel, largeur interne 30 mm',                                      price: 1400, weight: 0, locked: false, compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [] },
+    { id: 'roue_rd_fu_soa',  name: 'Fulcrum Soniq ALX',    desc: 'Aluminium, la meilleure solution all-road aluminium — économie vs les Obvious RD-35-R incluses', price: -765, weight: 0, locked: false, compat: [{mid:'route',rec:false}], incompat: [] },
+    { id: 'roue_rd_ob_35',   name: 'Obvious RD-35-R',      desc: 'Carbone compétition hyper polyvalente, moyeu DT350, rayons profilés, marquage laser', price: 0,    weight: 0, locked: true,  compat: [{mid:'route',rec:false}],                                                                  incompat: [] },
+    { id: 'roue_rd_fu_w57',  name: 'Fulcrum Wind 57',      desc: 'Carbone profil haut',                                                                 price: 80,   weight: 0, locked: false, compat: [{mid:'route',rec:false}],                                                                  incompat: [] },
+    { id: 'roue_mtb_ob_30',  name: 'Obvious MT30-S',       desc: 'Roue Enduro Carbone, ultralégère et indestructible',                                  price: 920,  weight: 0, locked: false, compat: [{mid:'vtt_enduro',rec:false}],                                                             incompat: [] },
+    { id: 'roue_mtb_fu_rm5', name: 'Fulcrum Red Metal 5',  desc: 'Roue Enduro aluminium, à toute épreuve',                                              price: 0,    weight: 0, locked: true,  compat: [{mid:'vtt_enduro',rec:false}],                                                             incompat: [] },
   ],
   pneus: [
     { id: 'pneu_gr_sc_r', name: 'Schwalbe G-ONE R PRO transparent', desc: 'Pneu gravel polyvalent', price: 0, weight: 0, locked: true, compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [] },
@@ -718,9 +731,9 @@ const POST_META = [
   { id: 'fourche',      name: 'Fourche',             icon: 'ti-git-fork' },
   { id: 'roues',        name: 'Roues',               icon: 'ti-circle' },
   { id: 'pneus',        name: 'Pneus',               icon: 'ti-circle-dotted' },
-  { id: 'frein',        name: 'Freins',              icon: 'ti-hand-stop' },
   { id: 'transmission', name: 'Transmission',        icon: 'ti-settings' },
   { id: 'power',        name: 'Mesure de puissance', icon: 'ti-activity' },
+  { id: 'frein',        name: 'Freins',              icon: 'ti-hand-stop' },
   { id: 'pilotage',     name: 'Poste de pilotage',   icon: 'ti-adjustments-horizontal' },
   { id: 'selle',        name: 'Selle',               icon: 'ti-armchair' },
   { id: 'tige',         name: 'Tige de selle',       icon: 'ti-arrows-vertical' },
@@ -979,7 +992,7 @@ function updateRecap() {
 
   const postIcons = {
     fourche: 'ti-git-fork', roues: 'ti-circle', pneus: 'ti-circle-dotted',
-    frein: 'ti-hand-stop', transmission: 'ti-settings', power: 'ti-activity',
+    transmission: 'ti-settings', power: 'ti-activity', frein: 'ti-hand-stop',
     pilotage: 'ti-adjustments-horizontal', selle: 'ti-armchair',
     tige: 'ti-arrows-vertical', pedales: 'ti-rotate-clockwise'
   };
