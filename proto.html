@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/webp" href="https://www.obviouscycles.com/wp-content/uploads/2023/04/favicon-512-light.webp">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OBVIOUS-ON-DEMAND — Montage à la carte [PROTO]</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --bg2: #f8f9fa;
+    --bg3: #f1f0eb;
+    --text1: #1a1a1a;
+    --text2: #555550;
+    --text3: #999990;
+    --border: rgba(0,0,0,0.12);
+    --border2: rgba(0,0,0,0.22);
+    --blue: #F5C400;
+    --blue-light: #FFF8D6;
+    --blue-dark: #3D3000;
+    --green: #3B6D11;
+    --green-light: #EAF3DE;
+    --radius-md: 0px;
+    --radius-lg: 0px;
+    --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1c1c1e;
+      --bg2: #2c2c2e;
+      --bg3: #3a3a3c;
+      --text1: #f2f2f7;
+      --text2: #aeaeb2;
+      --text3: #636366;
+      --border: rgba(255,255,255,0.12);
+      --border2: rgba(255,255,255,0.22);
+      --blue-light: #3D3000;
+      --blue-dark: #FFF8D6;
+      --green-light: #1a3008;
+    }
+  }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg3);
+    color: var(--text1);
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  header {
+    background: #000000;
+    border-bottom: 0.5px solid #333333;
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .logo { font-size: 16px; font-weight: 500; color: #ffffff; letter-spacing: -.01em; }
+  .logo span { color: #ffffff; }
+
+  .main { max-width: 760px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+  .tab-bar {
+    display: flex; gap: 2px;
+    border-bottom: 0.5px solid var(--border);
+    margin-bottom: 2rem;
+  }
+  .tab {
+    padding: 10px 16px; font-size: 13px; font-weight: 500;
+    color: var(--text2); cursor: pointer;
+    border-bottom: 2px solid transparent; margin-bottom: -1px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .tab:hover { color: var(--text1); }
+  .tab.active { color: #9a7a00; border-bottom-color: #F5C400; }
+  .count-badge {
+    font-size: 11px; background: #FFF8D6; color: #7a5f00;
+    padding: 1px 7px; border-radius: 0px;
+  }
+
+  .view { display: none; }
+  .view.active { display: block; }
+
+  .step-label {
+    font-size: 11px; font-weight: 500; color: var(--text3);
+    letter-spacing: .08em; text-transform: uppercase; margin-bottom: .4rem;
+  }
+  .section-title {
+    font-size: 18px; font-weight: 500; color: var(--text1); margin-bottom: 1rem;
+  }
+
+  .model-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 10px; margin-bottom: 2rem;
+    align-items: stretch;
+  }
+  .model-card {
+    border: 0.5px solid var(--border); border-radius: var(--radius-lg);
+    padding: 0; cursor: pointer; background: var(--bg);
+    transition: border-color .15s, background .15s;
+    display: flex; flex-direction: column; gap: 0;
+    overflow: hidden; height: 100%;
+  }
+  .mc-text { padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
+  .model-card:hover { border-color: var(--border2); background: var(--bg2); }
+  .model-card.sel { border: 2px solid var(--blue); background: #f0f0f0; }
+  .model-card.sel .mc-name { color: var(--text1); }
+  .mc-badge { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: .06em; }
+  .mc-name { font-size: 14px; font-weight: 500; color: var(--text1); }
+  .mc-desc { font-size: 11px; color: var(--text2); line-height: 1.4; margin-top: 3px; }
+  .mc-price { font-size: 12px; font-weight: 500; color: var(--text2); margin-top: auto; padding-top: 8px; }
+  .mc-photo {
+    width: 100%; height: 120px; object-fit: cover;
+    border-radius: 0;
+    margin-bottom: 0;
+    display: block;
+  }
+  .model-card.sel .mc-photo { opacity: 1; }
+  .model-card.sel .mc-price { color: #7a5f00; }
+
+  .prog-wrap { margin-bottom: 1.5rem; }
+  .prog-bar { display: flex; gap: 4px; margin-top: 6px; }
+  .prog-step { flex: 1; height: 3px; border-radius: 2px; background: var(--border); transition: background .3s; }
+  .prog-step.done { background: #F5C400; }
+
+  .post-block {
+    border: 0.5px solid var(--border); border-radius: var(--radius-lg);
+    margin-bottom: 8px; overflow: hidden; background: var(--bg);
+  }
+  .post-hdr {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 16px; cursor: pointer;
+  }
+  .post-hdr:hover { background: var(--bg2); }
+  .ph-icon { font-size: 16px; color: var(--text2); width: 20px; text-align: center; }
+  .ph-name { font-size: 14px; font-weight: 500; color: var(--text1); flex: 1; }
+  .ph-sel { font-size: 12px; color: var(--text1); max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ph-pending { font-size: 12px; color: var(--text3); }
+  .ph-chev { font-size: 15px; color: var(--text3); transition: transform .2s; }
+  .ph-chev.open { transform: rotate(180deg); }
+
+  .post-opts { border-top: 0.5px solid var(--border); padding: 12px 16px; display: none; }
+  .post-opts.open { display: block; }
+  .opt-list { display: flex; flex-direction: column; gap: 7px; }
+  .opt-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px; border: 0.5px solid var(--border);
+    border-radius: var(--radius-md); cursor: pointer;
+    transition: border-color .15s, background .15s; background: var(--bg);
+  }
+  .opt-item:hover { background: var(--bg2); border-color: var(--border2); }
+  .opt-item.sel { border: 2px solid var(--blue); background: #f0f0f0; }
+  .opt-item.sel .oi-name { color: var(--text1); }
+  .opt-radio {
+    width: 14px; height: 14px; border-radius: 50%;
+    border: 1.5px solid var(--border2); flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .opt-item.sel .opt-radio { border-color: var(--blue); background: var(--blue); }
+  .radio-dot { width: 5px; height: 5px; border-radius: 50%; background: white; display: none; }
+  .opt-item.sel .radio-dot { display: block; }
+  .oi-info { flex: 1; min-width: 0; }
+  .oi-name { font-size: 13px; font-weight: 500; color: var(--text1); }
+  .oi-desc { font-size: 11px; color: var(--text2); margin-top: 2px; }
+  .oi-meta { text-align: right; flex-shrink: 0; }
+  .oi-price { font-size: 13px; font-weight: 500; color: var(--text1); }
+  .oi-weight { font-size: 11px; color: var(--text3); }
+  .oi-price.negative { color: #3B6D11; }
+  .incl-badge {
+    font-size: 10px; background: #F1EFE8; color: #5F5E5A;
+    border-radius: 20px; padding: 1px 7px;
+    display: inline-flex; align-items: center; gap: 3px;
+    margin-left: 6px; vertical-align: middle;
+  }
+
+  .recap-box {
+    border: 0.5px solid var(--border); border-radius: var(--radius-lg);
+    padding: 1.2rem; background: var(--bg2); margin-bottom: 1.25rem;
+  }
+  .recap-row {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-size: 13px; padding: 3px 0; gap: 10px;
+  }
+  .rr-label { color: var(--text2); white-space: nowrap; }
+  .rr-val { color: var(--text1); font-weight: 500; text-align: right; }
+  .rr-sub { font-weight: 400; color: var(--text3); font-size: 11px; }
+  .recap-div { border: none; border-top: 0.5px solid var(--border); margin: 10px 0; }
+  .totals-row { display: flex; gap: 10px; margin-top: .8rem; }
+  .tot-card {
+    flex: 1; background: var(--bg); border: 0.5px solid var(--border);
+    border-radius: var(--radius-md); padding: 10px 12px; text-align: center;
+  }
+  .tot-label { font-size: 11px; color: var(--text2); margin-bottom: 3px; }
+  .tot-val { font-size: 20px; font-weight: 500; color: var(--text1); }
+  .tot-val.price { color: #7a5f00; }
+
+  .btn-row { display: flex; flex-direction: column; gap: 8px; }
+  .btn {
+    width: 100%; padding: 13px; font-size: 13px; font-weight: 500;
+    border-radius: var(--radius-lg); border: 0.5px solid var(--border2);
+    background: var(--bg); color: var(--text1);
+    cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+    font-family: var(--font);
+  }
+  .btn:hover { background: var(--bg2); }
+  .btn.primary { background: var(--blue); border-color: var(--blue); color: #1a1a00; font-weight: 500; }
+  .btn.primary:hover { background: #d4a900; }
+  .btn.success { background: #b38f00; border-color: #b38f00; color: #1a1a00; }
+  .btn.success:hover { background: #8a6d00; }
+
+  .save-form {
+    border: 0.5px solid var(--border); border-radius: var(--radius-lg);
+    padding: 1rem; background: var(--bg); display: none;
+  }
+  .save-form.open { display: block; }
+  .save-label { font-size: 13px; color: var(--text2); margin-bottom: 8px; }
+  .save-input-row { display: flex; gap: 8px; }
+  .save-input-row input {
+    flex: 1; padding: 9px 12px; font-size: 13px;
+    border: 0.5px solid var(--border2); border-radius: var(--radius-md);
+    background: var(--bg2); color: var(--text1); font-family: var(--font);
+    outline: none;
+  }
+  .save-input-row input:focus { border-color: var(--blue); }
+  .save-input-row button {
+    padding: 9px 16px; font-size: 13px; font-weight: 500;
+    border-radius: var(--radius-md); border: none;
+    background: var(--blue); color: #1a1a00; cursor: pointer; font-family: var(--font);
+    white-space: nowrap;
+  }
+  .save-input-row button:hover { background: #d4a900; }
+  .toast {
+    font-size: 12px; color: var(--green); background: var(--green-light);
+    border-radius: var(--radius-md); padding: 6px 10px; margin-top: 8px; display: none;
+  }
+
+  .saved-card {
+    border: 0.5px solid var(--border); border-radius: var(--radius-lg);
+    padding: 14px 16px; background: var(--bg); margin-bottom: 10px;
+  }
+  .sc-head { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; }
+  .sc-name { font-size: 15px; font-weight: 500; color: var(--text1); }
+  .sc-meta { font-size: 11px; color: var(--text3); margin-top: 2px; }
+  .sc-delete {
+    margin-left: auto; font-size: 15px; color: var(--text3); cursor: pointer;
+    padding: 3px; border-radius: 4px; background: none; border: none; flex-shrink: 0;
+  }
+  .sc-delete:hover { color: #A32D2D; background: #FCEBEB; }
+  .sc-detail { font-size: 12px; color: var(--text2); line-height: 1.7; }
+  .sc-totals { display: flex; gap: 8px; margin-top: 10px; }
+  .sc-tot {
+    font-size: 12px; background: var(--bg2); border-radius: var(--radius-md);
+    padding: 4px 12px; color: var(--text2);
+  }
+  .sc-tot strong { color: var(--text1); }
+  .sc-actions { display: flex; gap: 8px; margin-top: 12px; }
+  .sc-btn {
+    flex: 1; padding: 8px; font-size: 12px; font-weight: 500;
+    border-radius: var(--radius-md); border: 0.5px solid var(--border2);
+    background: var(--bg); color: var(--text1); cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+    font-family: var(--font);
+  }
+  .sc-btn:hover { background: var(--bg2); }
+  .sc-btn.blue { border-color: #b38f00; color: #7a5f00; }
+  .sc-btn.blue:hover { background: #FFF8D6; }
+  .empty-saved {
+    font-size: 13px; color: var(--text3); text-align: center;
+    padding: 2.5rem 1rem;
+    border: 0.5px dashed var(--border2); border-radius: var(--radius-lg);
+    line-height: 1.8;
+  }
+
+  /* EMAIL MODAL */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.45); z-index: 100;
+    align-items: center; justify-content: center; padding: 1rem;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--bg); border-radius: var(--radius-lg);
+    padding: 1.5rem; width: 100%; max-width: 480px;
+    border: 0.5px solid var(--border);
+  }
+  .modal h3 { font-size: 16px; font-weight: 500; margin-bottom: .25rem; }
+  .modal p { font-size: 13px; color: var(--text2); margin-bottom: 1rem; }
+  .field { margin-bottom: 12px; }
+  .field label { font-size: 12px; font-weight: 500; color: var(--text2); display: block; margin-bottom: 4px; }
+  .field input, .field textarea {
+    width: 100%; padding: 9px 12px; font-size: 13px;
+    border: 0.5px solid var(--border2); border-radius: var(--radius-md);
+    background: var(--bg2); color: var(--text1); font-family: var(--font);
+    outline: none; resize: vertical;
+  }
+  .field input:focus, .field textarea:focus { border-color: #F5C400; }
+  .modal-actions { display: flex; gap: 8px; margin-top: 1rem; }
+  .modal-actions button {
+    flex: 1; padding: 11px; font-size: 13px; font-weight: 500;
+    border-radius: var(--radius-md); cursor: pointer; font-family: var(--font);
+  }
+  .modal-actions .btn-cancel { border: 0.5px solid var(--border2); background: var(--bg); color: var(--text1); }
+  .modal-actions .btn-cancel:hover { background: var(--bg2); }
+  .modal-actions .btn-send { border: none; background: var(--blue); color: #1a1a00; }
+  .modal-actions .btn-send:hover { background: #d4a900; }
+
+  @media (max-width: 600px) {
+    header { padding: 0 1rem; }
+    .main { padding: 1.5rem 1rem 3rem; }
+    .model-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* ── RÉCAPITULATIF VISUEL ─────────────────────────────── */
+  .recap-visual {
+    background: #111111;
+    border-radius: 0;
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+    color: #ffffff;
+  }
+  .recap-visual-title {
+    font-size: 11px; font-weight: 500; letter-spacing: .1em;
+    text-transform: uppercase; color: #888; margin-bottom: 1.25rem;
+  }
+  .recap-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 8px;
+    margin-bottom: 1.5rem;
+  }
+  .recap-card {
+    background: #1e1e1e;
+    border: 0.5px solid #333;
+    padding: 10px 12px;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .recap-card-header {
+    display: flex; align-items: center; gap: 7px;
+    font-size: 10px; font-weight: 500; color: #888;
+    text-transform: uppercase; letter-spacing: .07em;
+  }
+  .recap-card-header i { font-size: 13px; color: var(--blue); }
+  .recap-card-name {
+    font-size: 13px; font-weight: 500; color: #f2f2f2;
+    line-height: 1.3;
+  }
+  .recap-card-price {
+    font-size: 12px; margin-top: 2px;
+  }
+  .recap-card-price.incl { color: #666; }
+  .recap-card-price.pos  { color: #F5C400; }
+  .recap-card-price.neg  { color: #7ecf5a; }
+  .recap-card-price.zero { color: #666; }
+  .recap-price-block {
+    border-top: 0.5px solid #2a2a2a;
+    padding-top: 1.1rem;
+    margin-top: .25rem;
+  }
+  .recap-price-detail {
+    display: flex; justify-content: space-between;
+    font-size: 12px; color: #888; padding: 2px 0;
+  }
+  .recap-price-detail span:last-child { color: #ccc; }
+  .recap-price-detail.upgrade span:last-child { color: #F5C400; }
+  .recap-price-detail.saving span:last-child { color: #7ecf5a; }
+  .recap-price-divider { border: none; border-top: 0.5px solid #333; margin: 8px 0; }
+  .recap-price-detail.assembly { border-top: 0.5px solid #333; margin-top: 6px; padding-top: 8px; color: #aaa; }
+  .recap-price-detail.assembly span:last-child { color: #F5C400 !important; }
+  .recap-total-block {
+    display: flex; gap: 12px; margin-top: .5rem;
+  }
+  .recap-total-card {
+    flex: 1; text-align: center; padding: 1rem;
+    background: #000; border: 0.5px solid #333;
+  }
+  .recap-total-label {
+    font-size: 10px; text-transform: uppercase;
+    letter-spacing: .1em; color: #666; margin-bottom: 6px;
+  }
+  .recap-total-val {
+    font-size: 28px; font-weight: 500; color: #ffffff; letter-spacing: -.02em;
+  }
+  .recap-total-val.price { color: #F5C400; }
+
+  .recap-model-card {
+    background: #1e1e1e;
+    border: 0.5px solid #F5C400;
+    padding: 10px 12px;
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 8px;
+  }
+  .recap-model-photo {
+    width: 80px; height: 54px; object-fit: cover; flex-shrink: 0;
+  }
+  .recap-model-info { flex: 1; min-width: 0; }
+  .recap-model-badge { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: .07em; }
+  .recap-model-name { font-size: 15px; font-weight: 500; color: #f2f2f2; margin-top: 2px; }
+  .recap-model-price { font-size: 12px; color: #888; margin-top: 3px; }
+
+  /* Model cards sur fond noir */
+  #view-config > div:first-child .model-card {
+    background: #1e1e1e;
+    border-color: #333;
+    color: #f2f2f2;
+  }
+  #view-config > div:first-child .model-card:hover {
+    background: #2a2a2a;
+    border-color: #555;
+  }
+  #view-config > div:first-child .model-card.sel {
+    border: 2px solid var(--blue);
+    background: #2a2200;
+  }
+  #view-config > div:first-child .model-card.sel .mc-name { color: #FFF8D6; }
+  #view-config > div:first-child .mc-name { color: #f2f2f2; }
+  #view-config > div:first-child .mc-badge { color: #888; }
+  #view-config > div:first-child .mc-desc { color: #aaa; }
+  #view-config > div:first-child .mc-price { color: #aaa; }
+  #view-config > div:first-child .model-card.sel .mc-name { color: #fff8d6; }
+  #view-config > div:first-child .model-card.sel .mc-price { color: #F5C400; }
+  #view-config > div:first-child .step-label { color: #888; }
+  #view-config > div:first-child .mc-text { background: transparent; }
+
+  .force-undo {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; color: #b38f00; cursor: pointer;
+    padding: 8px 16px 10px;
+    border-top: 0.5px solid var(--border);
+    background: #fffbee;
+  }
+  .force-undo:hover { background: #fff8d6; }
+  .force-undo i { font-size: 13px; }
+
+  /* Bouton retour flottant — PC et tablette uniquement */
+  .back-btn {
+    display: none;
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    z-index: 50;
+    background: #000000;
+    color: #ffffff;
+    border: 0.5px solid #444;
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    align-items: center;
+    gap: 7px;
+    font-family: var(--font);
+    box-shadow: 0 2px 12px rgba(0,0,0,.25);
+    text-decoration: none;
+  }
+  .back-btn:hover { background: #1a1a1a; border-color: #F5C400; color: #F5C400; }
+  @media (min-width: 768px) { .back-btn { display: flex; } }
+
+  /* Mode single-modèle : carte unique plus grande */
+  .model-grid.single .model-card { max-width: 320px; }
+  .model-grid.single .mc-photo { height: 200px; }
+
+  @media (prefers-color-scheme: dark) {
+    .opt-item.sel { background: #2a2200 !important; border-color: var(--blue) !important; }
+    .opt-item.sel .oi-name { color: #FFF8D6 !important; }
+    .opt-item.sel .oi-desc { color: #c8b870 !important; }
+    .opt-item.sel .opt-radio { border-color: var(--blue) !important; background: var(--blue) !important; }
+    .model-card.sel .mc-name { color: #FFF8D6 !important; }
+    .model-card.sel .mc-desc { color: #c8b870 !important; }
+    .model-card.sel .mc-price { color: var(--blue) !important; }
+    .ph-sel { color: #f2f2f2 !important; }
+  }
+
+  /* ── PROTO : cartes photo pour les options ─────────────── */
+  .opt-photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 8px;
+  }
+  .opt-photo-card {
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--bg);
+    cursor: pointer;
+    overflow: hidden;
+    transition: border-color .15s, background .15s;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  .opt-photo-card:hover { border-color: var(--border2); background: var(--bg2); }
+  .opt-photo-card.sel { border: 2px solid var(--blue); background: var(--blue-light); }
+  .opt-photo-card.sel .opc-name { color: var(--blue-dark); }
+  .opt-photo-card.sel .opc-price { color: #7a5f00; }
+  .opc-img-wrap {
+    aspect-ratio: 4/3;
+    background: var(--bg2);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    border-bottom: 0.5px solid var(--border);
+    flex-shrink: 0;
+  }
+  .opt-photo-card.sel .opc-img-wrap { background: #fff8d6; border-color: #e8d080; }
+  .opc-img-wrap img {
+    width: 100%; height: 100%; object-fit: contain; padding: 8px;
+    transition: transform .2s;
+  }
+  .opt-photo-card:hover .opc-img-wrap img { transform: scale(1.04); }
+  .opc-img-placeholder {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    opacity: .3; font-size: 11px; color: var(--text3);
+  }
+  .opc-img-placeholder i { font-size: 26px; }
+  .opc-body { padding: 8px 10px; flex: 1; display: flex; flex-direction: column; gap: 2px; }
+  .opc-badges { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 3px; }
+  .opc-badge-incl {
+    font-size: 9px; background: #F1EFE8; color: #5F5E5A;
+    border-radius: 20px; padding: 1px 6px;
+    display: inline-flex; align-items: center; gap: 3px;
+  }
+  .opc-badge-rec {
+    font-size: 9px; background: var(--blue-light); color: #7a5f00;
+    border-radius: 20px; padding: 1px 6px;
+    display: inline-flex; align-items: center; gap: 3px;
+  }
+  .opc-name { font-size: 12px; font-weight: 500; color: var(--text1); line-height: 1.3; }
+  .opc-desc { font-size: 11px; color: var(--text2); line-height: 1.3; margin-top: 2px; }
+  .opc-price { font-size: 12px; font-weight: 500; color: var(--text2); margin-top: auto; padding-top: 5px; }
+  .opc-price.negative { color: var(--green); }
+  .opc-check {
+    position: absolute; top: 5px; right: 5px;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--blue); display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity .15s;
+  }
+  .opt-photo-card.sel .opc-check { opacity: 1; }
+  .opc-check i { font-size: 10px; color: #1a1a00; }
+  @media (prefers-color-scheme: dark) {
+    .opt-photo-card.sel { background: #2a2200 !important; }
+    .opt-photo-card.sel .opc-name { color: #FFF8D6 !important; }
+    .opt-photo-card.sel .opc-price { color: var(--blue) !important; }
+    .opt-photo-card.sel .opc-img-wrap { background: #1a1200 !important; border-color: #5a4400 !important; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo" style="display:flex;align-items:center;gap:10px;">
+    <img src="https://www.obviouscycles.com/wp-content/uploads/2023/04/favicon-512.png" alt="Obvious Cycles" style="height:32px;width:32px;object-fit:contain;">
+    <span>OBVIOUS-ON-DEMAND</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <div style="font-size:12px;color:#ffffff;opacity:.7">Montage à la carte</div>
+    <span style="font-size:10px;font-weight:500;background:#F5C400;color:#1a1a00;padding:2px 8px;letter-spacing:.06em;">PROTO</span>
+  </div>
+</header>
+
+<main class="main">
+
+  <div class="tab-bar">
+    <div class="tab active" id="tab-config" onclick="switchTab('config')">
+      <i class="ti ti-settings"></i> Configurer
+    </div>
+    <div class="tab" id="tab-saved" onclick="switchTab('saved')">
+      <i class="ti ti-bookmark"></i> Mes configurations
+      <span class="count-badge" id="saved-count">0</span>
+    </div>
+  </div>
+
+  <!-- VUE CONFIGURATEUR -->
+  <div class="view active" id="view-config">
+    <div style="background:#111111;padding:1.5rem;margin-bottom:1.5rem;">
+      <div class="step-label" style="color:#888;">Étape 1 sur 2</div>
+      <p class="section-title" style="color:#f2f2f2;">Choisissez votre modèle de base</p>
+      <div class="model-grid" id="model-grid"></div>
+    </div>
+
+    <div id="posts-section" style="display:none">
+      <div class="prog-wrap">
+        <div class="step-label">Étape 2 — configurez vos composants</div>
+        <div class="prog-bar" id="prog-bar"></div>
+      </div>
+      <div id="posts-list"></div>
+    </div>
+
+    <div id="contact-hint" style="display:none;padding:0 0 1rem;font-size:13px;color:var(--text2);">
+      Pour tout autre montage, <a href="https://www.obviouscycles.com/contact/" target="_blank" style="color:var(--blue);text-decoration:none;font-weight:500;">contactez-nous</a>.
+    </div>
+    <div id="recap-section" style="display:none">
+      <p class="section-title" style="margin-top:.75rem">Votre configuration</p>
+      <div id="recap-box-container"></div>
+      <div class="btn-row">
+        <button class="btn primary" onclick="openOrderModal()">
+          <i class="ti ti-send"></i> Envoyer cette configuration
+        </button>
+        <button class="btn success" onclick="toggleSaveForm()">
+          <i class="ti ti-bookmark"></i> Sauvegarder cette configuration
+        </button>
+        <div class="save-form" id="save-form">
+          <div class="save-label">Donnez un nom à cette configuration :</div>
+          <div class="save-input-row">
+            <input type="text" id="save-name-input" placeholder="Ex : Mon gravel bikepacking" maxlength="60" />
+            <button onclick="saveConfig()">Sauvegarder</button>
+          </div>
+          <div class="toast" id="save-toast"><i class="ti ti-check"></i> Configuration sauvegardée !</div>
+        </div>
+        <button class="btn" onclick="resetConfig()">
+          <i class="ti ti-refresh"></i> Recommencer
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- VUE SAUVEGARDES -->
+  <div class="view" id="view-saved">
+    <p class="section-title">Mes configurations sauvegardées</p>
+    <div id="saved-list"></div>
+  </div>
+
+</main>
+
+<!-- MODAL COMMANDE -->
+<div class="modal-overlay" id="order-modal">
+  <div class="modal">
+    <h3><i class="ti ti-mail"></i> Envoyer ma configuration</h3>
+    <p>Renseignez vos coordonnées et nous vous recontacterons pour finaliser votre commande.</p>
+    <div class="field">
+      <label>Votre nom</label>
+      <input type="text" id="order-name" placeholder="Prénom Nom" />
+    </div>
+    <div class="field">
+      <label>Votre email</label>
+      <input type="email" id="order-email" placeholder="vous@example.com" />
+    </div>
+    <div class="field">
+      <label>Message (optionnel)</label>
+      <textarea id="order-msg" rows="3" placeholder="Questions, précisions..."></textarea>
+    </div>
+    <div class="field">
+      <label>Votre configuration</label>
+      <textarea id="order-config-display" rows="5" readonly style="font-size:11px;color:var(--text2);background:var(--bg3)"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeOrderModal()">Annuler</button>
+      <button class="btn-send" onclick="sendOrder()"><i class="ti ti-send"></i> Envoyer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── DONNÉES ────────────────────────────────────────────────────────────────
+
+const MODELS = [
+  { id: 'gravel_racing',     name: 'ON/OFF Gravel Racing',      badge: 'Gravel',         desc: 'Cadre titane, géométrie sport, fourche carbone, intégration complète',                 basePrice: 4450, assembly: 300, photo: 'https://www.obviouscycles.com/wp-content/uploads/2024/03/onoff-2024-6-655x427.webp?m=1711027780' },
+  { id: 'gravel_bikepacking',name: 'OUT/QUEST Gravel Aventure', badge: 'Bikepacking',    desc: "Cadre titane, géométrie confort / longue distance, nombreux points d'accroche",         basePrice: 4390, assembly: 300, photo: 'https://www.obviouscycles.com/wp-content/uploads/2024/11/outquest-1-655x450.webp?m=1730756293' },
+  { id: 'vtt_enduro',        name: '/OFF Enduro HT',            badge: 'Trail / Enduro', desc: 'Cadre titane semi-rigide, géométrie enduro, fourche 140/150 mm, boost 148 mm',          basePrice: 5090, assembly: 300, photo: 'https://www.obviouscycles.com/wp-content/uploads/2024/12/off-x0-1-1-655x404.webp?m=1733503243' },
+  { id: 'route',             name: 'ON/ Route',                 badge: 'Route',          desc: 'Cadre titane, fourche carbone, sportif et polyvalent',                                  basePrice: 5190, assembly: 300, photo: 'https://www.obviouscycles.com/wp-content/uploads/2025/05/on-da-1-mifi-655x460.jpg?m=1747931996' },
+];
+
+const ALL_OPTIONS = {
+  fourche: [
+    { id: 'fourche_rd_car_00', name: 'Fourche ON/', desc: 'Fourche carbone pivot conique', price: 0, weight: 0, lockedFor: ['route'], compat: [{mid:'route',rec:false}], incompat: [] },
+    { id: 'fourche_gr_car_00', name: 'Fourche gravel, sans inserts', desc: 'Fourche gravel carbone sans inserts, pivot conique, pneu max 50 mm', price: 0, weight: 0, lockedFor: ['gravel_racing'], compat: [{mid:'gravel_racing',rec:true},{mid:'gravel_bikepacking',rec:false}], incompat: [] },
+    { id: 'fourche_gr_car_ins', name: 'Fourche gravel, avec inserts', desc: 'Fourche gravel carbone avec inserts, pivot conique, pneu max 50 mm', price: 0, weight: 0, lockedFor: ['gravel_bikepacking'], compat: [{mid:'gravel_bikepacking',rec:true},{mid:'gravel_racing',rec:false}], incompat: [] },
+    { id: 'fourche_vtt_fox_fac_36_150', name: 'Fox Factory 36 150 mm', desc: 'Suspendue Fox Factory Kashima Grip2', price: 600, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false}], incompat: [] },
+    { id: 'fourche_vtt_rs_lyr_ult_150', name: 'Rockshox Lyrik Ultimate 150 mm', desc: 'Suspendue Rockshox Lyrik Ultimate', price: 280, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false}], incompat: [] },
+    { id: 'fourche_vtt_rs_lyr_sel_150', name: 'Rockshox Lyrik Select 150 mm', desc: 'Suspendue Rockshox Lyrik Select', price: 0, weight: 0, lockedFor: ['vtt_enduro'], compat: [{mid:'vtt_enduro',rec:false}], incompat: [] },
+  ],
+  roues: [
+    { id: 'roue_gr_ob_35',   name: 'Obvious GR35-S',           desc: 'Carbone hyper polyvalente, moyeu DT350, rayons profilés',                              price: 765,  weight: 0, lockedFor: [],                                 compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [], image: 'https://www.obviouscycles.com/wp-content/uploads/2024/01/obvious-gr35s-roue.jpg' },
+    { id: 'roue_gr_fu_soa',  name: 'Fulcrum Soniq ALX',         desc: 'Aluminium, la meilleure solution all-road et gravel aluminium',                       price: 0,    weight: 0, lockedFor: ['gravel_bikepacking','gravel_racing'], compat: [{mid:'gravel_bikepacking',rec:true},{mid:'gravel_racing',rec:false}],  incompat: [], image: 'https://www.fulcrum.com/media/catalog/product/cache/f3ba5d9e7d08d9a6bf82e697faa3b2d6/r/8/r8000-1_2.jpg' },
+    { id: 'roue_gr_dt_g16',  name: 'DT Swiss GR1600 Spline',    desc: "Roue aluminium, largeur interne 24 mm pour pneus jusqu\'à 52 mm",                   price: 75,   weight: 0, lockedFor: [],                                 compat: [{mid:'gravel_bikepacking',rec:true},{mid:'gravel_racing',rec:false}],  incompat: [], image: '' },
+    { id: 'roue_gr_fu_sgr',  name: 'Fulcrum Sharq GR',          desc: 'Roue compétition gravel, largeur interne 30 mm',                                      price: 1400, weight: 0, lockedFor: [],                                 compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [], image: '' },
+    { id: 'roue_rd_dt_p16',  name: 'DT Swiss PR1600 Spline',    desc: 'Roues aluminium, équilibre entre légèreté et confort',                                price: 0,    weight: 0, lockedFor: ['route'],                          compat: [{mid:'route',rec:false}],                                               incompat: [], image: '' },
+    { id: 'roue_rd_ob_35',   name: 'Obvious RD-35-R',           desc: 'Carbone compétition hyper polyvalente, moyeu DT350, rayons profilés, marquage laser', price: 730,  weight: 0, lockedFor: [],                                 compat: [{mid:'route',rec:false}],                                               incompat: [], image: '' },
+    { id: 'roue_rd_fu_w57',  name: 'Fulcrum Wind 57',           desc: 'Carbone profil haut',                                                                 price: 810,  weight: 0, lockedFor: [],                                 compat: [{mid:'route',rec:false}],                                               incompat: [], image: '' },
+    { id: 'roue_vtt_fu_rm5', name: 'Fulcrum Red Metal 5',       desc: 'Roue Enduro aluminium, à toute épreuve',                                              price: 0,    weight: 0, lockedFor: ['vtt_enduro'],                     compat: [{mid:'vtt_enduro',rec:false}],                                          incompat: [], image: '' },
+    { id: 'roue_vtt_dt_e17', name: 'DT Swiss EX1700 Classic',   desc: 'Aluminium et savoir-faire : durabilité et agilité',                                   price: 330,  weight: 0, lockedFor: [],                                 compat: [{mid:'vtt_enduro',rec:false}],                                          incompat: [], image: '' },
+    { id: 'roue_vtt_ob_30',  name: 'Obvious MT30-S',            desc: 'Roue Enduro Carbone, ultralégère et indestructible',                                  price: 920,  weight: 0, lockedFor: [],                                 compat: [{mid:'vtt_enduro',rec:false}],                                          incompat: [], image: '' },
+  ],
+  pneus: [
+    { id: 'pneu_gr_sc_r', name: 'Schwalbe G-ONE R PRO transparent', desc: 'Pneu gravel polyvalent', price: 0, weight: 0, lockedFor: ['gravel_bikepacking','gravel_racing'], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [] },
+    { id: 'pneu_gr_sc_rx', name: 'Schwalbe G-ONE RX PRO noir', desc: 'Le meilleur grip pour le gravel', price: 0, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [] },
+    { id: 'pneu_gr_sc_sp', name: 'Schwalbe G-ONE Speed NOIR', desc: 'Pneu gravel pour les terrains les plus roulants, idéal en all-road', price: -5, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [] },
+    { id: 'pneu_rd_co_gp', name: 'Continental GP5000 S TR transparent', desc: 'Le meilleur pneu route du moment', price: 0, weight: 0, lockedFor: ['route'], compat: [{mid:'route',rec:false}], incompat: [] },
+    { id: 'pneu_vtt_sc_gra', name: 'Schwalbe Magic Mary Gravity', desc: 'Le pneu le plus agressif pour les enduristes', price: 0, weight: 0, lockedFor: ['vtt_enduro'], compat: [{mid:'vtt_enduro',rec:false}], incompat: [] },
+  ],
+  frein: [
+    { id: 'frein_all', name: 'Freins inclus avec la transmission', desc: '', price: 0, weight: 0, lockedFor: ['gravel_bikepacking','gravel_racing','route'], compat: [{mid:'route',rec:false},{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: ['trans_vtt_sr_e70','trans_vtt_sr_gx','trans_vtt_sr_x0','trans_vtt_sr_xxs'] },
+    { id: 'frein_vtt_sr_db8', name: 'Freins SRAM DB8', desc: '4 pistons, simple et robuste', price: 0, weight: 0, lockedFor: ['vtt_enduro'], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre'] },
+    { id: 'frein_vtt_sr_mvs', name: 'Freins SRAM Maven Silver', desc: 'Le frein des disciplines Gravity', price: 230, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre'] },
+    { id: 'frein_vtt_sr_mvu', name: 'Freins SRAM Maven Ultimate', desc: 'Le frein de descente haut de gamme', price: 280, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre'] },
+  ],
+  transmission: [
+    { id: 'trans_gr_sh_821', name: 'SHIMANO GRX 820 1x12V', desc: '1x12v, à câble, haut de gamme Shimano', price: 275, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:true}], incompat: [] },
+    { id: 'trans_gr_sh_822', name: 'SHIMANO GRX 820 2x12V', desc: '2x12v, à câble, haut de gamme Shimano', price: 335, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [] },
+    { id: 'trans_gr_sh_611', name: 'SHIMANO GRX 820/610 1x12V', desc: '1x12v, à câble, le 12 vitesses accessible', price: 0, weight: 0, lockedFor: ['gravel_bikepacking','gravel_racing'], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [] },
+    { id: 'trans_gr_sh_cud', name: 'SHIMANO CUES U6040 DROP 1x11v', desc: 'Hyper polyvalent 11 vitesses', price: -155, weight: 0, lockedFor: [], compat: [{mid:'gravel_bikepacking',rec:false},{mid:'gravel_racing',rec:false}], incompat: [] },
+    { id: 'trans_gr_sh_cuf', name: 'SHIMANO CUES U6040 FLAT 1x11v', desc: 'Hyper polyvalent 11 vitesses pour cintre plat', price: -155, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: ['pilotage_rd_ala','pilotage_rd_suz_car','pilotage_rd_suz_alu','pilotage_gr_suz_car','pilotage_gr_suz_alu','pilotage_gr_ger_alu','pilotage_gr_drp_alu'] },
+    { id: 'trans_gr_sr_ri', name: 'SRAM RIVAL AXS XPLR 1x13v', desc: '1x13v sans fil, la solution robuste de SRAM', price: 420, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [] },
+    { id: 'trans_gr_sr_fo', name: 'SRAM FORCE AXS XPLR 1x13v', desc: '1x13v sans fil, le bon compromis SRAM', price: 820, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:true},{mid:'gravel_bikepacking',rec:false}], incompat: [] },
+    { id: 'trans_gr_sr_re', name: 'SRAM RED AXS XPLR 1x13v', desc: '1x13v sans fil, hyper performant', price: 2300, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [] },
+    { id: 'trans_gr_ca_ek', name: 'CAMPAGNOLO EKAR 1x13v', desc: '1x13v à câble du constructeur italien', price: 770, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [] },
+    { id: 'trans_gr_ca_re', name: 'CAMPAGNOLO RECORD X 1x13v', desc: '1x13v sans fil du constructeur italien', price: 1300, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [] },
+    { id: 'trans_rd_sh_105', name: 'SHIMANO 105 Di2 2x12v', desc: '2x12v, accessibilité et performance', price: 0, weight: 0, lockedFor: ['route'], compat: [{mid:'route',rec:false}], incompat: [] },
+    { id: 'trans_rd_sh_ul', name: 'SHIMANO ULTEGRA R8100 Di2 2x12v', desc: '2x12v, le meilleur du Di2 Shimano', price: 550, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: [] },
+    { id: 'trans_rd_sh_da', name: 'SHIMANO DURA ACE R9200 Di2 2x12v', desc: '2x12v, le choix des pros', price: 2065, weight: 0, lockedFor: [], compat: [{mid:'route',rec:true}], incompat: [] },
+    { id: 'trans_rd_sr_ri', name: 'SRAM RIVAL AXS 2x12v', desc: '2x12v, accessibilité et performance', price: -200, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: [] },
+    { id: 'trans_rd_sr_fo', name: 'SRAM FORCE AXS 2x12v', desc: '2x12v, le meilleur AXS', price: 210, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: [] },
+    { id: 'trans_rd_sr_re', name: 'SRAM RED AXS 2x12v', desc: '2x12v, le choix des pros', price: 1700, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: [] },
+    { id: 'trans_rd_ca_re', name: 'CAMPAGNOLO RECORD ALL-ROAD 2x13v', desc: '2x13v, sans fil', price: 990, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: [] },
+    { id: 'trans_rd_ca_sre', name: 'CAMPAGNOLO SUPER RECORD 2x13v', desc: '2x13v, boîtier céramique. Orfèvrerie italienne', price: 2590, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: [] },
+    { id: 'trans_vtt_sh_m6', name: 'SHIMANO DEORE M6100', desc: 'Le choix accessible', price: 105, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: [] },
+    { id: 'trans_vtt_sh_slx', name: 'SHIMANO SLX', desc: 'Performance et accessibilité', price: 225, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: [] },
+    { id: 'trans_vtt_sh_xt', name: 'SHIMANO XT M8100', desc: 'Performance et polyvalence', price: 300, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: [] },
+    { id: 'trans_vtt_sh_xte', name: 'SHIMANO XT 8200 Di2', desc: 'Shimano XT, sans fil', price: 1210, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: [] },
+    { id: 'trans_vtt_sh_xtr', name: 'SHIMANO XTR M9100', desc: 'La solution compétition de Shimano', price: 1020, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: [] },
+    { id: 'trans_vtt_sh_xtre', name: 'SHIMANO XTR M9200 Di2', desc: 'Shimano XTR, sans fil', price: 1950, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: [] },
+    { id: 'trans_vtt_sr_e70', name: 'SRAM EAGLE 70', desc: 'Le choix accessible', price: 0, weight: 0, lockedFor: ['vtt_enduro'], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: [] },
+    { id: 'trans_vtt_sr_gx', name: 'SRAM GX EAGLE', desc: 'Le VTT accessible en montage T-Type', price: 640, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: [] },
+    { id: 'trans_vtt_sr_x0', name: 'SRAM XO EAGLE', desc: 'Performance et polyvalence en T-Type', price: 1110, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:true},{mid:'vtt_xc',rec:false}], incompat: [] },
+    { id: 'trans_vtt_sr_xxs', name: 'SRAM XX SL EAGLE', desc: 'La solution compétition de SRAM', price: 1720, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: [] },
+  ],
+  power: [
+    { id: 'pwr_all', name: 'Sans mesure de puissance', desc: '', price: 0, weight: 0, lockedFor: ['gravel_racing','gravel_bikepacking','vtt_enduro','route'], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false},{mid:'vtt_enduro',rec:false},{mid:'route',rec:false}], incompat: [] },
+    { id: 'pwr_gr_sr_ri', name: 'SRAM Rival XPLR AXS', desc: 'Capteur dans l\'axe de pédalier (mono-jambe)', price: 180, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre','trans_vtt_sr_e70','trans_vtt_sr_gx','trans_vtt_sr_x0','trans_vtt_sr_xxs'] },
+    { id: 'pwr_gr_sr_fo', name: 'SRAM Force XPLR AXS', desc: 'Capteur dans l\'axe de pédalier (mono-jambe)', price: 205, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre','trans_vtt_sr_e70','trans_vtt_sr_gx','trans_vtt_sr_x0','trans_vtt_sr_xxs'] },
+    { id: 'pwr_gr_sr_re', name: 'SRAM Red XPLR AXS', desc: 'Capteur Quarq dans l\'étoile du pédalier', price: 500, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre','trans_vtt_sr_e70','trans_vtt_sr_gx','trans_vtt_sr_x0','trans_vtt_sr_xxs'] },
+    { id: 'pwr_gr_ca_re', name: 'Campagnolo Record 1x13', desc: 'Capteur sur chaque manivelle', price: 550, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre','trans_vtt_sr_e70','trans_vtt_sr_gx','trans_vtt_sr_x0','trans_vtt_sr_xxs'] },
+    { id: 'pwr_rd_sr_ri', name: 'SRAM Rival AXS 2x12', desc: 'Capteur dans l\'axe de pédalier (mono-jambe)', price: 200, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre','trans_vtt_sr_e70','trans_vtt_sr_gx','trans_vtt_sr_x0','trans_vtt_sr_xxs'] },
+    { id: 'pwr_rd_sr_fo', name: 'SRAM Force AXS 2x12', desc: 'Capteur Quarq dans l\'étoile du pédalier', price: 360, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre','trans_vtt_sr_e70','trans_vtt_sr_gx','trans_vtt_sr_x0','trans_vtt_sr_xxs'] },
+    { id: 'pwr_rd_sr_re', name: 'SRAM Red AXS 2x12', desc: 'Capteur Quarq dans l\'étoile du pédalier', price: 540, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_ca_re','trans_rd_ca_sre','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre','trans_vtt_sr_e70','trans_vtt_sr_gx','trans_vtt_sr_x0','trans_vtt_sr_xxs'] },
+    { id: 'pwr_rd_sh_ul', name: 'Shimano Ultegra R8100-P', desc: 'Capteur intégré dans les manivelles du pédalier', price: 540, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre','trans_vtt_sr_e70','trans_vtt_sr_gx','trans_vtt_sr_x0','trans_vtt_sr_xxs'] },
+    { id: 'pwr_rd_sh_da', name: 'Shimano Dura-Ace R9200-P', desc: 'Capteur intégré dans les manivelles du pédalier', price: 580, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre','trans_vtt_sr_e70','trans_vtt_sr_gx','trans_vtt_sr_x0','trans_vtt_sr_xxs'] },
+    { id: 'pwr_rd_ca_re', name: 'Campagnolo Record 2x13', desc: 'Capteur sur chaque manivelle', price: 1050, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_sre','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre','trans_vtt_sr_e70','trans_vtt_sr_gx','trans_vtt_sr_x0','trans_vtt_sr_xxs'] },
+    { id: 'pwr_rd_ca_sre', name: 'Campagnolo Super Record 2x13', desc: 'Capteur sur chaque manivelle', price: 1050, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre','trans_vtt_sr_e70','trans_vtt_sr_gx','trans_vtt_sr_x0','trans_vtt_sr_xxs'] },
+    { id: 'pwr_vtt_sr_x0', name: 'SRAM X0 Eagle AXS', desc: 'Capteur Quarq dans l\'étoile du pédalier', price: 190, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre','trans_vtt_sr_e70','trans_vtt_sr_gx','trans_vtt_sr_xxs'] },
+    { id: 'pwr_vtt_sr_xxs', name: 'SRAM XX SL Eagle AXS', desc: 'Capteur Quarq dans l\'étoile du pédalier', price: 420, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre','trans_vtt_sr_e70','trans_vtt_sr_gx','trans_vtt_sr_x0'] },
+  ],
+  pilotage: [
+    { id: 'pilotage_rd_ala', name: 'Combo Deda Alanera DCR', desc: 'Ensemble combiné carbone', price: 395, weight: 0, lockedFor: [], compat: [{mid:'route',rec:true}], incompat: [] },
+    { id: 'pilotage_rd_suz_car', name: 'Cintre Deda SuperZero Carbon / Potence Deda SuperBox', desc: 'Cintre route carbone profilé', price: 160, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: [] },
+    { id: 'pilotage_rd_suz_alu', name: 'Cintre Deda SuperZero Alu / Potence Deda SuperBox', desc: 'Cintre route aluminium profilé', price: 0, weight: 0, lockedFor: ['route'], compat: [{mid:'route',rec:false}], incompat: [] },
+    { id: 'pilotage_gr_suz_car', name: 'Cintre Deda SuperZero Carbon / Potence Deda SuperBox', desc: 'Cintre gravel carbone, profilé, flare 8°', price: 150, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false}], incompat: [] },
+    { id: 'pilotage_gr_suz_alu', name: 'Cintre Deda SuperZero Alu / Potence Deda SuperBox', desc: 'Cintre gravel aluminium, profilé, flare 8°', price: 0, weight: 0, lockedFor: ['gravel_racing'], compat: [{mid:'gravel_racing',rec:true}], incompat: [] },
+    { id: 'pilotage_gr_gerz_alu', name: 'Cintre Deda Gera Alu / Potence Deda Superbox', desc: 'Cintre gravel aluminium, multiposition, flare 12°', price: -25, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false}], incompat: [] },
+    { id: 'pilotage_gr_ger_alu', name: 'Cintre Deda Gera Alu / Potence Deda Zero100', desc: 'Cintre gravel aluminium, multiposition, flare 12°', price: 95, weight: 0, lockedFor: [], compat: [{mid:'gravel_bikepacking',rec:true}], incompat: [] },
+    { id: 'pilotage_gr_drp_alu', name: 'Cintre gravel Randonneur Ergotec', desc: 'Cintre gravel aluminium, flare 12°', price: 0, weight: 0, lockedFor: ['gravel_bikepacking'], compat: [{mid:'gravel_bikepacking',rec:false}], incompat: [] },
+    { id: 'pilotage_gr_flat_ext', name: 'Cintre gravel plat Ergotec', desc: 'Cintre plat pour plus de confort', price: -20, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re'] },
+    { id: 'pilotage_vtt_end', name: 'Cintre et potence Truvativ Descendant', desc: 'Potence 50 mm, Ø35 mm / Cintre 780 mm, 25 mm rise', price: 0, weight: 0, lockedFor: ['vtt_enduro'], compat: [{mid:'vtt_enduro',rec:false}], incompat: [] },
+  ],
+  selle: [
+    { id: 'selle_rd_ant_r5', name: 'Fizik Antares R5', desc: 'Course route et VTT', price: 0, weight: 0, lockedFor: ['route'], compat: [{mid:'route',rec:false},{mid:'vtt_xc',rec:false}], incompat: [] },
+    { id: 'selle_rd_ant_r3', name: 'Fizik Antares R3', desc: 'Course route et VTT, rail titane', price: 50, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false},{mid:'vtt_xc',rec:false}], incompat: [] },
+    { id: 'selle_rd_ant_r1', name: 'Fizik Antares R1', desc: 'Course route et VTT, rail carbone', price: 90, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false},{mid:'vtt_xc',rec:false}], incompat: [] },
+    { id: 'selle_gr_ali_r5', name: 'Fizik Aliante R5', desc: 'Route et gravel', price: 0, weight: 0, lockedFor: ['gravel_racing'], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false},{mid:'route',rec:false}], incompat: [] },
+    { id: 'selle_gr_ali_r3', name: 'Fizik Aliante R3', desc: 'Route et gravel, rail titane', price: 50, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false},{mid:'route',rec:false}], incompat: [] },
+    { id: 'selle_rd_arg_r3', name: 'Fizik Vento Argo R3', desc: 'Course route et gravel, selle courte, rail titane', price: 50, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false},{mid:'gravel_racing',rec:false}], incompat: [] },
+    { id: 'selle_rd_arg_r1', name: 'Fizik Vento Argo R1 Light', desc: 'Course route et gravel, selle courte, rail carbone', price: 90, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false},{mid:'gravel_racing',rec:false}], incompat: [] },
+    { id: 'selle_rd_arg_r00', name: 'Fizik Vento Argo R00', desc: 'Course route et gravel, selle courte, rail et coque carbone', price: 175, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false},{mid:'gravel_racing',rec:false}], incompat: [] },
+    { id: 'selle_gr_arg_x5', name: 'Fizik Terra Argo X5', desc: 'Gravel, selle courte', price: 0, weight: 0, lockedFor: ['gravel_bikepacking'], compat: [{mid:'gravel_bikepacking',rec:false},{mid:'gravel_racing',rec:false}], incompat: [] },
+    { id: 'selle_gr_arg_x3', name: 'Fizik Terra Argo X3', desc: 'Gravel, selle courte, rail titane', price: 50, weight: 0, lockedFor: [], compat: [{mid:'gravel_bikepacking',rec:false},{mid:'gravel_racing',rec:false}], incompat: [] },
+    { id: 'selle_rd_ari_r3', name: 'Fizik Arione R3', desc: 'Course route, rail titane', price: 50, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false},{mid:'vtt_xc',rec:false}], incompat: [] },
+    { id: 'selle_rd_ari_r00', name: 'Fizik Arione R00', desc: 'Course route, rail et coque carbone', price: 175, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false},{mid:'vtt_xc',rec:false}], incompat: [] },
+    { id: 'selle_vtt_alpt_x5', name: 'Fizik Alpaca Terra X5', desc: 'VTT, rail alliage léger, coupe anatomique', price: 0, weight: 0, lockedFor: ['vtt_enduro'], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: [] },
+    { id: 'selle_br_b17_ho', name: 'Brooks B17 honey', desc: 'Cuir, touring', price: 55, weight: 0, lockedFor: [], compat: [{mid:'gravel_bikepacking',rec:false}], incompat: [] },
+    { id: 'selle_ber_asp_bk', name: 'Berthoud Aravis ouverte noir', desc: 'Cuir, fabrication française, longue distance + couvre selle', price: 250, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false},{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [] },
+    { id: 'selle_bek_lup', name: 'Selle Berk Lupina Short noir', desc: '99 gr, full carbone, revêtement cuir synthétique', price: 240, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false},{mid:'vtt_xc',rec:false}], incompat: [] },
+  ],
+  tige: [
+    { id: 'tige_rd_ob_car', name: 'Tige de selle Obvious carbone CS25', desc: 'Diamètre 27,2 mm, recul 25 mm. Compatible rail rond ou oval', price: 0, weight: 0, lockedFor: ['gravel_bikepacking','gravel_racing','route'], compat: [{mid:'route',rec:true},{mid:'gravel_racing',rec:true},{mid:'gravel_bikepacking',rec:false}], incompat: [] },
+    { id: 'tige_rd_ob_ti', name: 'Tige de selle Obvious titane TS25', desc: 'Diamètre 27,2 mm, recul 25 mm. Compatible rail rond ou oval', price: 90, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false},{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:true}], incompat: [] },
+    { id: 'tige_vtt_ob_ti', name: 'Tige de selle Obvious titane TS00', desc: 'Diamètre 27,2 mm, sans recul. Compatible rail rond ou oval', price: 90, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: [] },
+    { id: 'tige_vtt_ou_tel', name: 'Tige de selle One-Up Dropper V3', desc: 'Tige de selle téléscopique', price: 0, weight: 0, lockedFor: ['vtt_enduro'], compat: [{mid:'vtt_enduro',rec:true},{mid:'vtt_xc',rec:true}], incompat: [] },
+  ],
+  pedales: [
+    { id: 'ped_no', name: 'Sans pédales', desc: '', price: 0, weight: 0, lockedFor: ['gravel_racing','gravel_bikepacking','vtt_enduro','route'], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false},{mid:'vtt_enduro',rec:false},{mid:'route',rec:false}], incompat: [] },
+    { id: 'ped_rd_sh_da', name: 'Pédales Shimano Dura-Ace 9100 Carbone', desc: 'Technologie SPD-SL. Carbone et inox.', price: 190, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: [] },
+    { id: 'ped_rd_sh_ul', name: 'Pédales Shimano Ultegra R8000 Carbone', desc: 'Technologie SPD-SL. Carbone.', price: 120, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: [] },
+    { id: 'ped_rd_sh_105', name: 'Pédales Shimano 105 R7000', desc: 'Technologie SPD-SL', price: 95, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: [] },
+    { id: 'ped_rd_sh_r55', name: 'Pédales Shimano PD-R550', desc: 'Pédales automatiques Shimano', price: 75, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: [] },
+    { id: 'ped_rd_lk_kbti', name: 'Pédales Look Keo Blade Carbone Ti', desc: 'Ressort à lame carbone, axe titane et roulements céramique', price: 300, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: [] },
+    { id: 'ped_rd_lk_kbc', name: 'Pédales Look Keo Blade Carbone', desc: 'Ressort à lame carbone', price: 130, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: [] },
+    { id: 'ped_rd_lk_k2m', name: 'Pédales Look Keo 2 Max', desc: 'Pédales automatiques Look', price: 75, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: [] },
+    { id: 'ped_vtt_sh_xtrp', name: 'Pédales Shimano XTR M9220', desc: 'Pédales XTR Enduro à plateforme. Technologie SPD', price: 130, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false}], incompat: [] },
+    { id: 'ped_vtt_sh_xtp', name: 'Pédales Shimano XT M8120', desc: 'Pédales XT Enduro à plateforme. Technologie SPD', price: 90, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: [] },
+    { id: 'ped_vtt_lk_xer', name: 'Pédales Look X-Track En Rage', desc: 'Compatible SPD', price: 70, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: [] },
+    { id: 'ped_vtt_on_com', name: 'Pédales plates One-Up Composite noir', desc: 'Pédales plates Enduro. Corps composite', price: 55, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false}], incompat: [] },
+    { id: 'ped_vtt_on_alu', name: 'Pédales plates One-Up Aluminium noir', desc: 'Pédales plates Enduro. Corps aluminium', price: 165, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false}], incompat: [] },
+    { id: 'ped_gr_sh_1sd', name: 'Pédales Shimano PD-ES600', desc: 'Pédales SPD à 1 seul côté', price: 65, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [] },
+    { id: 'ped_gr_sh_xtr', name: 'Pédales Shimano XTR M9200', desc: 'Pédales XTR XC. Technologie SPD', price: 130, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false},{mid:'vtt_xc',rec:false}], incompat: [] },
+    { id: 'ped_gr_sh_xt', name: 'Pédales Shimano XT M8100', desc: 'Pédales XT XC. Technologie SPD', price: 90, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false},{mid:'vtt_xc',rec:false}], incompat: [] },
+    { id: 'ped_gr_sh_M54', name: 'Pédales Shimano PD-M540', desc: 'Pédales XC. Compatible SPD', price: 59, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false},{mid:'vtt_xc',rec:false}], incompat: [] },
+    { id: 'ped_gr_lk_xrct', name: 'Pédales Look X-Track Race Carbon Ti', desc: 'Compatible SPD, corps carbone, axe titane et roulements céramique', price: 210, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false},{mid:'vtt_xc',rec:false}], incompat: [] },
+    { id: 'ped_gr_lk_xrc', name: 'Pédales Look X-Track Race Carbon', desc: 'Compatible SPD, corps carbone', price: 110, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false},{mid:'vtt_xc',rec:false}], incompat: [] },
+    { id: 'ped_gr_lk_xtk', name: 'Pédales Look X-Track', desc: 'Compatible SPD', price: 50, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false},{mid:'vtt_xc',rec:false}], incompat: [] },
+  ],
+};
+
+const POST_META = [
+  { id: 'fourche',      name: 'Fourche',             icon: 'ti-git-fork' },
+  { id: 'roues',        name: 'Roues',               icon: 'ti-circle' },
+  { id: 'pneus',        name: 'Pneus',               icon: 'ti-circle-dotted' },
+  { id: 'transmission', name: 'Transmission',        icon: 'ti-settings' },
+  { id: 'power',        name: 'Mesure de puissance', icon: 'ti-activity' },
+  { id: 'frein',        name: 'Freins',              icon: 'ti-hand-stop' },
+  { id: 'pilotage',     name: 'Poste de pilotage',   icon: 'ti-adjustments-horizontal' },
+  { id: 'selle',        name: 'Selle',               icon: 'ti-armchair' },
+  { id: 'tige',         name: 'Tige de selle',       icon: 'ti-arrows-vertical' },
+  { id: 'pedales',      name: 'Pédales',             icon: 'ti-rotate-clockwise' },
+];
+
+// ─── ÉTAT ────────────────────────────────────────────────────────────────────
+let selModel = null, selOpts = {}, openPost = null, savedConfigs = [];
+
+// ─── STOCKAGE LOCAL ───────────────────────────────────────────────────────────
+function loadSaved() {
+  try { savedConfigs = JSON.parse(localStorage.getItem('velo_configs') || '[]'); } catch(e) { savedConfigs = []; }
+  updateSavedCount();
+}
+function persistSaved() {
+  try { localStorage.setItem('velo_configs', JSON.stringify(savedConfigs)); } catch(e) {}
+}
+function updateSavedCount() {
+  document.getElementById('saved-count').textContent = savedConfigs.length;
+}
+
+// ─── UTILITAIRES ─────────────────────────────────────────────────────────────
+function optionsFor(postId, modelId) {
+  const incompatFromOthers = getIncompatFromSelections(postId);
+  let opts = ALL_OPTIONS[postId].filter(o => {
+    const compatible = o.compat.some(c => c.mid === modelId);
+    const blocked = incompatFromOthers.includes(o.id);
+    return compatible && !blocked;
+  });
+
+  // Filtre power : n'afficher que pwr_all + le powermeter de la transmission choisie
+  if (postId === 'power' && selOpts['transmission']) {
+    const transId = selOpts['transmission'];
+    const linkedPwr = FORCE_SELECT.find(r => r.if_selected !== 'pwr_all' &&
+      r.force && r.force.transmission === transId);
+    if (linkedPwr) {
+      opts = opts.filter(o => o.id === 'pwr_all' || o.id === linkedPwr.if_selected);
+    } else {
+      opts = opts.filter(o => o.id === 'pwr_all');
+    }
+  }
+  return opts.sort((a, b) => {
+    const aRec = isRecommended(a, modelId) ? 0 : 1;
+    const bRec = isRecommended(b, modelId) ? 0 : 1;
+    if (aRec !== bRec) return aRec - bRec;
+    const aLocked = a.lockedFor.includes(modelId) ? 0 : 1;
+    const bLocked = b.lockedFor.includes(modelId) ? 0 : 1;
+    if (aLocked !== bLocked) return aLocked - bLocked;
+    return a.price - b.price;
+  });
+}
+
+function isLocked(opt, modelId) {
+  return opt.lockedFor && opt.lockedFor.includes(modelId);
+}
+
+function getIncompatFromSelections(excludePostId) {
+  let blocked = [];
+  POST_META.forEach(p => {
+    if (p.id === excludePostId) return;
+    const selId = selOpts[p.id];
+    if (!selId) return;
+    const allOpts = ALL_OPTIONS[p.id] || [];
+    const selOpt = allOpts.find(o => o.id === selId);
+    if (selOpt && selOpt.incompat) blocked = blocked.concat(selOpt.incompat);
+  });
+  return blocked;
+}
+
+function isRecommended(opt, modelId) {
+  const c = opt.compat.find(x => x.mid === modelId);
+  return c ? c.rec : false;
+}
+
+function autoSelectLocked(modelId) {
+  POST_META.forEach(p => {
+    if (selOpts[p.id]) return;
+    const opts = optionsFor(p.id, modelId);
+    const toSelect = opts.find(o => isLocked(o, modelId));
+    if (toSelect) selOpts[p.id] = toSelect.id;
+  });
+}
+
+function computeTotals(modelId, opts) {
+  const model = MODELS.find(m => m.id === modelId);
+  let price = model.basePrice + (model.assembly || 0), weight = 0;
+  POST_META.forEach(p => {
+    const allOpts = ALL_OPTIONS[p.id] || [];
+    const opt = allOpts.find(o => o.id === opts[p.id]);
+    if (opt && !isLocked(opt, modelId)) { price += opt.price; weight += opt.weight; }
+  });
+  return { price, weight };
+}
+
+function buildConfigText(modelId, opts) {
+  const model = MODELS.find(m => m.id === modelId);
+  const { price, weight } = computeTotals(modelId, opts);
+  let lines = ['Modèle : ' + model.name];
+  POST_META.forEach(p => {
+    const allOpts = ALL_OPTIONS[p.id] || [];
+    const opt = allOpts.find(o => o.id === opts[p.id]);
+    if (opt) lines.push(p.name + ' : ' + opt.name + (isLocked(opt, modelId) ? ' (inclus)' : (opt.price >= 0 ? ' (+' + opt.price.toLocaleString('fr-FR') + ' €)' : ' (' + opt.price.toLocaleString('fr-FR') + ' €)')));
+  });
+  if (model.assembly) lines.push('Assemblage & mise en route : ' + model.assembly.toLocaleString('fr-FR') + ' €');
+  lines.push('Prix total : ' + price.toLocaleString('fr-FR') + ' €');
+
+  return lines.join('\n');
+}
+
+// ─── NAVIGATION ───────────────────────────────────────────────────────────────
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  document.getElementById('view-' + tab).classList.add('active');
+  if (tab === 'saved') renderSaved();
+}
+
+// ─── RENDU MODÈLES ────────────────────────────────────────────────────────────
+function renderModels() {
+  const models = window._singleModel
+    ? MODELS.filter(m => m.id === window._singleModel)
+    : MODELS;
+
+  // Adapter le titre de l'étape 1
+  const stepLabel = document.querySelector('#view-config > div:first-child .step-label');
+  const stepTitle = document.querySelector('#view-config > div:first-child .section-title');
+  if (window._singleModel && stepLabel && stepTitle) {
+    const m = MODELS.find(x => x.id === window._singleModel);
+    stepLabel.textContent = 'Étape 1 sur 2';
+    stepTitle.textContent = 'Configurer votre ' + m.name;
+  }
+
+  document.getElementById('model-grid').className = 'model-grid' + (window._singleModel ? ' single' : '');
+  document.getElementById('model-grid').innerHTML = models.map(m => `
+    <div class="model-card ${selModel === m.id ? 'sel' : ''}" onclick="selectModel('${m.id}')">
+      ${m.photo ? `<img class="mc-photo" src="${m.photo}" alt="${m.name}" loading="lazy">` : ''}
+      <div class="mc-text">
+        <span class="mc-badge">${m.badge}</span>
+        <span class="mc-name">${m.name}</span>
+        <span class="mc-desc">${m.desc}</span>
+        <span class="mc-price">à partir de ${(m.basePrice + (m.assembly||0)).toLocaleString('fr-FR')} €</span>
+      </div>
+    </div>`).join('');
+}
+
+function selectModel(id) {
+  selModel = id; selOpts = {}; openPost = null;
+  autoSelectLocked(id);
+  renderModels(); renderPosts();
+  document.getElementById('posts-section').style.display = 'block';
+  document.getElementById('recap-section').style.display = 'none';
+  document.getElementById('save-form').classList.remove('open');
+  document.getElementById('posts-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ─── RENDU POSTES ─────────────────────────────────────────────────────────────
+function renderPosts() {
+  // Masquer le poste power s'il ne contient que pwr_all
+  const visiblePosts = POST_META.filter(p => {
+    if (p.id !== 'power') return true;
+    return optionsFor('power', selModel).length > 1;
+  });
+
+  document.getElementById('prog-bar').innerHTML = visiblePosts.map(p =>
+    '<div class="prog-step ' + (selOpts[p.id] ? 'done' : '') + '"></div>').join('');
+
+  document.getElementById('posts-list').innerHTML = visiblePosts.map(p => {
+    const opts = optionsFor(p.id, selModel);
+    if (selOpts[p.id] && !opts.find(o => o.id === selOpts[p.id])) selOpts[p.id] = null;
+    const selOpt = selOpts[p.id] ? opts.find(o => o.id === selOpts[p.id]) : null;
+    const isOpen = openPost === p.id;
+
+    // Détecter si au moins une option a une image → mode cartes photo
+    const hasPhotos = opts.some(o => o.image && o.image.length > 0);
+
+    const optsHTML = hasPhotos
+      ? '<div class="opt-photo-grid">' +
+          opts.map(o => {
+            const rec = isRecommended(o, selModel);
+            const locked = isLocked(o, selModel);
+            let priceStr;
+            if (locked) priceStr = '<span style="font-size:9px;background:#F1EFE8;color:#5F5E5A;border-radius:20px;padding:1px 6px;"><i class="ti ti-lock" style="font-size:8px"></i> inclus</span>';
+            else if (o.price === 0) priceStr = '±0 €';
+            else if (o.price > 0) priceStr = '+' + o.price.toLocaleString('fr-FR') + ' €';
+            else priceStr = o.price.toLocaleString('fr-FR') + ' €';
+
+            const imgHTML = o.image
+              ? '<img src="' + o.image + '" alt="' + o.name + '" loading="lazy" onerror="this.parentNode.classList.add(\'no-img\');this.style.display=\'none\'">'
+              : '<div class="opc-img-placeholder"><i class="ti ti-photo"></i><span>photo à venir</span></div>';
+
+            return '<div class="opt-photo-card ' + (selOpts[p.id] === o.id ? 'sel' : '') + '" onclick="selectOpt(\'' + p.id + '\',\'' + o.id + '\')">' +
+              '<div class="opc-check"><i class="ti ti-check"></i></div>' +
+              '<div class="opc-img-wrap">' + imgHTML + '</div>' +
+              '<div class="opc-body">' +
+                (locked || rec ? '<div class="opc-badges">' +
+                  (locked ? '<span class="opc-badge-incl"><i class="ti ti-lock" style="font-size:8px"></i> inclus</span>' : '') +
+                  (rec ? '<span class="opc-badge-rec"><i class="ti ti-star" style="font-size:8px"></i> Recommandé</span>' : '') +
+                '</div>' : '') +
+                '<div class="opc-name">' + o.name + '</div>' +
+                (o.desc ? '<div class="opc-desc">' + o.desc + '</div>' : '') +
+                (!locked ? '<div class="opc-price' + (o.price < 0 ? ' negative' : '') + '">' + priceStr + '</div>' : '') +
+              '</div>' +
+            '</div>';
+          }).join('') +
+        '</div>'
+      : '<div class="opt-list">' +
+          opts.map(o => {
+            const rec = isRecommended(o, selModel);
+            let priceStr;
+            if (o.locked) priceStr = '—';
+            else if (o.price === 0) priceStr = '±0 €';
+            else if (o.price > 0) priceStr = '+' + o.price.toLocaleString('fr-FR') + ' €';
+            else priceStr = o.price.toLocaleString('fr-FR') + ' €';
+            return '<div class="opt-item ' + (selOpts[p.id] === o.id ? 'sel' : '') + '" onclick="selectOpt(\'' + p.id + '\',\'' + o.id + '\')">' +
+              '<div class="opt-radio"><div class="radio-dot"></div></div>' +
+              '<div class="oi-info">' +
+                '<div class="oi-name">' + o.name +
+                  (isLocked(o, selModel) ? '<span class="incl-badge"><i class="ti ti-lock" style="font-size:9px"></i> inclus</span>' : '') +
+                  (rec ? '<span class="rec-badge"><i class="ti ti-star-filled" style="font-size:9px"></i> Recommandé</span>' : '') +
+                '</div>' +
+                '<div class="oi-desc">' + o.desc + '</div>' +
+              '</div>' +
+              '<div class="oi-meta">' +
+                '<div class="oi-price' + (o.price < 0 ? ' negative' : '') + '">' + priceStr + '</div>' +
+              '</div>' +
+            '</div>';
+          }).join('') +
+        '</div>';
+
+    return '<div class="post-block" data-post-id="' + p.id + '">' +
+      '<div class="post-hdr" onclick="togglePost(\'' + p.id + '\')">' +
+        '<i class="ti ' + p.icon + ' ph-icon"></i>' +
+        '<span class="ph-name">' + p.name + '</span>' +
+        (selOpt ? '<span class="ph-sel">' + selOpt.name + '</span>' : '<span class="ph-pending">choisir →</span>') +
+        '<i class="ti ti-chevron-down ph-chev ' + (isOpen ? 'open' : '') + '"></i>' +
+      '</div>' +
+      '<div class="post-opts ' + (isOpen ? 'open' : '') + '">' +
+        optsHTML +
+        (function() {
+          if ((p.id === 'transmission' || p.id === 'pilotage') &&
+              selOpts['transmission'] === 'trans_gr_sh_cuf' &&
+              selOpts['pilotage'] === 'pilotage_gr_flat_ext') {
+            const other = p.id === 'transmission' ? 'le cintre' : 'la transmission';
+            return '<div class="force-undo" onclick="resetFlatBarForce()"><i class="ti ti-rotate-left"></i> Changer ce choix (réinitialise aussi ' + other + ')</div>';
+          }
+          if (p.id === 'power') {
+            const pwrId = selOpts['power'];
+            if (pwrId && pwrId !== 'pwr_all') {
+              return '<div class="force-undo" onclick="resetForceLink(\'power\',\'transmission\',\'transmission\')"><i class="ti ti-rotate-left"></i> Changer ce choix (réinitialise la transmission et le powermeter)</div>';
+            }
+          }
+          return '';
+        })() +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function togglePost(id) {
+  openPost = openPost === id ? null : id;
+  renderPosts();
+  if (openPost) {
+    setTimeout(() => {
+      const el = document.querySelector('[data-post-id="' + openPost + '"]');
+      if (el) {
+        const top = el.getBoundingClientRect().top + window.scrollY - 70;
+        window.scrollTo({ top, behavior: 'smooth' });
+      }
+    }, 50);
+  }
+}
+
+// Règles de sélection forcée bidirectionnelle
+const FORCE_SELECT = [
+  // Cintre plat ↔ CUES FLAT
+  { if_selected: 'trans_gr_sh_cuf',       force: { pilotage: 'pilotage_gr_flat_ext' } },
+  { if_selected: 'pilotage_gr_flat_ext',  force: { transmission: 'trans_gr_sh_cuf' } },
+  // Powermeter → transmission
+  { if_selected: 'pwr_gr_sr_ri', force: { transmission: 'trans_gr_sr_ri' } },
+  { if_selected: 'pwr_gr_sr_fo', force: { transmission: 'trans_gr_sr_fo' } },
+  { if_selected: 'pwr_gr_sr_re', force: { transmission: 'trans_gr_sr_re' } },
+  { if_selected: 'pwr_gr_ca_re', force: { transmission: 'trans_gr_ca_re' } },
+  { if_selected: 'pwr_rd_sr_ri', force: { transmission: 'trans_rd_sr_ri' } },
+  { if_selected: 'pwr_rd_sr_fo', force: { transmission: 'trans_rd_sr_fo' } },
+  { if_selected: 'pwr_rd_sr_re', force: { transmission: 'trans_rd_sr_re' } },
+  { if_selected: 'pwr_rd_sh_ul', force: { transmission: 'trans_rd_sh_ul' } },
+  { if_selected: 'pwr_rd_sh_da', force: { transmission: 'trans_rd_sh_da' } },
+  { if_selected: 'pwr_rd_ca_re', force: { transmission: 'trans_rd_ca_re' } },
+  { if_selected: 'pwr_rd_ca_sre', force: { transmission: 'trans_rd_ca_sre' } },
+  { if_selected: 'pwr_vtt_sr_x0', force: { transmission: 'trans_vtt_sr_x0' } },
+  { if_selected: 'pwr_vtt_sr_xxs', force: { transmission: 'trans_vtt_sr_xxs' } },
+];
+
+function selectOpt(postId, optId) {
+  selOpts[postId] = optId;
+
+  // 1. Si on change de transmission → remettre power sur pwr_all (sauf si pwr_all déjà)
+  if (postId === 'transmission') {
+    const currentPwr = selOpts['power'];
+    if (currentPwr && currentPwr !== 'pwr_all') {
+      // Le powermeter actuel est-il compatible avec la nouvelle transmission ?
+      const pwrRule = FORCE_SELECT.find(r => r.if_selected === currentPwr && r.force.transmission);
+      if (!pwrRule || pwrRule.force.transmission !== optId) {
+        selOpts['power'] = 'pwr_all';
+      }
+    }
+  }
+
+  // 2. Sélections forcées (power → transmission, cintre plat ↔ CUES FLAT)
+  FORCE_SELECT.forEach(rule => {
+    if (rule.if_selected === optId) {
+      Object.entries(rule.force).forEach(([forcePost, forceId]) => {
+        const available = optionsFor(forcePost, selModel);
+        if (available.find(o => o.id === forceId)) {
+          selOpts[forcePost] = forceId;
+        }
+      });
+    }
+  });
+
+  // 3. Effacer les sélections incompatibles dans les autres postes
+  POST_META.forEach(p => {
+    if (p.id === postId) return;
+    if (!selOpts[p.id]) return;
+    const allIncompat = POST_META.reduce((acc, pp) => {
+      if (!selOpts[pp.id]) return acc;
+      const o = ALL_OPTIONS[pp.id]?.find(x => x.id === selOpts[pp.id]);
+      return o ? acc.concat(o.incompat) : acc;
+    }, []);
+    if (allIncompat.includes(selOpts[p.id])) selOpts[p.id] = null;
+  });
+
+  renderPosts(); updateRecap();
+}
+
+// ─── RÉCAPITULATIF ────────────────────────────────────────────────────────────
+function updateRecap() {
+  const model = MODELS.find(m => m.id === selModel);
+  if (!model) return;
+  const allDone = POST_META.every(p => !!selOpts[p.id]);
+  document.getElementById('recap-section').style.display = allDone ? 'block' : 'none';
+  document.getElementById('contact-hint').style.display = allDone ? 'block' : 'none';
+  if (!allDone) return;
+
+  const { price, weight } = computeTotals(selModel, selOpts);
+
+  const postIcons = {
+    fourche: 'ti-git-fork', roues: 'ti-circle', pneus: 'ti-circle-dotted',
+    transmission: 'ti-settings', power: 'ti-activity', frein: 'ti-hand-stop',
+    pilotage: 'ti-adjustments-horizontal', selle: 'ti-armchair',
+    tige: 'ti-arrows-vertical', pedales: 'ti-rotate-clockwise'
+  };
+
+  // Build cards
+  let cards = '';
+  POST_META.forEach(p => {
+    const opt = optionsFor(p.id, selModel).find(o => o.id === selOpts[p.id]);
+    if (!opt) return;
+    let priceLabel = '', priceClass = '';
+    if (opt.locked)       { priceLabel = 'Inclus';                                     priceClass = 'incl'; }
+    else if (opt.price === 0) { priceLabel = '±0 €';                                   priceClass = 'zero'; }
+    else if (opt.price > 0)   { priceLabel = '+' + opt.price.toLocaleString('fr-FR') + ' €'; priceClass = 'pos';  }
+    else                      { priceLabel = opt.price.toLocaleString('fr-FR') + ' €'; priceClass = 'neg';  }
+
+    cards += '<div class="recap-card">' +
+      '<div class="recap-card-header"><i class="ti ' + (postIcons[p.id]||'ti-point') + '"></i>' + p.name + '</div>' +
+      '<div class="recap-card-name">' + opt.name + '</div>' +
+      '<div class="recap-card-price ' + priceClass + '">' + priceLabel + '</div>' +
+    '</div>';
+  });
+
+  // Build price detail
+  let details = '<div class="recap-price-detail"><span>Cadre — ' + model.name + '</span><span>' + model.basePrice.toLocaleString('fr-FR') + ' €</span></div>';
+  if (model.assembly) {
+    details += '<div class="recap-price-detail assembly"><span>Assemblage &amp; mise en route</span><span>' + model.assembly.toLocaleString('fr-FR') + ' €</span></div>';
+  }
+  POST_META.forEach(p => {
+    const opt = optionsFor(p.id, selModel).find(o => o.id === selOpts[p.id]);
+    if (!opt || isLocked(opt, selModel)) return;
+    let cls = '', label = '';
+    if (opt.price === 0)      { cls = ''; label = '±0 €'; }
+    else if (opt.price > 0)   { cls = 'upgrade'; label = '+' + opt.price.toLocaleString('fr-FR') + ' €'; }
+    else                      { cls = 'saving';  label = opt.price.toLocaleString('fr-FR') + ' €'; }
+    details += '<div class="recap-price-detail ' + cls + '"><span>' + p.name + ' — ' + opt.name + '</span><span>' + label + '</span></div>';
+  });
+
+  const recapHTML =
+    '<div class="recap-visual">' +
+      '<div class="recap-visual-title">Votre configuration</div>' +
+      '<div class="recap-model-card">' +
+        (model.photo ? '<img class="recap-model-photo" src="' + model.photo + '" alt="' + model.name + '">' : '') +
+        '<div class="recap-model-info">' +
+          '<div class="recap-model-badge">' + model.badge + '</div>' +
+          '<div class="recap-model-name">' + model.name + '</div>' +
+          '<div class="recap-model-price">Base : ' + model.basePrice.toLocaleString('fr-FR') + ' €</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="recap-cards">' + cards + '</div>' +
+      '<div class="recap-price-block">' +
+        details +
+        '<hr class="recap-price-divider">' +
+        '<div class="recap-total-block">' +
+          '<div class="recap-total-card"><div class="recap-total-label">Prix total</div><div class="recap-total-val price">' + price.toLocaleString('fr-FR') + ' €</div></div>' +
+          ''
+        '</div>' +
+      '</div>' +
+    '</div>';
+
+  document.getElementById('recap-box-container').innerHTML = recapHTML;
+}
+
+function resetConfig() {
+  selModel = null; selOpts = {}; openPost = null;
+  document.getElementById('posts-section').style.display = 'none';
+  document.getElementById('recap-section').style.display = 'none';
+  document.getElementById('save-form').classList.remove('open');
+  renderModels();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─── SAUVEGARDE ───────────────────────────────────────────────────────────────
+function toggleSaveForm() {
+  const f = document.getElementById('save-form');
+  f.classList.toggle('open');
+  if (f.classList.contains('open')) {
+    const model = MODELS.find(m => m.id === selModel);
+    document.getElementById('save-name-input').value = model.name + ' — ma configuration';
+    document.getElementById('save-toast').style.display = 'none';
+    setTimeout(() => document.getElementById('save-name-input').focus(), 50);
+  }
+}
+
+function saveConfig() {
+  const name = document.getElementById('save-name-input').value.trim();
+  if (!name) return;
+  const model = MODELS.find(m => m.id === selModel);
+  const { price, weight } = computeTotals(selModel, selOpts);
+  const details = POST_META.map(p => {
+    const opt = optionsFor(p.id, selModel).find(o => o.id === selOpts[p.id]);
+    return { post: p.name, option: opt ? opt.name : '—', locked: opt ? !!opt.locked : false, price: opt && !opt.locked ? opt.price : 0 };
+  });
+  const entry = { id: Date.now(), name, modelName: model.name, modelBadge: model.badge, date: new Date().toLocaleDateString('fr-FR'), price, weight, details, selModel, selOpts: { ...selOpts } };
+  savedConfigs.unshift(entry);
+  persistSaved();
+  updateSavedCount();
+  document.getElementById('save-toast').style.display = 'block';
+  setTimeout(() => {
+    document.getElementById('save-form').classList.remove('open');
+    document.getElementById('save-toast').style.display = 'none';
+  }, 1800);
+}
+
+function deleteConfig(id) {
+  if (!confirm('Supprimer cette configuration ?')) return;
+  savedConfigs = savedConfigs.filter(c => c.id !== id);
+  persistSaved();
+  updateSavedCount();
+  renderSaved();
+}
+
+function restoreConfig(id) {
+  const cfg = savedConfigs.find(c => c.id === id);
+  if (!cfg) return;
+  selModel = cfg.selModel; selOpts = { ...cfg.selOpts }; openPost = null;
+  switchTab('config');
+  renderModels(); renderPosts(); updateRecap();
+  document.getElementById('posts-section').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderSaved() {
+  const el = document.getElementById('saved-list');
+  if (!savedConfigs.length) {
+    el.innerHTML = '<div class="empty-saved"><i class="ti ti-bookmark" style="font-size:24px;display:block;margin-bottom:10px;opacity:.4"></i>Aucune configuration sauvegardée.<br>Complétez une configuration et cliquez sur "Sauvegarder".</div>';
+    return;
+  }
+  el.innerHTML = savedConfigs.map(c => `
+    <div class="saved-card">
+      <div class="sc-head">
+        <div>
+          <div class="sc-name">${c.name}</div>
+          <div class="sc-meta">${c.modelBadge} · sauvegardé le ${c.date}</div>
+        </div>
+        <button class="sc-delete" onclick="deleteConfig(${c.id})" title="Supprimer"><i class="ti ti-trash"></i></button>
+      </div>
+      <div class="sc-detail">${c.details.map(d => `<span style="opacity:.6">${d.post} :</span> ${d.option}`).join(' &nbsp;·&nbsp; ')}</div>
+      <div class="sc-totals">
+        <div class="sc-tot">Prix : <strong>${c.price.toLocaleString('fr-FR')} €</strong></div>
+        <div class="sc-tot">Poids : <strong>${(c.weight/1000).toFixed(2)} kg</strong></div>
+      </div>
+      <div class="sc-actions">
+        <button class="sc-btn blue" onclick="restoreConfig(${c.id})"><i class="ti ti-edit"></i> Reprendre / modifier</button>
+        <button class="sc-btn" onclick="openOrderModalFrom(${c.id})"><i class="ti ti-send"></i> Commander</button>
+      </div>
+    </div>`).join('');
+}
+
+// ─── MODAL COMMANDE ───────────────────────────────────────────────────────────
+function openOrderModal() {
+  document.getElementById('order-config-display').value = buildConfigText(selModel, selOpts);
+  document.getElementById('order-modal').classList.add('open');
+}
+function openOrderModalFrom(id) {
+  const cfg = savedConfigs.find(c => c.id === id);
+  if (!cfg) return;
+  document.getElementById('order-config-display').value = buildConfigText(cfg.selModel, cfg.selOpts);
+  document.getElementById('order-modal').classList.add('open');
+}
+function closeOrderModal() {
+  document.getElementById('order-modal').classList.remove('open');
+}
+async function sendOrder() {
+  const name = document.getElementById('order-name').value.trim();
+  const email = document.getElementById('order-email').value.trim();
+  const msg = document.getElementById('order-msg').value.trim();
+  const config = document.getElementById('order-config-display').value;
+  if (!name || !email) { alert('Merci de renseigner votre nom et votre email.'); return; }
+
+  const btnSend = document.querySelector('.btn-send');
+  btnSend.textContent = 'Envoi en cours...';
+  btnSend.disabled = true;
+
+  try {
+    const response = await fetch('https://formspree.io/f/mqeoqewy', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        nom: name,
+        email: email,
+        configuration: config,
+        message: msg || '—',
+      })
+    });
+
+    if (response.ok) {
+      closeOrderModal();
+      document.getElementById('order-name').value = '';
+      document.getElementById('order-email').value = '';
+      document.getElementById('order-msg').value = '';
+      alert('✅ Votre configuration a bien été envoyée ! Nous vous recontacterons rapidement.');
+    } else {
+      alert("Une erreur s'est produite. Merci de réessayer ou de nous contacter directement à info@obviouscycles.com");
+    }
+  } catch(e) {
+    alert("Impossible d'envoyer le formulaire. Vérifiez votre connexion internet.");
+  } finally {
+    btnSend.textContent = '↗ Envoyer';
+    btnSend.disabled = false;
+  }
+}
+
+
+// Réinitialiser un duo forcé (cintre plat ↔ CUES FLAT, powermeter ↔ transmission)
+function resetForceLink(postA, postB, scrollTo) {
+  selOpts[postA] = null;
+  selOpts[postB] = null;
+  openPost = scrollTo || postA;
+  renderPosts(); updateRecap();
+  setTimeout(() => {
+    const el = document.querySelector('[data-post-id="' + (scrollTo || postA) + '"]');
+    if (el) {
+      const top = el.getBoundingClientRect().top + window.scrollY - 70;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }
+  }, 50);
+}
+// Alias pour compatibilité
+function resetFlatBarForce() { resetForceLink('transmission','pilotage','transmission'); }
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+loadSaved();
+renderModels();
+
+// Présélection du modèle via paramètre URL (?modele=ON/ ou ?modele=gravel_racing)
+const ALIASES = {
+  'ON/':       'route',
+  'ON/OFF':    'gravel_racing',
+  'OUT/QUEST': 'gravel_bikepacking',
+  '/OFF':      'vtt_enduro',
+};
+const urlParams = new URLSearchParams(window.location.search);
+const modeleParam = urlParams.get('modele');
+if (modeleParam) {
+  const decoded = decodeURIComponent(modeleParam);
+  const resolvedId = ALIASES[decoded] || ALIASES[modeleParam] || decoded || modeleParam;
+  const modeleAuto = MODELS.find(m => m.id === resolvedId);
+  if (modeleAuto) {
+    window._singleModel = modeleAuto.id;
+    renderModels();
+    selectModel(modeleAuto.id);
+    // Remonter en haut de page après sélection auto
+    setTimeout(() => window.scrollTo({ top: 0, behavior: 'instant' }), 10);
+  }
+}
+</script>
+
+<button class="back-btn" onclick="window.history.back()" title="Retour à la page précédente"><i class="ti ti-arrow-left"></i> Retour</button>
+</body>
+</html>
