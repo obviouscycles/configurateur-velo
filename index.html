@@ -897,10 +897,13 @@ function selectModel(id) {
 
 // ─── RENDU POSTES ─────────────────────────────────────────────────────────────
 function renderPosts() {
-  document.getElementById('prog-bar').innerHTML = POST_META.map(p =>
+  // Masquer les postes qui n'ont qu'une seule option disponible (ex: power sans powermeter compatible)
+  const visiblePosts = POST_META.filter(p => optionsFor(p.id, selModel).length > 1);
+
+  document.getElementById('prog-bar').innerHTML = visiblePosts.map(p =>
     '<div class="prog-step ' + (selOpts[p.id] ? 'done' : '') + '"></div>').join('');
 
-  document.getElementById('posts-list').innerHTML = POST_META.map(p => {
+  document.getElementById('posts-list').innerHTML = visiblePosts.map(p => {
     const opts = optionsFor(p.id, selModel);
     // Clear selection if now blocked by incompatibility
     if (selOpts[p.id] && !opts.find(o => o.id === selOpts[p.id])) selOpts[p.id] = null;
