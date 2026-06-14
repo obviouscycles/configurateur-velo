@@ -478,6 +478,20 @@
     .model-card.sel .mc-price { color: var(--blue) !important; }
     .ph-sel { color: #f2f2f2 !important; }
   }
+
+  .change-model-btn {
+    display: none;
+    margin-top: 12px;
+    text-align: center;
+  }
+  .change-model-btn a {
+    font-size: 12px; color: #888; text-decoration: none;
+    border: 0.5px solid #444; padding: 6px 14px;
+    display: inline-flex; align-items: center; gap: 6px;
+    transition: color .15s, border-color .15s;
+    font-family: var(--font);
+  }
+  .change-model-btn a:hover { color: #F5C400; border-color: #F5C400; }
 </style>
 </head>
 <body>
@@ -508,6 +522,9 @@
       <div class="step-label" style="color:#888;">Étape 1 sur 2</div>
       <p class="section-title" style="color:#f2f2f2;">Choisissez votre modèle de base</p>
       <div class="model-grid" id="model-grid"></div>
+    <div class="change-model-btn" id="change-model-btn">
+      <a href="./"><i class="ti ti-grid-dots"></i> Changer de modèle</a>
+    </div>
     </div>
 
     <div id="posts-section" style="display:none">
@@ -873,6 +890,11 @@ function renderModels() {
   }
 
   document.getElementById('model-grid').className = 'model-grid' + (window._singleModel ? ' single' : '');
+
+  // Bouton "Changer de modèle" visible uniquement en mode single
+  const changeBtn = document.getElementById('change-model-btn');
+  if (changeBtn) changeBtn.style.display = window._singleModel ? 'block' : 'none';
+
   document.getElementById('model-grid').innerHTML = models.map(m => `
     <div class="model-card ${selModel === m.id ? 'sel' : ''}" onclick="selectModel('${m.id}')">
       ${m.photo ? `<img class="mc-photo" src="${m.photo}" alt="${m.name}" loading="lazy">` : ''}
