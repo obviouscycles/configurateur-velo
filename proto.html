@@ -479,36 +479,27 @@
     .ph-sel { color: #f2f2f2 !important; }
   }
 
-  /* ── PROTO : cartes photo pour les options ─────────────── */
+  /* ── PROTO : cartes photo ───────────────────────────────── */
   .opt-photo-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
     gap: 8px;
   }
   .opt-photo-card {
-    border: 0.5px solid var(--border);
-    border-radius: var(--radius-lg);
-    background: var(--bg);
-    cursor: pointer;
-    overflow: hidden;
+    border: 0.5px solid var(--border); border-radius: var(--radius-lg);
+    background: var(--bg); cursor: pointer; overflow: hidden;
     transition: border-color .15s, background .15s;
-    position: relative;
-    display: flex;
-    flex-direction: column;
+    position: relative; display: flex; flex-direction: column;
   }
   .opt-photo-card:hover { border-color: var(--border2); background: var(--bg2); }
   .opt-photo-card.sel { border: 2px solid var(--blue); background: var(--blue-light); }
   .opt-photo-card.sel .opc-name { color: var(--blue-dark); }
-  .opt-photo-card.sel .opc-price { color: #7a5f00; }
   .opc-img-wrap {
-    aspect-ratio: 4/3;
-    background: var(--bg2);
+    aspect-ratio: 4/3; background: var(--bg2);
     display: flex; align-items: center; justify-content: center;
-    overflow: hidden;
-    border-bottom: 0.5px solid var(--border);
-    flex-shrink: 0;
+    overflow: hidden; border-bottom: 0.5px solid var(--border); flex-shrink: 0;
   }
-  .opt-photo-card.sel .opc-img-wrap { background: #fff8d6; border-color: #e8d080; }
+  .opt-photo-card.sel .opc-img-wrap { background: #fffbee; border-color: #e8d080; }
   .opc-img-wrap img {
     width: 100%; height: 100%; object-fit: contain; padding: 8px;
     transition: transform .2s;
@@ -546,7 +537,6 @@
   @media (prefers-color-scheme: dark) {
     .opt-photo-card.sel { background: #2a2200 !important; }
     .opt-photo-card.sel .opc-name { color: #FFF8D6 !important; }
-    .opt-photo-card.sel .opc-price { color: var(--blue) !important; }
     .opt-photo-card.sel .opc-img-wrap { background: #1a1200 !important; border-color: #5a4400 !important; }
   }
 </style>
@@ -660,10 +650,10 @@
 // ─── DONNÉES ────────────────────────────────────────────────────────────────
 
 const MODELS = [
+  { id: 'route',             name: 'ON/ Route',                 badge: 'Route',          desc: 'Cadre titane, fourche carbone, sportif et polyvalent',                                  basePrice: 5190, assembly: 300, photo: 'https://www.obviouscycles.com/wp-content/uploads/2025/05/on-da-1-mifi-655x460.jpg?m=1747931996' },
   { id: 'gravel_racing',     name: 'ON/OFF Gravel Racing',      badge: 'Gravel',         desc: 'Cadre titane, géométrie sport, fourche carbone, intégration complète',                 basePrice: 4450, assembly: 300, photo: 'https://www.obviouscycles.com/wp-content/uploads/2024/03/onoff-2024-6-655x427.webp?m=1711027780' },
   { id: 'gravel_bikepacking',name: 'OUT/QUEST Gravel Aventure', badge: 'Bikepacking',    desc: "Cadre titane, géométrie confort / longue distance, nombreux points d'accroche",         basePrice: 4390, assembly: 300, photo: 'https://www.obviouscycles.com/wp-content/uploads/2024/11/outquest-1-655x450.webp?m=1730756293' },
   { id: 'vtt_enduro',        name: '/OFF Enduro HT',            badge: 'Trail / Enduro', desc: 'Cadre titane semi-rigide, géométrie enduro, fourche 140/150 mm, boost 148 mm',          basePrice: 5090, assembly: 300, photo: 'https://www.obviouscycles.com/wp-content/uploads/2024/12/off-x0-1-1-655x404.webp?m=1733503243' },
-  { id: 'route',             name: 'ON/ Route',                 badge: 'Route',          desc: 'Cadre titane, fourche carbone, sportif et polyvalent',                                  basePrice: 5190, assembly: 300, photo: 'https://www.obviouscycles.com/wp-content/uploads/2025/05/on-da-1-mifi-655x460.jpg?m=1747931996' },
 ];
 
 const ALL_OPTIONS = {
@@ -982,11 +972,12 @@ function renderPosts() {
 
   document.getElementById('posts-list').innerHTML = visiblePosts.map(p => {
     const opts = optionsFor(p.id, selModel);
+    // Clear selection if now blocked by incompatibility
     if (selOpts[p.id] && !opts.find(o => o.id === selOpts[p.id])) selOpts[p.id] = null;
     const selOpt = selOpts[p.id] ? opts.find(o => o.id === selOpts[p.id]) : null;
     const isOpen = openPost === p.id;
 
-    // Détecter si au moins une option a une image → mode cartes photo
+    // Mode cartes photo si au moins une option a une image
     const hasPhotos = opts.some(o => o.image && o.image.length > 0);
 
     const optsHTML = hasPhotos
@@ -995,20 +986,18 @@ function renderPosts() {
             const rec = isRecommended(o, selModel);
             const locked = isLocked(o, selModel);
             let priceStr;
-            if (locked) priceStr = '<span style="font-size:9px;background:#F1EFE8;color:#5F5E5A;border-radius:20px;padding:1px 6px;"><i class="ti ti-lock" style="font-size:8px"></i> inclus</span>';
+            if (locked) priceStr = '';
             else if (o.price === 0) priceStr = '±0 €';
             else if (o.price > 0) priceStr = '+' + o.price.toLocaleString('fr-FR') + ' €';
             else priceStr = o.price.toLocaleString('fr-FR') + ' €';
-
             const imgHTML = o.image
-              ? '<img src="' + o.image + '" alt="' + o.name + '" loading="lazy" onerror="this.parentNode.classList.add(\'no-img\');this.style.display=\'none\'">'
+              ? '<img src="' + o.image + '" alt="' + o.name + '" loading="lazy" onerror="this.style.display=\'none\'">'
               : '<div class="opc-img-placeholder"><i class="ti ti-photo"></i><span>photo à venir</span></div>';
-
             return '<div class="opt-photo-card ' + (selOpts[p.id] === o.id ? 'sel' : '') + '" onclick="selectOpt(\'' + p.id + '\',\'' + o.id + '\')">' +
               '<div class="opc-check"><i class="ti ti-check"></i></div>' +
               '<div class="opc-img-wrap">' + imgHTML + '</div>' +
               '<div class="opc-body">' +
-                (locked || rec ? '<div class="opc-badges">' +
+                ((locked || rec) ? '<div class="opc-badges">' +
                   (locked ? '<span class="opc-badge-incl"><i class="ti ti-lock" style="font-size:8px"></i> inclus</span>' : '') +
                   (rec ? '<span class="opc-badge-rec"><i class="ti ti-star" style="font-size:8px"></i> Recommandé</span>' : '') +
                 '</div>' : '') +
