@@ -492,6 +492,27 @@
     font-family: var(--font);
   }
   .change-model-btn a:hover { color: #F5C400; border-color: #F5C400; }
+
+  /* Boutons pré-config sous la carte modèle */
+  .preset-bar {
+    display: none;
+    padding: 10px 12px 12px;
+    background: #1e1e1e;
+    border-top: 0.5px solid #333;
+  }
+  .preset-label {
+    font-size: 10px; color: #888; text-transform: uppercase;
+    letter-spacing: .08em; margin-bottom: 8px;
+  }
+  .preset-btns { display: flex; gap: 6px; }
+  .preset-btn {
+    flex: 1; padding: 7px 4px; font-size: 12px; font-weight: 500;
+    border: 0.5px solid #444; background: #111; color: #ccc;
+    cursor: pointer; font-family: var(--font); text-align: center;
+    transition: border-color .15s, color .15s, background .15s;
+  }
+  .preset-btn:hover { border-color: var(--blue); color: var(--blue); background: #1a1500; }
+  .preset-btn.active { border-color: var(--blue); color: var(--blue); background: #1a1500; }
 </style>
 </head>
 <body>
@@ -895,8 +916,10 @@ function renderModels() {
   const changeBtn = document.getElementById('change-model-btn');
   if (changeBtn) changeBtn.style.display = window._singleModel ? 'block' : 'none';
 
-  document.getElementById('model-grid').innerHTML = models.map(m => `
-    <div class="model-card ${selModel === m.id ? 'sel' : ''}" onclick="selectModel('${m.id}')">
+  document.getElementById('model-grid').innerHTML = models.map(m => {
+    const isSingle = !!window._singleModel;
+    const hasPresets = isSingle && PRESETS[m.id];
+    return `<div class="model-card ${selModel === m.id ? 'sel' : ''}" onclick="selectModel('${m.id}')">
       ${m.photo ? `<img class="mc-photo" src="${m.photo}" alt="${m.name}" loading="lazy">` : ''}
       <div class="mc-text">
         <span class="mc-badge">${m.badge}</span>
@@ -904,11 +927,22 @@ function renderModels() {
         <span class="mc-desc">${m.desc}</span>
         <span class="mc-price">à partir de ${(m.basePrice + (m.assembly||0)).toLocaleString('fr-FR')} €</span>
       </div>
-    </div>`).join('');
+      ${hasPresets ? `<div class="preset-bar" id="preset-bar-${m.id}" style="display:block" onclick="event.stopPropagation()">
+        <div class="preset-label">3 pré-configurations</div>
+        <div class="preset-btns">
+          <button class="preset-btn" onclick="loadPreset('Signature')">Signature</button>
+          <button class="preset-btn" onclick="loadPreset('Ti1')">Ti1</button>
+          <button class="preset-btn" onclick="loadPreset('Ti2')">Ti2</button>
+        </div>
+      </div>` : ''}
+    </div>`;
+  }).join('');
 }
 
 function selectModel(id) {
   selModel = id; selOpts = {}; openPost = null;
+  // Passer en mode single-modèle si on vient de la grille des 4
+  if (!window._singleModel) window._singleModel = id;
   autoSelectLocked(id);
   renderModels(); renderPosts();
   document.getElementById('posts-section').style.display = 'block';
@@ -1300,6 +1334,56 @@ function resetForceLink(postA, postB, scrollTo) {
 }
 // Alias pour compatibilité
 function resetFlatBarForce() { resetForceLink('transmission','pilotage','transmission'); }
+
+
+// Pré-configurations depuis l'onglet Gamme 2026
+const PRESETS = {
+  'gravel_racing': {
+    'Ti2':       {fourche:'fourche_gr_car_00',roues:'roue_gr_fu_soa',pneus:'pneu_gr_sc_r',transmission:'trans_gr_sh_611',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_gr_suz_alu',selle:'selle_rd_ant_r5',tige:'tige_rd_ob_car',pedales:'ped_no'},
+    'Ti1':       {fourche:'fourche_gr_car_00',roues:'roue_gr_ob_35',pneus:'pneu_gr_sc_r',transmission:'trans_gr_sr_fo',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_gr_suz_alu',selle:'selle_rd_ant_r3',tige:'tige_rd_ob_car',pedales:'ped_no'},
+    'Signature': {fourche:'fourche_gr_car_00',roues:'roue_gr_ob_35',pneus:'pneu_gr_sc_r',transmission:'trans_gr_sr_re',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_gr_suz_car',selle:'selle_rd_arg_r00',tige:'tige_rd_ob_car',pedales:'ped_no'},
+  },
+  'gravel_bikepacking': {
+    'Ti2':       {fourche:'fourche_gr_car_ins',roues:'roue_gr_fu_soa',pneus:'pneu_gr_sc_r',transmission:'trans_gr_sh_cud',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_gr_drp_alu',selle:'selle_gr_arg_x5',tige:'tige_rd_ob_car',pedales:'ped_no'},
+    'Ti1':       {fourche:'fourche_gr_car_ins',roues:'roue_gr_dt_g16',pneus:'pneu_gr_sc_r',transmission:'trans_gr_sh_821',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_gr_ger_alu',selle:'selle_gr_arg_x3',tige:'tige_rd_ob_ti',pedales:'ped_no'},
+    'Signature': {fourche:'fourche_gr_car_ins',roues:'roue_gr_ob_35',pneus:'pneu_gr_sc_r',transmission:'trans_gr_ca_re',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_gr_ger_alu',selle:'selle_br_b17_ho',tige:'tige_rd_ob_ti',pedales:'ped_no'},
+  },
+  'route': {
+    'Ti2':       {fourche:'fourche_rd_car_00',roues:'roue_rd_dt_p16',pneus:'pneu_rd_co_gp',transmission:'trans_rd_sh_105',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_rd_suz_alu',selle:'selle_rd_ant_r5',tige:'tige_rd_ob_car',pedales:'ped_no'},
+    'Ti1':       {fourche:'fourche_rd_car_00',roues:'roue_rd_ob_35',pneus:'pneu_rd_co_gp',transmission:'trans_rd_sr_fo',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_rd_suz_alu',selle:'selle_rd_ant_r3',tige:'tige_rd_ob_car',pedales:'ped_no'},
+    'Signature': {fourche:'fourche_rd_car_00',roues:'roue_rd_fu_w57',pneus:'pneu_rd_co_gp',transmission:'trans_rd_sh_da',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_rd_ala',selle:'selle_rd_ari_r00',tige:'tige_rd_ob_car',pedales:'ped_no'},
+  },
+  'vtt_enduro': {
+    'Ti2':       {fourche:'fourche_vtt_rs_lyr_sel_150',roues:'roue_vtt_fu_rm5',pneus:'pneu_vtt_sc_gra',transmission:'trans_vtt_sh_slx',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_vtt_end',selle:'selle_vtt_alpt_x5',tige:'tige_vtt_ou_tel',pedales:'ped_no'},
+    'Ti1':       {fourche:'fourche_vtt_rs_lyr_ult_150',roues:'roue_vtt_dt_e17',pneus:'pneu_vtt_sc_gra',transmission:'trans_vtt_sh_xt',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_vtt_end',selle:'selle_vtt_alpt_x5',tige:'tige_vtt_ou_tel',pedales:'ped_no'},
+    'Signature': {fourche:'fourche_vtt_fox_fac_36_150',roues:'roue_vtt_ob_30',pneus:'pneu_vtt_sc_gra',transmission:'trans_vtt_sr_x0',power:'pwr_all',frein:'frein_vtt_sr_mvs',pilotage:'pilotage_vtt_end',selle:'selle_vtt_alpt_x5',tige:'tige_vtt_ou_tel',pedales:'ped_no'},
+  },
+};
+
+function loadPreset(decl) {
+  const preset = PRESETS[selModel] && PRESETS[selModel][decl];
+  if (!preset) return;
+  selOpts = {...preset};
+  // Appliquer FORCE_SELECT
+  Object.keys(selOpts).forEach(postId => {
+    const optId = selOpts[postId];
+    if (!optId) return;
+    FORCE_SELECT.forEach(rule => {
+      if (rule.if_selected === optId) {
+        Object.entries(rule.force).forEach(([fp, fid]) => {
+          if (!selOpts[fp]) selOpts[fp] = fid;
+        });
+      }
+    });
+  });
+  renderPosts();
+  updateRecap();
+  // Scroll vers l'étape 2
+  setTimeout(() => {
+    const el = document.getElementById('posts-section');
+    if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 70, behavior: 'smooth' });
+  }, 80);
+}
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 loadSaved();
