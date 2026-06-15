@@ -1077,19 +1077,10 @@ const FORCE_SELECT = [
 function selectOpt(postId, optId) {
   selOpts[postId] = optId;
 
-  // Si la transmission VTT change, réinitialiser le frein pour pré-sélectionner le bon
+  // Si la transmission VTT change → forcer le bon frein
   if (postId === 'transmission' && selModel === 'vtt_enduro') {
-    selOpts['frein'] = null;
     const isSramVtt = optId && optId.startsWith('trans_vtt_sr_');
-    const freinsOpts = ALL_OPTIONS['frein'] || [];
-    const toPreselect = freinsOpts.find(o => {
-      const compat = o.compat.some(c => c.mid === selModel);
-      if (!compat) return false;
-      if (o.id === 'frein_all') return !isSramVtt;
-      if (o.id === 'frein_vtt_sr_db8') return isSramVtt;
-      return false;
-    });
-    if (toPreselect) selOpts['frein'] = toPreselect.id;
+    selOpts['frein'] = isSramVtt ? 'frein_vtt_sr_db8' : 'frein_all';
   }
 
   // Vérifier si la config courante correspond à un preset
