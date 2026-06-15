@@ -963,7 +963,7 @@ function selectModel(id) {
   document.getElementById('posts-section').style.display = 'block';
   document.getElementById('recap-section').style.display = 'none';
   document.getElementById('save-form').classList.remove('open');
-  document.getElementById('posts-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  window.scrollTo({ top: 0, behavior: 'instant' }); // toujours en haut
 }
 
 // ─── RENDU POSTES ─────────────────────────────────────────────────────────────
@@ -1076,6 +1076,21 @@ const FORCE_SELECT = [
 
 function selectOpt(postId, optId) {
   selOpts[postId] = optId;
+
+  // Si la transmission VTT change, réinitialiser le frein pour pré-sélectionner le bon
+  if (postId === 'transmission' && selModel === 'vtt_enduro') {
+    selOpts['frein'] = null;
+    const isSramVtt = optId && optId.startsWith('trans_vtt_sr_');
+    const freinsOpts = ALL_OPTIONS['frein'] || [];
+    const toPreselect = freinsOpts.find(o => {
+      const compat = o.compat.some(c => c.mid === selModel);
+      if (!compat) return false;
+      if (o.id === 'frein_all') return !isSramVtt;
+      if (o.id === 'frein_vtt_sr_db8') return isSramVtt;
+      return false;
+    });
+    if (toPreselect) selOpts['frein'] = toPreselect.id;
+  }
 
   // Vérifier si la config courante correspond à un preset
   const postes = ['fourche','roues','pneus','transmission','power','frein','pilotage','selle','tige','pedales'];
