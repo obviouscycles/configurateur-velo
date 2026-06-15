@@ -1722,6 +1722,129 @@ if (modeleParam) {
 ;
 </script>
 
+  <!-- ── ÉTAPE 3 ── -->
+  <div id="step3-section" style="display:none; max-width:860px; margin:0 auto; padding:0 1rem 3rem;">
+    <div class="step3-intro">
+      <div class="step-label">Étape 3 sur 3 — Optionnelle</div>
+      <h2>Souhaitez-vous personnaliser votre cadre ?</h2>
+      <p>Le configurateur vous a permis de choisir vos composants sur un cadre <strong>standard</strong> — c'est le forfait <strong>Essentiel</strong>, gratuit.<br>
+      Si vous souhaitez aller plus loin — adapter le cadre à votre morphologie, ajouter des fonctions, ou créer un vélo vraiment unique — trois niveaux supplémentaires sont disponibles, cumulatifs vers le bas.</p>
+    </div>
+
+    <div class="step3-cards">
+
+      <!-- ÉVOLUTION -->
+      <div class="step3-card" id="s3-evolution" onclick="selectStep3('evolution')">
+        <div class="step3-card-header">
+          <span class="s3-name">ÉVOLUTION</span>
+          <span class="s3-price">+ 60 €</span>
+        </div>
+        <div class="step3-card-body">
+          <div class="step3-card-tagline">Ajoutez des fonctions à votre vélo</div>
+          <div class="step3-card-desc">Des adaptations simples sur le cadre standard pour optimiser sa polyvalence et l'intégration de vos accessoires.</div>
+          <ul class="step3-card-items">
+            <li>Inserts supplémentaires (porte-bidons, bagageries)</li>
+            <li>Fixation ISCG05 pour guide-chaîne</li>
+            <li>Patte arrière T-Type / UDH</li>
+            <li>Suppression patte dérailleur avant (mono-plateau)</li>
+            <li>Gravure personnalisée</li>
+          </ul>
+        </div>
+        <div class="step3-evolution-options" onclick="event.stopPropagation()">
+          <div class="step3-evo-title">Choisissez vos options</div>
+          <label class="step3-evo-item"><input type="checkbox" name="evo" value="inserts"> Inserts supplémentaires porte-bidons / bagageries</label>
+          <label class="step3-evo-item"><input type="checkbox" name="evo" value="iscg"> Fixation ISCG05 pour guide-chaîne</label>
+          <label class="step3-evo-item"><input type="checkbox" name="evo" value="udh"> Patte arrière T-Type / UDH</label>
+          <label class="step3-evo-item"><input type="checkbox" name="evo" value="mono"> Suppression patte dérailleur avant (mono-plateau)</label>
+          <label class="step3-evo-item"><input type="checkbox" name="evo" value="gravure"> Gravure personnalisée</label>
+        </div>
+        <div class="step3-card-footer">
+          <div class="step3-radio"></div>
+          <span class="step3-select-label">Choisir ce niveau</span>
+        </div>
+      </div>
+
+      <!-- PERFORMANCE -->
+      <div class="step3-card" id="s3-performance" onclick="selectStep3('performance')">
+        <div class="step3-card-header">
+          <span class="s3-name">PERFORMANCE</span>
+          <span class="s3-price">+ 300 €</span>
+        </div>
+        <div class="step3-card-body">
+          <div class="step3-card-tagline">Adaptez la géométrie à votre pratique</div>
+          <div class="step3-card-desc">Le cadre est dessiné selon votre morphologie et votre usage. Inclut les options du niveau Évolution.</div>
+          <ul class="step3-card-items">
+            <li>Géométrie liée à votre morphologie</li>
+            <li>Adaptation à votre pratique (route → all-road, etc.)</li>
+            <li>Ajustements liés à un composant spécifique</li>
+            <li>Toutes les options Évolution incluses</li>
+          </ul>
+        </div>
+        <div class="step3-perf-form" onclick="event.stopPropagation()">
+          <div class="step3-evo-title">Vos informations morphologiques</div>
+          <div class="step3-perf-grid">
+            <div class="step3-perf-field">
+              <label>Taille (cm)</label>
+              <input type="number" id="perf-taille" placeholder="ex: 178" min="140" max="210">
+            </div>
+            <div class="step3-perf-field">
+              <label>Entrejambe (cm)</label>
+              <input type="number" id="perf-entrejambe" placeholder="ex: 84" min="60" max="110">
+            </div>
+            <div class="step3-perf-field">
+              <label>Envergure (cm)</label>
+              <input type="number" id="perf-envergure" placeholder="ex: 180" min="140" max="220">
+            </div>
+            <div class="step3-perf-field">
+              <label>Usage principal</label>
+              <select id="perf-usage">
+                <option value="">Sélectionner...</option>
+                <option>Route / Sportif</option>
+                <option>Endurance / Longue distance</option>
+                <option>All-road / Polyvalent</option>
+                <option>Gravel / Bikepacking</option>
+                <option>Trail / Enduro</option>
+              </select>
+            </div>
+          </div>
+          <p class="step3-perf-note">Ces informations nous permettent d'amorcer la réflexion. Nous vous contacterons pour un échange approfondi avant de valider la géométrie.</p>
+        </div>
+        <div class="step3-card-footer">
+          <div class="step3-radio"></div>
+          <span class="step3-select-label">Choisir ce niveau</span>
+        </div>
+      </div>
+
+      <!-- TITANIUM -->
+      <div class="step3-card" id="s3-titanium" onclick="selectStep3('titanium')">
+        <div class="step3-card-header">
+          <span class="s3-name">TITANIUM</span>
+          <span class="s3-price">+ 720 €</span>
+        </div>
+        <div class="step3-card-body">
+          <div class="step3-card-tagline">Prenez les commandes</div>
+          <div class="step3-card-desc">Personnalisation avancée : tubes, intégration, formes. Un vélo titane vraiment unique. Inclut tous les niveaux précédents.</div>
+          <ul class="step3-card-items">
+            <li>Intégration complète des gaines</li>
+            <li>Modification des formes / sections des tubes</li>
+            <li>Passage de roues élargi ou réduit</li>
+            <li>Compatibilité composants atypiques</li>
+            <li>Toutes les options Évolution et Performance incluses</li>
+          </ul>
+        </div>
+        <div class="step3-ti-form" onclick="event.stopPropagation()">
+          <div class="step3-evo-title">Décrivez votre projet</div>
+          <textarea id="ti-description" placeholder="Décrivez vos envies, vos contraintes, vos idées... Nous vous contacterons pour un échange approfondi."></textarea>
+          <p class="step3-ti-note">Le niveau Titanium fait l'objet d'un accompagnement personnalisé. Après réception de votre configuration, nous vous contactons pour co-concevoir votre cadre.</p>
+        </div>
+        <div class="step3-card-footer">
+          <div class="step3-radio"></div>
+          <span class="step3-select-label">Choisir ce niveau</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
 <button class="back-btn" onclick="window.history.back()" title="Retour à la page précédente"><i class="ti ti-arrow-left"></i> Retour</button>
 </body>
 </html>
