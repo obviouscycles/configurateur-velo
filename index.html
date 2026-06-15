@@ -1077,10 +1077,23 @@ const FORCE_SELECT = [
 function selectOpt(postId, optId) {
   selOpts[postId] = optId;
 
-  // Si la transmission VTT change → forcer le bon frein
+  // Transmission VTT : impose le frein
   if (postId === 'transmission' && selModel === 'vtt_enduro') {
     const isSramVtt = optId && optId.startsWith('trans_vtt_sr_');
-    selOpts['frein'] = isSramVtt ? 'frein_vtt_sr_db8' : 'frein_all';
+    if (isSramVtt) {
+      // SRAM → frein_all interdit, pré-sélectionner DB8
+      if (!selOpts['frein'] || selOpts['frein'] === 'frein_all') {
+        selOpts['frein'] = 'frein_vtt_sr_db8';
+      }
+    } else {
+      // Shimano → imposer frein_all
+      selOpts['frein'] = 'frein_all';
+    }
+  }
+  // Si le visiteur tente de choisir frein_all avec trans SRAM VTT → bloquer
+  if (postId === 'frein' && optId === 'frein_all' && selModel === 'vtt_enduro') {
+    const isSramVtt = selOpts['transmission'] && selOpts['transmission'].startsWith('trans_vtt_sr_');
+    if (isSramVtt) return; // ignorer le choix
   }
 
   // Vérifier si la config courante correspond à un preset
@@ -1132,6 +1145,7 @@ function selectOpt(postId, optId) {
     if (allIncompat.includes(selOpts[p.id])) selOpts[p.id] = null;
   });
 
+  renderModels(); // mettre à jour surbrillance boutons preset
   renderPosts(); updateRecap();
 }
 
