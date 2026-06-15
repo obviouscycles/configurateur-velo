@@ -645,6 +645,65 @@
     cursor: pointer; text-decoration: underline;
   }
   .step3-trigger .skip-link:hover { color: #555; }
+
+  /* ── Étape 3 pivot (entre étape 2 et récap) ── */
+  #ood-section {
+    display: none;
+    background: #111111;
+    padding: 1.5rem;
+    margin-bottom: 0;
+  }
+  .ood-section-label { color: #888; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px; }
+  .ood-section-title { color: #fff; font-size: 18px; font-weight: 600; margin-bottom: 10px; }
+  .ood-section-text { color: #aaa; font-size: 13px; line-height: 1.65; margin-bottom: 1.2rem; }
+  .ood-section-text strong { color: #f2f2f2; }
+  .ood-section-actions { display: flex; flex-direction: column; gap: 10px; }
+  @media (min-width: 480px) { .ood-section-actions { flex-direction: row; align-items: center; } }
+  .ood-section-btn-yes {
+    background: var(--blue); color: #1a1a00; border: none;
+    padding: 11px 22px; font-size: 13px; font-weight: 600;
+    font-family: var(--font); cursor: pointer;
+    display: inline-flex; align-items: center; gap: 7px;
+    transition: opacity .15s;
+  }
+  .ood-section-btn-yes:hover { opacity: .85; }
+  .ood-section-btn-no {
+    background: transparent; color: #888; border: 0.5px solid #444;
+    padding: 11px 22px; font-size: 13px;
+    font-family: var(--font); cursor: pointer;
+    display: inline-flex; align-items: center; gap: 7px;
+    transition: border-color .15s, color .15s;
+  }
+  .ood-section-btn-no:hover { border-color: #888; color: #ccc; }
+
+  /* ── Cadre OOD (entre étape 2 et récap) ── */
+  #ood-section {
+    display: none;
+    background: #111111;
+    padding: 1.5rem;
+    margin: 0 auto 0;
+    max-width: 860px;
+  }
+  .ood-step-label { font-size: 11px; color: #888; text-transform: uppercase;
+    letter-spacing: .08em; margin-bottom: 6px; }
+  .ood-title { font-size: 18px; font-weight: 600; color: #fff; margin-bottom: 10px; }
+  .ood-desc { font-size: 13px; color: #aaa; line-height: 1.65; margin-bottom: 20px; }
+  .ood-desc strong { color: #f2f2f2; }
+  .ood-actions { display: flex; flex-direction: column; gap: 10px; }
+  @media (min-width: 540px) { .ood-actions { flex-direction: row; align-items: center; gap: 14px; } }
+  .ood-btn-yes {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: var(--blue); color: #1a1a00; padding: 11px 22px;
+    font-size: 13px; font-weight: 600; font-family: var(--font);
+    border: none; cursor: pointer; white-space: nowrap;
+  }
+  .ood-btn-yes:hover { background: #e6b800; }
+  .ood-btn-no {
+    font-size: 12px; color: #888; cursor: pointer;
+    text-decoration: underline; background: none; border: none;
+    font-family: var(--font); padding: 0;
+  }
+  .ood-btn-no:hover { color: #ccc; }
 </style>
 </head>
 <body>
@@ -688,13 +747,43 @@
       <div id="posts-list"></div>
     </div>
 
-    <div id="contact-hint" style="display:none;padding:0 0 1rem;font-size:13px;color:var(--text2);">
+    <!-- ── Étape 3 pivot ── -->
+<div class="ood-section-title">Souhaitez-vous personnaliser votre cadre ?</div>
+      <div class="ood-section-text">
+        Le configurateur vous a permis de choisir vos composants sur un cadre <strong>standard</strong> — c'est le forfait <strong>Essentiel</strong>, gratuit.<br><br>
+        Si vous souhaitez aller plus loin — adapter le cadre à votre morphologie, ajouter des fonctions, ou créer un vélo vraiment unique — trois niveaux supplémentaires sont disponibles, <strong>cumulatifs vers le bas</strong>.
+      </div>
+      <div class="ood-section-actions">
+        <button class="ood-section-btn-yes" onclick="openStep3()">
+          <i class="ti ti-adjustments-plus"></i> Découvrir les niveaux de personnalisation
+        </button>
+        <button class="ood-section-btn-no" onclick="skipOOD()">
+          <i class="ti ti-arrow-right"></i> Passer au récapitulatif
+        </button>
+      </div>
+    </div>
+
+
+  <!-- ── CADRE OOD ── -->
+  <div id="ood-section">
+    <div class="ood-step-label">Étape 3 sur 3 — Optionnelle</div>
+    <div class="ood-title">Souhaitez-vous personnaliser votre cadre ?</div>
+    <div class="ood-desc">
+      Le configurateur vous a permis de choisir vos composants sur un cadre <strong>standard</strong> — c'est le forfait <strong>Essentiel</strong>, gratuit.<br><br>
+      Si vous souhaitez aller plus loin — adapter le cadre à votre morphologie, ajouter des fonctions, ou créer un vélo vraiment unique — trois niveaux supplémentaires sont disponibles, <strong>cumulatifs vers le bas</strong>.
+    </div>
+    <div class="ood-actions">
+      <button class="ood-btn-yes" onclick="openStep3()">
+        <i class="ti ti-adjustments-plus"></i> Découvrir les niveaux de personnalisation
+      </button>
+      <button class="ood-btn-no" onclick="skipOOD()">Non merci, voir ma configuration</button>
+    </div>
+  </div>
+
+    <div id="contact-hint"</p> style="display:none;padding:0 0 1rem;font-size:13px;color:var(--text2);">
       Pour tout autre montage, <a href="https://www.obviouscycles.com/contact/" target="_blank" style="color:var(--blue);text-decoration:none;font-weight:500;">contactez-nous</a>.
     </div>
-    <div id="step3-trigger-zone" class="step3-trigger" style="display:none">
-      <button onclick="openStep3()"><i class="ti ti-adjustments-plus"></i> Personnaliser mon cadre</button>
-      <span class="skip-link" onclick="skipStep3()">Non merci, passer à la commande directement</span>
-    </div>
+
     <div id="recap-section" style="display:none">
       <p class="section-title" style="margin-top:.75rem">Votre configuration</p>
       <div id="recap-box-container"></div>
@@ -1113,6 +1202,10 @@ function selectModel(id) {
   renderModels();
   renderPosts();
   updateRecap();
+  // Afficher directement récap + OOD quand preset chargé
+  document.getElementById('ood-section').style.display = 'block';
+  document.getElementById('recap-section').style.display = 'block';
+  document.getElementById('contact-hint').style.display = 'block';
   document.getElementById('save-form').classList.remove('open');
   window.scrollTo({ top: 0, behavior: 'instant' });
 }
@@ -1310,9 +1403,9 @@ function updateRecap() {
     return optionsFor('power', selModel).length > 1;
   }).map(p => p.id);
   const allDone = visiblePostIds.every(p => !!selOpts[p]);
-  document.getElementById('recap-section').style.display = allDone ? 'block' : 'none';
-  document.getElementById('contact-hint').style.display = allDone ? 'block' : 'none';
-  document.getElementById('step3-trigger-zone').style.display = allDone ? 'block' : 'none';
+  document.getElementById('recap-section').style.display = 'none'; // affiché après choix étape 3
+  document.getElementById('contact-hint').style.display = 'none';
+  document.getElementById('ood-section').style.display = allDone ? 'block' : 'none';
   if (!allDone) return;
 
   const { price, weight } = computeTotals(selModel, selOpts);
@@ -1595,18 +1688,30 @@ let selStep3 = null; // 'evolution' | 'performance' | 'titanium' | null
 const STEP3_PRICE = { evolution: 60, performance: 300, titanium: 720 };
 
 function openStep3() {
+  document.getElementById('ood-section').style.display = 'none';
   document.getElementById('step3-section').style.display = 'block';
-  document.getElementById('step3-trigger-zone').style.display = 'none';
+  document.getElementById('recap-section').style.display = 'block';
+  document.getElementById('contact-hint').style.display = 'block';
   setTimeout(() => {
     const el = document.getElementById('step3-section');
-    window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 70, behavior: 'smooth' });
+    if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 70, behavior: 'smooth' });
   }, 50);
 }
 
-function skipStep3() {
-  document.getElementById('step3-trigger-zone').style.display = 'none';
-  openSendModal();
+function skipOOD() {
+  document.getElementById('ood-section').style.display = 'none';
+  document.getElementById('step3-section').style.display = 'none';
+  document.getElementById('recap-section').style.display = 'block';
+  document.getElementById('contact-hint').style.display = 'block';
+  setTimeout(() => {
+    const el = document.getElementById('recap-section');
+    if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 70, behavior: 'smooth' });
+  }, 50);
+});
+  }, 50);
 }
+
+function openStep3() { openStep3Details(); } // alias
 
 function selectStep3(level) {
   // Toggle : re-cliquer désélectionne
