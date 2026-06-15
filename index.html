@@ -513,6 +513,18 @@
   }
   .preset-btn:hover { border-color: var(--blue); color: var(--blue); background: #1a1500; }
   .preset-btn.active { border-color: var(--blue); color: var(--blue); background: #1a1500; }
+
+  /* Surbrillance pré-config active */
+  .preset-btn.active {
+    border-color: var(--blue) !important;
+    color: var(--blue) !important;
+    background: #1a1500 !important;
+  }
+  /* Carte modèle en surbrillance quand arrivée via URL pré-config */
+  .model-card.preset-active {
+    border: 2px solid var(--blue) !important;
+    box-shadow: 0 0 0 1px var(--blue);
+  }
 </style>
 </head>
 <body>
@@ -930,9 +942,9 @@ function renderModels() {
       ${hasPresets ? `<div class="preset-bar" id="preset-bar-${m.id}" style="display:block" onclick="event.stopPropagation()">
         <div class="preset-label">3 pré-configurations</div>
         <div class="preset-btns">
-          <button class="preset-btn" onclick="loadPreset('Signature')">Signature</button>
-          <button class="preset-btn" onclick="loadPreset('Ti1')">Ti1</button>
-          <button class="preset-btn" onclick="loadPreset('Ti2')">Ti2</button>
+          <button class="preset-btn ${window._activePreset === 'Signature' ? 'active' : ''}" onclick="loadPreset('Signature')">Signature</button>
+          <button class="preset-btn ${window._activePreset === 'Ti1' ? 'active' : ''}" onclick="loadPreset('Ti1')">Ti1</button>
+          <button class="preset-btn ${window._activePreset === 'Ti2' ? 'active' : ''}" onclick="loadPreset('Ti2')">Ti2</button>
         </div>
       </div>` : ''}
     </div>`;
@@ -1064,6 +1076,19 @@ const FORCE_SELECT = [
 
 function selectOpt(postId, optId) {
   selOpts[postId] = optId;
+
+  // Vérifier si la config courante correspond à un preset
+  const postes = ['fourche','roues','pneus','transmission','power','frein','pilotage','selle','tige','pedales'];
+  const modelPresets = PRESETS[selModel];
+  window._activePreset = null;
+  if (modelPresets) {
+    for (const [decl, preset] of Object.entries(modelPresets)) {
+      if (postes.every(p => selOpts[p] === preset[p])) {
+        window._activePreset = decl;
+        break;
+      }
+    }
+  }
 
   // 1. Si on change de transmission → remettre power sur pwr_all (sauf si pwr_all déjà)
   if (postId === 'transmission') {
@@ -1366,6 +1391,7 @@ const PRESETS = {
 function loadPreset(decl) {
   const preset = PRESETS[selModel] && PRESETS[selModel][decl];
   if (!preset) return;
+  window._activePreset = decl;
   selOpts = {...preset};
   // Appliquer FORCE_SELECT
   Object.keys(selOpts).forEach(postId => {
@@ -1381,11 +1407,7 @@ function loadPreset(decl) {
   });
   renderPosts();
   updateRecap();
-  // Scroll vers l'étape 2
-  setTimeout(() => {
-    const el = document.getElementById('posts-section');
-    if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 70, behavior: 'smooth' });
-  }, 80);
+  // Pas de scroll — on reste en haut de page
 }
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
@@ -1437,8 +1459,22 @@ if (modeleParam) {
           }
         });
       });
+
+      // Identifier quel preset correspond à la config chargée
+      const modelPresets = PRESETS[modeleAuto.id];
+      if (modelPresets) {
+        const postes = ['fourche','roues','pneus','transmission','power','frein','pilotage','selle','tige','pedales'];
+        for (const [decl, preset] of Object.entries(modelPresets)) {
+          if (postes.every(p => selOpts[p] === preset[p])) {
+            window._activePreset = decl;
+            break;
+          }
+        }
+      }
+
       renderPosts();
       updateRecap();
+      renderModels(); // re-render pour afficher bouton actif
     }
 
     setTimeout(() => window.scrollTo({ top: 0, behavior: 'instant' }), 10);
