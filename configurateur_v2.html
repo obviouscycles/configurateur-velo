@@ -1286,7 +1286,12 @@ function selectOpt(postId, optId) {
 function updateRecap() {
   const model = MODELS.find(m => m.id === selModel);
   if (!model) return;
-  const allDone = POST_META.every(p => !!selOpts[p.id]);
+  // allDone : ignorer les postes masqués (ex: power si aucun powermeter disponible)
+  const visiblePostIds = POST_META.filter(p => {
+    if (p.id !== 'power') return true;
+    return optionsFor('power', selModel).length > 1;
+  }).map(p => p.id);
+  const allDone = visiblePostIds.every(p => !!selOpts[p]);
   document.getElementById('recap-section').style.display = allDone ? 'block' : 'none';
   document.getElementById('contact-hint').style.display = allDone ? 'block' : 'none';
   document.getElementById('step3-trigger-zone').style.display = allDone ? 'block' : 'none';
