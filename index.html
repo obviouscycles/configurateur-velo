@@ -967,12 +967,30 @@ function selectModel(id) {
     window._singleModel = id;
     renderModels(); // re-render pour afficher mode single
   }
-  autoSelectLocked(id);
-  renderPosts();
+  // Charger Ti1 par défaut sauf si un preset est déjà actif (URL pré-config)
+  if (!window._activePreset && PRESETS[id] && PRESETS[id]['Ti1']) {
+    window._activePreset = 'Ti1';
+    selOpts = {...PRESETS[id]['Ti1']};
+    Object.keys(selOpts).forEach(postId => {
+      const optId = selOpts[postId];
+      if (!optId) return;
+      FORCE_SELECT.forEach(rule => {
+        if (rule.if_selected === optId) {
+          Object.entries(rule.force).forEach(([fp, fid]) => {
+            if (!selOpts[fp]) selOpts[fp] = fid;
+          });
+        }
+      });
+    });
+  } else {
+    autoSelectLocked(id);
+  }
   document.getElementById('posts-section').style.display = 'block';
-  document.getElementById('recap-section').style.display = 'none';
+  renderModels();
+  renderPosts();
+  updateRecap();
   document.getElementById('save-form').classList.remove('open');
-  window.scrollTo({ top: 0, behavior: 'instant' }); // toujours en haut
+  window.scrollTo({ top: 0, behavior: 'instant' });
 }
 
 // ─── RENDU POSTES ─────────────────────────────────────────────────────────────
