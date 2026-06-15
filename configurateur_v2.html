@@ -597,6 +597,27 @@
   .step3-ti-form textarea { width: 100%; min-height: 80px; padding: 8px;
     border: 0.5px solid #ccc; font-size: 12px; font-family: var(--font);
     resize: vertical; box-sizing: border-box; }
+
+  /* ── En-têtes d'étape unifiés ── */
+  .step-header {
+    background: #111111;
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 0;
+  }
+  .step-header .sh-label {
+    font-size: 11px; font-weight: 500; color: #888;
+    text-transform: uppercase; letter-spacing: .08em;
+    margin-bottom: 5px;
+  }
+  .step-header .sh-title {
+    font-size: 17px; font-weight: 600; color: #ffffff;
+    margin: 0;
+  }
+  /* Séparateur entre étapes */
+  .step-divider {
+    height: 1px; background: #333;
+    margin: 0 auto; max-width: 860px;
+  }
 </style>
 </head>
 <body>
@@ -624,26 +645,37 @@
   <!-- VUE CONFIGURATEUR -->
   <div class="view active" id="view-config">
     <div style="background:#111111;padding:1.5rem;margin-bottom:1.5rem;">
-      <div class="step-label" style="color:#888;">Étape 1 sur 2</div>
-      <p class="section-title" style="color:#f2f2f2;">Choisissez votre modèle de base</p>
+      <div class="step-header">
+        <div class="sh-label">Étape 1 sur 3</div>
+        <p class="sh-title">Choisissez votre modèle de base</p>
+      </div>
       <div class="model-grid" id="model-grid"></div>
     <div class="change-model-btn" id="change-model-btn">
       <a href="./"><i class="ti ti-grid-dots"></i> Changer de modèle</a>
     </div>
     </div>
 
+    <div class="step-divider"></div>
+
     <div id="posts-section" style="display:none">
       <div class="prog-wrap">
-        <div class="step-label">Étape 2 — configurez vos composants</div>
+      <div class="step-header">
+        <div class="sh-label">Étape 2 sur 3</div>
+        <p class="sh-title">Configurez vos composants</p>
+      </div>
         <div class="prog-bar" id="prog-bar"></div>
       </div>
       <div id="posts-list"></div>
     </div>
 
+<div class="step-divider"></div>
+
 <!-- ── CADRE OOD ── -->
 <div id="ood-section">
-  <div class="ood-step-label">Étape 3 sur 3 — Optionnelle</div>
-  <div class="ood-title">Souhaitez-vous personnaliser votre cadre ?</div>
+  <div class="step-header" style="margin-bottom:1.2rem;">
+    <div class="sh-label">Étape 3 sur 3 — Optionnelle</div>
+    <p class="sh-title">Souhaitez-vous personnaliser votre cadre ?</p>
+  </div>
   <div class="ood-desc">
     Le configurateur vous a permis de choisir vos composants sur un cadre <strong>standard</strong> — c'est le forfait <strong>Essentiel</strong>, gratuit.<br><br>
     Si vous souhaitez aller plus loin — adapter le cadre à votre morphologie, ajouter des fonctions, ou créer un vélo vraiment unique — trois niveaux supplémentaires sont disponibles, <strong>cumulatifs vers le bas</strong>.
