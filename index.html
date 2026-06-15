@@ -1435,6 +1435,7 @@ function loadPreset(decl) {
     });
   });
   renderModels(); // mettre à jour la surbrillance du bouton actif
+  document.getElementById('posts-section').style.display = 'block';
   renderPosts();
   updateRecap();
   // Pas de scroll — on reste en haut de page
@@ -1502,6 +1503,7 @@ if (modeleParam) {
         }
       }
 
+      document.getElementById('posts-section').style.display = 'block';
       renderPosts();
       updateRecap();
       renderModels(); // re-render pour afficher bouton actif
