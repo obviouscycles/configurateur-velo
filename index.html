@@ -941,10 +941,13 @@ function renderModels() {
 
 function selectModel(id) {
   selModel = id; selOpts = {}; openPost = null;
-  // Passer en mode single-modèle si on vient de la grille des 4
-  if (!window._singleModel) window._singleModel = id;
+  // Passer en mode single uniquement si on vient d'un clic depuis la grille des 4 (pas déjà single)
+  if (!window._singleModel) {
+    window._singleModel = id;
+    renderModels(); // re-render pour afficher mode single
+  }
   autoSelectLocked(id);
-  renderModels(); renderPosts();
+  renderPosts();
   document.getElementById('posts-section').style.display = 'block';
   document.getElementById('recap-section').style.display = 'none';
   document.getElementById('save-form').classList.remove('open');
