@@ -717,8 +717,8 @@ const ALL_OPTIONS = {
     { id: 'pwr_vtt_sr_xxs', name: 'SRAM XX SL Eagle AXS', desc: 'Capteur Quarq dans l\'étoile du pédalier', price: 420, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre','trans_vtt_sr_e70','trans_vtt_sr_gx','trans_vtt_sr_x0'] },
   ],
   frein: [
-    { id: 'frein_all', name: 'Freins inclus avec la transmission', desc: '', price: 0, weight: 0, lockedFor: ['gravel_bikepacking','gravel_racing','route'], compat: [{mid:'route',rec:false},{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: ['trans_vtt_sr_e70','trans_vtt_sr_gx','trans_vtt_sr_x0','trans_vtt_sr_xxs'] },
-    { id: 'frein_vtt_sr_db8', name: 'Freins SRAM DB8', desc: '4 pistons, simple et robuste', price: 0, weight: 0, lockedFor: ['vtt_enduro'], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre'] },
+    { id: 'frein_all', name: 'Freins inclus avec la transmission', desc: '', price: 0, weight: 0, lockedFor: ['gravel_bikepacking','gravel_racing','route','vtt_enduro'], compat: [{mid:'route',rec:false},{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false},{mid:'vtt_enduro',rec:false}], incompat: [] },
+    { id: 'frein_vtt_sr_db8', name: 'Freins SRAM DB8', desc: '4 pistons, simple et robuste', price: 0, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre'] },
     { id: 'frein_vtt_sr_mvs', name: 'Freins SRAM Maven Silver', desc: 'Le frein des disciplines Gravity', price: 230, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre'] },
     { id: 'frein_vtt_sr_mvu', name: 'Freins SRAM Maven Ultimate', desc: 'Le frein de descente haut de gamme', price: 280, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre'] },
   ],
@@ -818,6 +818,15 @@ function optionsFor(postId, modelId) {
     const blocked = incompatFromOthers.includes(o.id);
     return compatible && !blocked;
   });
+
+  // Filtre freins VTT : selon transmission choisie
+  if (postId === 'frein' && selModel === 'vtt_enduro' && selOpts['transmission']) {
+    const isSramVtt = selOpts['transmission'].startsWith('trans_vtt_sr_');
+    opts = opts.filter(o => {
+      if (isSramVtt) return o.id !== 'frein_all';   // SRAM : tout sauf frein_all
+      return o.id === 'frein_all';                   // Shimano : frein_all uniquement
+    });
+  }
 
   // Filtre power : n'afficher que pwr_all + le powermeter de la transmission choisie
   if (postId === 'power' && selOpts['transmission']) {
