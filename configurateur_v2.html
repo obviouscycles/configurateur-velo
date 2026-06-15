@@ -526,163 +526,10 @@
     box-shadow: 0 0 0 1px var(--blue);
   }
 
-  /* ── Étape 3 ── */
-  #step3-section {
-    max-width: 860px; margin: 0 auto; padding: 0 1rem 3rem;
-    display: none;
-  }
-  .step3-intro {
-    background: #111; color: #f2f2f2; padding: 1.5rem;
-    margin-bottom: 1.5rem;
-  }
-  .step3-intro .step-label { color: #888; font-size: 12px; margin-bottom: 6px; }
-  .step3-intro h2 { font-size: 18px; font-weight: 600; margin-bottom: 8px; color: #fff; }
-  .step3-intro p { font-size: 13px; color: #aaa; line-height: 1.6; }
-  .step3-cards { display: grid; grid-template-columns: 1fr; gap: 12px; }
-  @media (min-width: 640px) { .step3-cards { grid-template-columns: repeat(3,1fr); } }
-
-  .step3-card {
-    background: #fff; border: 1.5px solid #ddd; padding: 0;
-    cursor: pointer; transition: border-color .15s;
-    display: flex; flex-direction: column;
-  }
-  .step3-card:hover { border-color: #aaa; }
-  .step3-card.selected { border-color: var(--blue); }
-  .step3-card-header {
-    background: #111; color: #fff; padding: 12px 16px;
-    display: flex; align-items: center; justify-content: space-between;
-  }
-  .step3-card-header .s3-name { font-size: 14px; font-weight: 600; letter-spacing: .05em; }
-  .step3-card-header .s3-price { font-size: 16px; font-weight: 700; color: var(--blue); }
-  .step3-card-header .s3-price.free { color: #7ecf5a; }
-  .step3-card-body { padding: 14px 16px; flex: 1; }
-  .step3-card-tagline { font-size: 12px; color: #888; text-transform: uppercase;
-    letter-spacing: .07em; margin-bottom: 10px; }
-  .step3-card-desc { font-size: 12px; color: #555; line-height: 1.55; margin-bottom: 12px; }
-  .step3-card-items { list-style: none; padding: 0; margin: 0; }
-  .step3-card-items li {
-    font-size: 12px; color: #333; padding: 4px 0;
-    border-bottom: 0.5px solid #f0f0f0;
-    display: flex; align-items: flex-start; gap: 6px;
-  }
-  .step3-card-items li:last-child { border-bottom: none; }
-  .step3-card-items li::before { content: '→'; color: var(--blue); flex-shrink: 0; }
-  .step3-card-footer {
-    padding: 10px 16px; border-top: 0.5px solid #eee;
-    display: flex; align-items: center; justify-content: space-between;
-  }
-  .step3-radio {
-    width: 18px; height: 18px; border: 1.5px solid #ccc;
-    border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
-  .step3-card.selected .step3-radio {
-    border-color: var(--blue); background: var(--blue);
-  }
-  .step3-card.selected .step3-radio::after {
-    content: ''; width: 8px; height: 8px;
-    background: #fff; border-radius: 50%;
-  }
-  .step3-select-label { font-size: 12px; color: #888; }
-  .step3-card.selected .step3-select-label { color: var(--blue); font-weight: 500; }
-
-  /* Détail Évolution — cases à cocher */
-  .step3-evolution-options {
-    display: none; background: #f9f9f7; border-top: 0.5px solid #e0e0e0;
-    padding: 12px 16px;
-  }
-  .step3-card.selected .step3-evolution-options { display: block; }
-  .step3-evo-title { font-size: 11px; color: #888; text-transform: uppercase;
-    letter-spacing: .07em; margin-bottom: 8px; }
-  .step3-evo-item {
-    display: flex; align-items: flex-start; gap: 8px;
-    padding: 5px 0; cursor: pointer; font-size: 12px; color: #333;
-  }
-  .step3-evo-item input[type=checkbox] { margin-top: 2px; flex-shrink: 0; accent-color: #F5C400; }
-
-  /* Formulaire Performance */
-  .step3-perf-form {
-    display: none; background: #f9f9f7; border-top: 0.5px solid #e0e0e0;
-    padding: 14px 16px;
-  }
-  .step3-card.selected .step3-perf-form { display: block; }
-  .step3-perf-grid {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;
-  }
-  .step3-perf-field { display: flex; flex-direction: column; gap: 4px; }
-  .step3-perf-field label { font-size: 11px; color: #888; }
-  .step3-perf-field input, .step3-perf-field select {
-    padding: 6px 8px; border: 0.5px solid #ccc; font-size: 12px;
-    font-family: var(--font); background: #fff;
-  }
-  .step3-perf-note { font-size: 11px; color: #aaa; line-height: 1.5; }
-
-  /* Zone description Titanium */
-  .step3-ti-form {
-    display: none; background: #f9f9f7; border-top: 0.5px solid #e0e0e0;
-    padding: 14px 16px;
-  }
-  .step3-card.selected .step3-ti-form { display: block; }
-  .step3-ti-form textarea {
-    width: 100%; min-height: 80px; padding: 8px; border: 0.5px solid #ccc;
-    font-size: 12px; font-family: var(--font); resize: vertical; box-sizing: border-box;
-  }
-  .step3-ti-note { font-size: 11px; color: #aaa; margin-top: 6px; line-height: 1.5; }
-
-  /* Bouton passer à l'étape 3 */
-  .step3-trigger {
-    text-align: center; padding: 1.5rem 0 0;
-  }
-  .step3-trigger button {
-    background: #111; color: #f2f2f2; border: 0.5px solid #444;
-    padding: 12px 28px; font-size: 13px; font-family: var(--font);
-    cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
-    transition: border-color .15s, color .15s;
-  }
-  .step3-trigger button:hover { border-color: var(--blue); color: var(--blue); }
-  .step3-trigger .skip-link {
-    display: block; margin-top: 10px; font-size: 12px; color: #999;
-    cursor: pointer; text-decoration: underline;
-  }
-  .step3-trigger .skip-link:hover { color: #555; }
-
-  /* ── Étape 3 pivot (entre étape 2 et récap) ── */
+  /* ── Cadre OOD ── */
   #ood-section {
-    display: none;
-    background: #111111;
-    padding: 1.5rem;
-    margin-bottom: 0;
-  }
-  .ood-section-label { color: #888; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px; }
-  .ood-section-title { color: #fff; font-size: 18px; font-weight: 600; margin-bottom: 10px; }
-  .ood-section-text { color: #aaa; font-size: 13px; line-height: 1.65; margin-bottom: 1.2rem; }
-  .ood-section-text strong { color: #f2f2f2; }
-  .ood-section-actions { display: flex; flex-direction: column; gap: 10px; }
-  @media (min-width: 480px) { .ood-section-actions { flex-direction: row; align-items: center; } }
-  .ood-section-btn-yes {
-    background: var(--blue); color: #1a1a00; border: none;
-    padding: 11px 22px; font-size: 13px; font-weight: 600;
-    font-family: var(--font); cursor: pointer;
-    display: inline-flex; align-items: center; gap: 7px;
-    transition: opacity .15s;
-  }
-  .ood-section-btn-yes:hover { opacity: .85; }
-  .ood-section-btn-no {
-    background: transparent; color: #888; border: 0.5px solid #444;
-    padding: 11px 22px; font-size: 13px;
-    font-family: var(--font); cursor: pointer;
-    display: inline-flex; align-items: center; gap: 7px;
-    transition: border-color .15s, color .15s;
-  }
-  .ood-section-btn-no:hover { border-color: #888; color: #ccc; }
-
-  /* ── Cadre OOD (entre étape 2 et récap) ── */
-  #ood-section {
-    display: none;
-    background: #111111;
-    padding: 1.5rem;
-    margin: 0 auto 0;
-    max-width: 860px;
+    display: none; background: #111111; padding: 1.5rem;
+    margin: 0 auto; max-width: 860px;
   }
   .ood-step-label { font-size: 11px; color: #888; text-transform: uppercase;
     letter-spacing: .08em; margin-bottom: 6px; }
@@ -691,19 +538,65 @@
   .ood-desc strong { color: #f2f2f2; }
   .ood-actions { display: flex; flex-direction: column; gap: 10px; }
   @media (min-width: 540px) { .ood-actions { flex-direction: row; align-items: center; gap: 14px; } }
-  .ood-btn-yes {
-    display: inline-flex; align-items: center; gap: 7px;
+  .ood-btn-yes { display: inline-flex; align-items: center; gap: 7px;
     background: var(--blue); color: #1a1a00; padding: 11px 22px;
     font-size: 13px; font-weight: 600; font-family: var(--font);
-    border: none; cursor: pointer; white-space: nowrap;
-  }
+    border: none; cursor: pointer; }
   .ood-btn-yes:hover { background: #e6b800; }
-  .ood-btn-no {
-    font-size: 12px; color: #888; cursor: pointer;
+  .ood-btn-no { font-size: 12px; color: #888; cursor: pointer;
     text-decoration: underline; background: none; border: none;
-    font-family: var(--font); padding: 0;
-  }
+    font-family: var(--font); padding: 0; }
   .ood-btn-no:hover { color: #ccc; }
+
+  /* ── Étape 3 niveaux ── */
+  #step3-section { display: none; max-width: 860px; margin: 0 auto; padding: 0 0 3rem; }
+  .step3-intro { background: #111; color: #f2f2f2; padding: 1.5rem; margin-bottom: 1.5rem; }
+  .step3-intro .step-label { color: #888; font-size: 12px; margin-bottom: 6px; }
+  .step3-intro h2 { font-size: 18px; font-weight: 600; margin-bottom: 8px; color: #fff; }
+  .step3-cards { display: grid; grid-template-columns: 1fr; gap: 12px; }
+  @media (min-width: 640px) { .step3-cards { grid-template-columns: repeat(3,1fr); } }
+  .step3-card { background: #fff; border: 1.5px solid #ddd; cursor: pointer;
+    display: flex; flex-direction: column; transition: border-color .15s; }
+  .step3-card:hover { border-color: #aaa; }
+  .step3-card.selected { border-color: var(--blue); }
+  .step3-card-header { background: #111; color: #fff; padding: 12px 16px;
+    display: flex; align-items: center; justify-content: space-between; }
+  .s3-name { font-size: 14px; font-weight: 600; letter-spacing: .05em; }
+  .s3-price { font-size: 16px; font-weight: 700; color: var(--blue); }
+  .step3-card-body { padding: 14px 16px; flex: 1; }
+  .step3-card-tagline { font-size: 12px; color: #888; text-transform: uppercase;
+    letter-spacing: .07em; margin-bottom: 10px; }
+  .step3-card-desc { font-size: 12px; color: #555; line-height: 1.55; margin-bottom: 12px; }
+  .step3-card-items { list-style: none; padding: 0; margin: 0; }
+  .step3-card-items li { font-size: 12px; color: #333; padding: 4px 0;
+    border-bottom: 0.5px solid #f0f0f0; display: flex; gap: 6px; }
+  .step3-card-items li:last-child { border-bottom: none; }
+  .step3-card-items li::before { content: '→'; color: var(--blue); flex-shrink: 0; }
+  .step3-card-footer { padding: 10px 16px; border-top: 0.5px solid #eee;
+    display: flex; align-items: center; justify-content: space-between; }
+  .step3-radio { width: 18px; height: 18px; border: 1.5px solid #ccc;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+  .step3-card.selected .step3-radio { border-color: var(--blue); background: var(--blue); }
+  .step3-card.selected .step3-radio::after { content: ''; width: 8px; height: 8px;
+    background: #fff; border-radius: 50%; }
+  .step3-select-label { font-size: 12px; color: #888; }
+  .step3-card.selected .step3-select-label { color: var(--blue); font-weight: 500; }
+  .step3-sub { display: none; background: #f9f9f7; border-top: 0.5px solid #e0e0e0; padding: 12px 16px; }
+  .step3-card.selected .step3-sub { display: block; }
+  .step3-sub-title { font-size: 11px; color: #888; text-transform: uppercase;
+    letter-spacing: .07em; margin-bottom: 8px; }
+  .step3-evo-item { display: flex; align-items: flex-start; gap: 8px;
+    padding: 5px 0; cursor: pointer; font-size: 12px; color: #333; }
+  .step3-evo-item input { margin-top: 2px; flex-shrink: 0; accent-color: #F5C400; }
+  .step3-perf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+  .step3-perf-field { display: flex; flex-direction: column; gap: 4px; }
+  .step3-perf-field label { font-size: 11px; color: #888; }
+  .step3-perf-field input, .step3-perf-field select { padding: 6px 8px;
+    border: 0.5px solid #ccc; font-size: 12px; font-family: var(--font); background: #fff; }
+  .step3-note { font-size: 11px; color: #aaa; line-height: 1.5; margin-top: 6px; }
+  .step3-ti-form textarea { width: 100%; min-height: 80px; padding: 8px;
+    border: 0.5px solid #ccc; font-size: 12px; font-family: var(--font);
+    resize: vertical; box-sizing: border-box; }
 </style>
 </head>
 <body>
@@ -747,43 +640,9 @@
       <div id="posts-list"></div>
     </div>
 
-    <!-- ── Étape 3 pivot ── -->
-<div class="ood-section-title">Souhaitez-vous personnaliser votre cadre ?</div>
-      <div class="ood-section-text">
-        Le configurateur vous a permis de choisir vos composants sur un cadre <strong>standard</strong> — c'est le forfait <strong>Essentiel</strong>, gratuit.<br><br>
-        Si vous souhaitez aller plus loin — adapter le cadre à votre morphologie, ajouter des fonctions, ou créer un vélo vraiment unique — trois niveaux supplémentaires sont disponibles, <strong>cumulatifs vers le bas</strong>.
-      </div>
-      <div class="ood-section-actions">
-        <button class="ood-section-btn-yes" onclick="openStep3()">
-          <i class="ti ti-adjustments-plus"></i> Découvrir les niveaux de personnalisation
-        </button>
-        <button class="ood-section-btn-no" onclick="skipOOD()">
-          <i class="ti ti-arrow-right"></i> Passer au récapitulatif
-        </button>
-      </div>
-    </div>
-
-
-  <!-- ── CADRE OOD ── -->
-  <div id="ood-section">
-    <div class="ood-step-label">Étape 3 sur 3 — Optionnelle</div>
-    <div class="ood-title">Souhaitez-vous personnaliser votre cadre ?</div>
-    <div class="ood-desc">
-      Le configurateur vous a permis de choisir vos composants sur un cadre <strong>standard</strong> — c'est le forfait <strong>Essentiel</strong>, gratuit.<br><br>
-      Si vous souhaitez aller plus loin — adapter le cadre à votre morphologie, ajouter des fonctions, ou créer un vélo vraiment unique — trois niveaux supplémentaires sont disponibles, <strong>cumulatifs vers le bas</strong>.
-    </div>
-    <div class="ood-actions">
-      <button class="ood-btn-yes" onclick="openStep3()">
-        <i class="ti ti-adjustments-plus"></i> Découvrir les niveaux de personnalisation
-      </button>
-      <button class="ood-btn-no" onclick="skipOOD()">Non merci, voir ma configuration</button>
-    </div>
-  </div>
-
-    <div id="contact-hint"</p> style="display:none;padding:0 0 1rem;font-size:13px;color:var(--text2);">
+    <div id="contact-hint" style="display:none;padding:0 0 1rem;font-size:13px;color:var(--text2);">
       Pour tout autre montage, <a href="https://www.obviouscycles.com/contact/" target="_blank" style="color:var(--blue);text-decoration:none;font-weight:500;">contactez-nous</a>.
     </div>
-
     <div id="recap-section" style="display:none">
       <p class="section-title" style="margin-top:.75rem">Votre configuration</p>
       <div id="recap-box-container"></div>
@@ -1175,37 +1034,23 @@ function renderModels() {
 
 function selectModel(id) {
   selModel = id; selOpts = {}; openPost = null;
-  // Passer en mode single uniquement si on vient d'un clic depuis la grille des 4 (pas déjà single)
   if (!window._singleModel) {
     window._singleModel = id;
-    renderModels(); // re-render pour afficher mode single
+    renderModels();
   }
-  // Charger Ti1 par défaut sauf si un preset est déjà actif (URL pré-config)
-  if (!window._activePreset && PRESETS[id] && PRESETS[id]['Ti1']) {
-    window._activePreset = 'Ti1';
-    selOpts = {...PRESETS[id]['Ti1']};
-    Object.keys(selOpts).forEach(postId => {
-      const optId = selOpts[postId];
-      if (!optId) return;
-      FORCE_SELECT.forEach(rule => {
-        if (rule.if_selected === optId) {
-          Object.entries(rule.force).forEach(([fp, fid]) => {
-            if (!selOpts[fp]) selOpts[fp] = fid;
-          });
-        }
-      });
-    });
+  // Ti1 par défaut sauf si preset déjà actif via URL
+  if (!window._activePreset) {
+    applyPreset(id, 'Ti1');
   } else {
     autoSelectLocked(id);
   }
   document.getElementById('posts-section').style.display = 'block';
-  renderModels();
-  renderPosts();
-  updateRecap();
-  // Afficher directement récap + OOD quand preset chargé
   document.getElementById('ood-section').style.display = 'block';
   document.getElementById('recap-section').style.display = 'block';
   document.getElementById('contact-hint').style.display = 'block';
+  renderModels();
+  renderPosts();
+  updateRecap();
   document.getElementById('save-form').classList.remove('open');
   window.scrollTo({ top: 0, behavior: 'instant' });
 }
@@ -1397,15 +1242,21 @@ function selectOpt(postId, optId) {
 function updateRecap() {
   const model = MODELS.find(m => m.id === selModel);
   if (!model) return;
-  // allDone : ignorer les postes masqués (ex: power si aucun powermeter disponible)
   const visiblePostIds = POST_META.filter(p => {
     if (p.id !== 'power') return true;
     return optionsFor('power', selModel).length > 1;
   }).map(p => p.id);
   const allDone = visiblePostIds.every(p => !!selOpts[p]);
-  document.getElementById('recap-section').style.display = 'none'; // affiché après choix étape 3
-  document.getElementById('contact-hint').style.display = 'none';
-  document.getElementById('ood-section').style.display = allDone ? 'block' : 'none';
+  // OOD s'affiche si config complète et recap pas encore visible
+  const recapVisible = document.getElementById('recap-section').style.display === 'block';
+  if (allDone && !recapVisible) {
+    document.getElementById('ood-section').style.display = 'block';
+  }
+  if (!allDone) {
+    document.getElementById('ood-section').style.display = 'none';
+    document.getElementById('recap-section').style.display = 'none';
+    document.getElementById('contact-hint').style.display = 'none';
+  }
   if (!allDone) return;
 
   const { price, weight } = computeTotals(selModel, selOpts);
@@ -1634,58 +1485,58 @@ function resetForceLink(postA, postB, scrollTo) {
 function resetFlatBarForce() { resetForceLink('transmission','pilotage','transmission'); }
 
 
-// Pré-configurations depuis l'onglet Gamme 2026
+
+
+
+
 const PRESETS = {
+  'route': {
+    'Ti2': {fourche:'fourche_rd_car_00',roues:'roue_rd_dt_p16',pneus:'pneu_rd_co_gp',transmission:'trans_rd_sh_105',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_rd_suz_alu',selle:'selle_rd_ant_r5',tige:'tige_rd_ob_car',pedales:'ped_no'},
+    'Ti1': {fourche:'fourche_rd_car_00',roues:'roue_rd_ob_35',pneus:'pneu_rd_co_gp',transmission:'trans_rd_sr_fo',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_rd_suz_alu',selle:'selle_rd_ant_r3',tige:'tige_rd_ob_car',pedales:'ped_no'},
+    'Signature': {fourche:'fourche_rd_car_00',roues:'roue_rd_fu_w57',pneus:'pneu_rd_co_gp',transmission:'trans_rd_sh_da',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_rd_ala',selle:'selle_rd_ari_r00',tige:'tige_rd_ob_car',pedales:'ped_no'},
+  },
   'gravel_racing': {
-    'Ti2':       {fourche:'fourche_gr_car_00',roues:'roue_gr_fu_soa',pneus:'pneu_gr_sc_r',transmission:'trans_gr_sh_611',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_gr_suz_alu',selle:'selle_rd_ant_r5',tige:'tige_rd_ob_car',pedales:'ped_no'},
-    'Ti1':       {fourche:'fourche_gr_car_00',roues:'roue_gr_ob_35',pneus:'pneu_gr_sc_r',transmission:'trans_gr_sr_fo',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_gr_suz_alu',selle:'selle_rd_ant_r3',tige:'tige_rd_ob_car',pedales:'ped_no'},
+    'Ti2': {fourche:'fourche_gr_car_00',roues:'roue_gr_fu_soa',pneus:'pneu_gr_sc_r',transmission:'trans_gr_sh_611',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_gr_suz_alu',selle:'selle_rd_ant_r5',tige:'tige_rd_ob_car',pedales:'ped_no'},
+    'Ti1': {fourche:'fourche_gr_car_00',roues:'roue_gr_ob_35',pneus:'pneu_gr_sc_r',transmission:'trans_gr_sr_fo',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_gr_suz_alu',selle:'selle_rd_ant_r3',tige:'tige_rd_ob_car',pedales:'ped_no'},
     'Signature': {fourche:'fourche_gr_car_00',roues:'roue_gr_ob_35',pneus:'pneu_gr_sc_r',transmission:'trans_gr_sr_re',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_gr_suz_car',selle:'selle_rd_arg_r00',tige:'tige_rd_ob_car',pedales:'ped_no'},
   },
   'gravel_bikepacking': {
-    'Ti2':       {fourche:'fourche_gr_car_ins',roues:'roue_gr_fu_soa',pneus:'pneu_gr_sc_r',transmission:'trans_gr_sh_cud',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_gr_drp_alu',selle:'selle_gr_arg_x5',tige:'tige_rd_ob_car',pedales:'ped_no'},
-    'Ti1':       {fourche:'fourche_gr_car_ins',roues:'roue_gr_dt_g16',pneus:'pneu_gr_sc_r',transmission:'trans_gr_sh_821',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_gr_ger_alu',selle:'selle_gr_arg_x3',tige:'tige_rd_ob_ti',pedales:'ped_no'},
+    'Ti2': {fourche:'fourche_gr_car_ins',roues:'roue_gr_fu_soa',pneus:'pneu_gr_sc_r',transmission:'trans_gr_sh_cud',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_gr_drp_alu',selle:'selle_gr_arg_x5',tige:'tige_rd_ob_car',pedales:'ped_no'},
+    'Ti1': {fourche:'fourche_gr_car_ins',roues:'roue_gr_dt_g16',pneus:'pneu_gr_sc_r',transmission:'trans_gr_sh_821',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_gr_ger_alu',selle:'selle_gr_arg_x3',tige:'tige_rd_ob_ti',pedales:'ped_no'},
     'Signature': {fourche:'fourche_gr_car_ins',roues:'roue_gr_ob_35',pneus:'pneu_gr_sc_r',transmission:'trans_gr_ca_re',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_gr_ger_alu',selle:'selle_br_b17_ho',tige:'tige_rd_ob_ti',pedales:'ped_no'},
   },
-  'route': {
-    'Ti2':       {fourche:'fourche_rd_car_00',roues:'roue_rd_dt_p16',pneus:'pneu_rd_co_gp',transmission:'trans_rd_sh_105',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_rd_suz_alu',selle:'selle_rd_ant_r5',tige:'tige_rd_ob_car',pedales:'ped_no'},
-    'Ti1':       {fourche:'fourche_rd_car_00',roues:'roue_rd_ob_35',pneus:'pneu_rd_co_gp',transmission:'trans_rd_sr_fo',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_rd_suz_alu',selle:'selle_rd_ant_r3',tige:'tige_rd_ob_car',pedales:'ped_no'},
-    'Signature': {fourche:'fourche_rd_car_00',roues:'roue_rd_fu_w57',pneus:'pneu_rd_co_gp',transmission:'trans_rd_sh_da',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_rd_ala',selle:'selle_rd_ari_r00',tige:'tige_rd_ob_car',pedales:'ped_no'},
-  },
   'vtt_enduro': {
-    'Ti2':       {fourche:'fourche_vtt_rs_lyr_sel_150',roues:'roue_vtt_fu_rm5',pneus:'pneu_vtt_sc_gra',transmission:'trans_vtt_sh_slx',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_vtt_end',selle:'selle_vtt_alpt_x5',tige:'tige_vtt_ou_tel',pedales:'ped_no'},
-    'Ti1':       {fourche:'fourche_vtt_rs_lyr_ult_150',roues:'roue_vtt_dt_e17',pneus:'pneu_vtt_sc_gra',transmission:'trans_vtt_sh_xt',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_vtt_end',selle:'selle_vtt_alpt_x5',tige:'tige_vtt_ou_tel',pedales:'ped_no'},
+    'Ti2': {fourche:'fourche_vtt_rs_lyr_sel_150',roues:'roue_vtt_fu_rm5',pneus:'pneu_vtt_sc_gra',transmission:'trans_vtt_sh_slx',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_vtt_end',selle:'selle_vtt_alpt_x5',tige:'tige_vtt_ou_tel',pedales:'ped_no'},
+    'Ti1': {fourche:'fourche_vtt_rs_lyr_ult_150',roues:'roue_vtt_dt_e17',pneus:'pneu_vtt_sc_gra',transmission:'trans_vtt_sh_xt',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_vtt_end',selle:'selle_vtt_alpt_x5',tige:'tige_vtt_ou_tel',pedales:'ped_no'},
     'Signature': {fourche:'fourche_vtt_fox_fac_36_150',roues:'roue_vtt_ob_30',pneus:'pneu_vtt_sc_gra',transmission:'trans_vtt_sr_x0',power:'pwr_all',frein:'frein_vtt_sr_mvs',pilotage:'pilotage_vtt_end',selle:'selle_vtt_alpt_x5',tige:'tige_vtt_ou_tel',pedales:'ped_no'},
   },
 };
 
-function loadPreset(decl) {
-  const preset = PRESETS[selModel] && PRESETS[selModel][decl];
+let selStep3 = null;
+const STEP3_PRICE = { evolution: 60, performance: 300, titanium: 720 };
+
+function applyPreset(modelId, decl) {
+  const preset = PRESETS[modelId] && PRESETS[modelId][decl];
   if (!preset) return;
   window._activePreset = decl;
   selOpts = {...preset};
-  // Appliquer FORCE_SELECT
-  Object.keys(selOpts).forEach(postId => {
-    const optId = selOpts[postId];
-    if (!optId) return;
-    FORCE_SELECT.forEach(rule => {
-      if (rule.if_selected === optId) {
-        Object.entries(rule.force).forEach(([fp, fid]) => {
-          if (!selOpts[fp]) selOpts[fp] = fid;
-        });
-      }
-    });
+  FORCE_SELECT.forEach(rule => {
+    if (selOpts[rule.if_selected]) {
+      Object.entries(rule.force).forEach(([fp, fid]) => { if (!selOpts[fp]) selOpts[fp] = fid; });
+    }
   });
-  renderModels(); // mettre à jour la surbrillance du bouton actif
-  document.getElementById('posts-section').style.display = 'block';
-  renderPosts();
-  updateRecap();
-  // Pas de scroll — on reste en haut de page
 }
 
-
-// ── ÉTAPE 3 ──────────────────────────────────────────────────────────────────
-let selStep3 = null; // 'evolution' | 'performance' | 'titanium' | null
-const STEP3_PRICE = { evolution: 60, performance: 300, titanium: 720 };
+function loadPreset(decl) {
+  applyPreset(selModel, decl);
+  document.getElementById('posts-section').style.display = 'block';
+  document.getElementById('ood-section').style.display = 'block';
+  document.getElementById('recap-section').style.display = 'block';
+  document.getElementById('contact-hint').style.display = 'block';
+  renderModels();
+  renderPosts();
+  updateRecap();
+}
 
 function openStep3() {
   document.getElementById('ood-section').style.display = 'none';
@@ -1707,50 +1558,14 @@ function skipOOD() {
     const el = document.getElementById('recap-section');
     if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 70, behavior: 'smooth' });
   }, 50);
-});
-  }, 50);
 }
-
-function openStep3() { openStep3Details(); } // alias
 
 function selectStep3(level) {
-  // Toggle : re-cliquer désélectionne
-  if (selStep3 === level) {
-    selStep3 = null;
-  } else {
-    selStep3 = level;
-  }
-  // Mettre à jour l'UI
+  selStep3 = (selStep3 === level) ? null : level;
   ['evolution','performance','titanium'].forEach(l => {
-    const card = document.getElementById('s3-' + l);
-    if (card) card.classList.toggle('selected', selStep3 === l);
+    const c = document.getElementById('s3-' + l);
+    if (c) c.classList.toggle('selected', selStep3 === l);
   });
-  updateStep3Total();
-}
-
-function updateStep3Total() {
-  // Afficher le surcoût dans le récap si étape 3 sélectionnée
-  const el = document.getElementById('step3-price-line');
-  if (!el) return;
-  if (selStep3) {
-    const price = STEP3_PRICE[selStep3];
-    const names = { evolution: 'Évolution', performance: 'Performance', titanium: 'Titanium' };
-    el.style.display = 'flex';
-    el.querySelector('.s3pl-name').textContent = 'Personnalisation cadre — ' + names[selStep3];
-    el.querySelector('.s3pl-price').textContent = '+' + price.toLocaleString('fr-FR') + ' €';
-  } else {
-    el.style.display = 'none';
-  }
-  updateGrandTotal();
-}
-
-function updateGrandTotal() {
-  // Recalculer le total avec step3
-  const el = document.getElementById('grand-total-val');
-  if (!el) return;
-  const baseTotal = parseInt(el.dataset.base || el.textContent.replace(/[^0-9]/g,''));
-  const step3Extra = selStep3 ? STEP3_PRICE[selStep3] : 0;
-  el.textContent = (baseTotal + step3Extra).toLocaleString('fr-FR') + ' €';
 }
 
 function getStep3ForEmail() {
@@ -1759,7 +1574,7 @@ function getStep3ForEmail() {
   let lines = ['\nPersonnalisation cadre : ' + names[selStep3]];
   if (selStep3 === 'evolution') {
     const checks = [...document.querySelectorAll('input[name=evo]:checked')].map(el => el.parentElement.textContent.trim());
-    if (checks.length) lines.push('Options Évolution : ' + checks.join(', '));
+    if (checks.length) lines.push('Options : ' + checks.join(', '));
   }
   if (selStep3 === 'performance') {
     const t = document.getElementById('perf-taille')?.value;
@@ -1773,7 +1588,7 @@ function getStep3ForEmail() {
   }
   if (selStep3 === 'titanium') {
     const desc = document.getElementById('ti-description')?.value;
-    if (desc) lines.push('Description projet : ' + desc);
+    if (desc) lines.push('Projet : ' + desc);
   }
   return lines.join('\n');
 }
@@ -1841,9 +1656,12 @@ if (modeleParam) {
       }
 
       document.getElementById('posts-section').style.display = 'block';
+      document.getElementById('ood-section').style.display = 'block';
+      document.getElementById('recap-section').style.display = 'block';
+      document.getElementById('contact-hint').style.display = 'block';
       renderPosts();
       updateRecap();
-      renderModels(); // re-render pour afficher bouton actif
+      renderModels();
     }
 
     setTimeout(() => window.scrollTo({ top: 0, behavior: 'instant' }), 10);
@@ -1852,129 +1670,100 @@ if (modeleParam) {
 ;
 </script>
 
-  <!-- ── ÉTAPE 3 ── -->
-  <div id="step3-section" style="display:none; max-width:860px; margin:0 auto; padding:0 1rem 3rem;">
-    <div class="step3-intro">
-      <div class="step-label">Étape 3 sur 3 — Optionnelle</div>
-      <h2>Souhaitez-vous personnaliser votre cadre ?</h2>
-      <p>Le configurateur vous a permis de choisir vos composants sur un cadre <strong>standard</strong> — c'est le forfait <strong>Essentiel</strong>, gratuit.<br>
-      Si vous souhaitez aller plus loin — adapter le cadre à votre morphologie, ajouter des fonctions, ou créer un vélo vraiment unique — trois niveaux supplémentaires sont disponibles, cumulatifs vers le bas.</p>
-    </div>
-
-    <div class="step3-cards">
-
-      <!-- ÉVOLUTION -->
-      <div class="step3-card" id="s3-evolution" onclick="selectStep3('evolution')">
-        <div class="step3-card-header">
-          <span class="s3-name">ÉVOLUTION</span>
-          <span class="s3-price">+ 60 €</span>
-        </div>
-        <div class="step3-card-body">
-          <div class="step3-card-tagline">Ajoutez des fonctions à votre vélo</div>
-          <div class="step3-card-desc">Des adaptations simples sur le cadre standard pour optimiser sa polyvalence et l'intégration de vos accessoires.</div>
-          <ul class="step3-card-items">
-            <li>Inserts supplémentaires (porte-bidons, bagageries)</li>
-            <li>Fixation ISCG05 pour guide-chaîne</li>
-            <li>Patte arrière T-Type / UDH</li>
-            <li>Suppression patte dérailleur avant (mono-plateau)</li>
-            <li>Gravure personnalisée</li>
-          </ul>
-        </div>
-        <div class="step3-evolution-options" onclick="event.stopPropagation()">
-          <div class="step3-evo-title">Choisissez vos options</div>
-          <label class="step3-evo-item"><input type="checkbox" name="evo" value="inserts"> Inserts supplémentaires porte-bidons / bagageries</label>
-          <label class="step3-evo-item"><input type="checkbox" name="evo" value="iscg"> Fixation ISCG05 pour guide-chaîne</label>
-          <label class="step3-evo-item"><input type="checkbox" name="evo" value="udh"> Patte arrière T-Type / UDH</label>
-          <label class="step3-evo-item"><input type="checkbox" name="evo" value="mono"> Suppression patte dérailleur avant (mono-plateau)</label>
-          <label class="step3-evo-item"><input type="checkbox" name="evo" value="gravure"> Gravure personnalisée</label>
-        </div>
-        <div class="step3-card-footer">
-          <div class="step3-radio"></div>
-          <span class="step3-select-label">Choisir ce niveau</span>
-        </div>
-      </div>
-
-      <!-- PERFORMANCE -->
-      <div class="step3-card" id="s3-performance" onclick="selectStep3('performance')">
-        <div class="step3-card-header">
-          <span class="s3-name">PERFORMANCE</span>
-          <span class="s3-price">+ 300 €</span>
-        </div>
-        <div class="step3-card-body">
-          <div class="step3-card-tagline">Adaptez la géométrie à votre pratique</div>
-          <div class="step3-card-desc">Le cadre est dessiné selon votre morphologie et votre usage. Inclut les options du niveau Évolution.</div>
-          <ul class="step3-card-items">
-            <li>Géométrie liée à votre morphologie</li>
-            <li>Adaptation à votre pratique (route → all-road, etc.)</li>
-            <li>Ajustements liés à un composant spécifique</li>
-            <li>Toutes les options Évolution incluses</li>
-          </ul>
-        </div>
-        <div class="step3-perf-form" onclick="event.stopPropagation()">
-          <div class="step3-evo-title">Vos informations morphologiques</div>
-          <div class="step3-perf-grid">
-            <div class="step3-perf-field">
-              <label>Taille (cm)</label>
-              <input type="number" id="perf-taille" placeholder="ex: 178" min="140" max="210">
-            </div>
-            <div class="step3-perf-field">
-              <label>Entrejambe (cm)</label>
-              <input type="number" id="perf-entrejambe" placeholder="ex: 84" min="60" max="110">
-            </div>
-            <div class="step3-perf-field">
-              <label>Envergure (cm)</label>
-              <input type="number" id="perf-envergure" placeholder="ex: 180" min="140" max="220">
-            </div>
-            <div class="step3-perf-field">
-              <label>Usage principal</label>
-              <select id="perf-usage">
-                <option value="">Sélectionner...</option>
-                <option>Route / Sportif</option>
-                <option>Endurance / Longue distance</option>
-                <option>All-road / Polyvalent</option>
-                <option>Gravel / Bikepacking</option>
-                <option>Trail / Enduro</option>
-              </select>
-            </div>
-          </div>
-          <p class="step3-perf-note">Ces informations nous permettent d'amorcer la réflexion. Nous vous contacterons pour un échange approfondi avant de valider la géométrie.</p>
-        </div>
-        <div class="step3-card-footer">
-          <div class="step3-radio"></div>
-          <span class="step3-select-label">Choisir ce niveau</span>
-        </div>
-      </div>
-
-      <!-- TITANIUM -->
-      <div class="step3-card" id="s3-titanium" onclick="selectStep3('titanium')">
-        <div class="step3-card-header">
-          <span class="s3-name">TITANIUM</span>
-          <span class="s3-price">+ 720 €</span>
-        </div>
-        <div class="step3-card-body">
-          <div class="step3-card-tagline">Prenez les commandes</div>
-          <div class="step3-card-desc">Personnalisation avancée : tubes, intégration, formes. Un vélo titane vraiment unique. Inclut tous les niveaux précédents.</div>
-          <ul class="step3-card-items">
-            <li>Intégration complète des gaines</li>
-            <li>Modification des formes / sections des tubes</li>
-            <li>Passage de roues élargi ou réduit</li>
-            <li>Compatibilité composants atypiques</li>
-            <li>Toutes les options Évolution et Performance incluses</li>
-          </ul>
-        </div>
-        <div class="step3-ti-form" onclick="event.stopPropagation()">
-          <div class="step3-evo-title">Décrivez votre projet</div>
-          <textarea id="ti-description" placeholder="Décrivez vos envies, vos contraintes, vos idées... Nous vous contacterons pour un échange approfondi."></textarea>
-          <p class="step3-ti-note">Le niveau Titanium fait l'objet d'un accompagnement personnalisé. Après réception de votre configuration, nous vous contactons pour co-concevoir votre cadre.</p>
-        </div>
-        <div class="step3-card-footer">
-          <div class="step3-radio"></div>
-          <span class="step3-select-label">Choisir ce niveau</span>
-        </div>
-      </div>
-
-    </div>
+<!-- ── CADRE OOD ── -->
+<div id="ood-section">
+  <div class="ood-step-label">Étape 3 sur 3 — Optionnelle</div>
+  <div class="ood-title">Souhaitez-vous personnaliser votre cadre ?</div>
+  <div class="ood-desc">
+    Le configurateur vous a permis de choisir vos composants sur un cadre <strong>standard</strong> — c'est le forfait <strong>Essentiel</strong>, gratuit.<br><br>
+    Si vous souhaitez aller plus loin — adapter le cadre à votre morphologie, ajouter des fonctions, ou créer un vélo vraiment unique — trois niveaux supplémentaires sont disponibles, <strong>cumulatifs vers le bas</strong>.
   </div>
+  <div class="ood-actions">
+    <button class="ood-btn-yes" onclick="openStep3()"><i class="ti ti-adjustments-plus"></i> Découvrir les niveaux de personnalisation</button>
+    <button class="ood-btn-no" onclick="skipOOD()">Non merci, voir ma configuration</button>
+  </div>
+</div>
+
+<!-- ── ÉTAPE 3 niveaux ── -->
+<div id="step3-section">
+  <div class="step3-cards">
+
+    <div class="step3-card" id="s3-evolution" onclick="selectStep3('evolution')">
+      <div class="step3-card-header"><span class="s3-name">ÉVOLUTION</span><span class="s3-price">+ 60 €</span></div>
+      <div class="step3-card-body">
+        <div class="step3-card-tagline">Ajoutez des fonctions à votre vélo</div>
+        <div class="step3-card-desc">Adaptations simples sur le cadre standard pour optimiser sa polyvalence. Inclus dans les niveaux supérieurs.</div>
+        <ul class="step3-card-items">
+          <li>Inserts supplémentaires (porte-bidons, bagageries)</li>
+          <li>Fixation ISCG05 pour guide-chaîne</li>
+          <li>Patte arrière T-Type / UDH</li>
+          <li>Suppression patte dérailleur avant (mono-plateau)</li>
+          <li>Gravure personnalisée</li>
+        </ul>
+      </div>
+      <div class="step3-sub" onclick="event.stopPropagation()">
+        <div class="step3-sub-title">Choisissez vos options</div>
+        <label class="step3-evo-item"><input type="checkbox" name="evo" value="inserts"> Inserts supplémentaires porte-bidons / bagageries</label>
+        <label class="step3-evo-item"><input type="checkbox" name="evo" value="iscg"> Fixation ISCG05 pour guide-chaîne</label>
+        <label class="step3-evo-item"><input type="checkbox" name="evo" value="udh"> Patte arrière T-Type / UDH</label>
+        <label class="step3-evo-item"><input type="checkbox" name="evo" value="mono"> Suppression patte dérailleur avant (mono-plateau)</label>
+        <label class="step3-evo-item"><input type="checkbox" name="evo" value="gravure"> Gravure personnalisée</label>
+      </div>
+      <div class="step3-card-footer"><div class="step3-radio"></div><span class="step3-select-label">Choisir ce niveau</span></div>
+    </div>
+
+    <div class="step3-card" id="s3-performance" onclick="selectStep3('performance')">
+      <div class="step3-card-header"><span class="s3-name">PERFORMANCE</span><span class="s3-price">+ 300 €</span></div>
+      <div class="step3-card-body">
+        <div class="step3-card-tagline">Adaptez la géométrie à votre pratique</div>
+        <div class="step3-card-desc">Cadre dessiné selon votre morphologie et usage. Inclut les options Évolution.</div>
+        <ul class="step3-card-items">
+          <li>Géométrie liée à votre morphologie</li>
+          <li>Adaptation à votre pratique (route → all-road…)</li>
+          <li>Ajustements liés à un composant spécifique</li>
+          <li>Toutes les options Évolution incluses</li>
+        </ul>
+      </div>
+      <div class="step3-sub" onclick="event.stopPropagation()">
+        <div class="step3-sub-title">Vos informations morphologiques</div>
+        <div class="step3-perf-grid">
+          <div class="step3-perf-field"><label>Taille (cm)</label><input type="number" id="perf-taille" placeholder="ex: 178"></div>
+          <div class="step3-perf-field"><label>Entrejambe (cm)</label><input type="number" id="perf-entrejambe" placeholder="ex: 84"></div>
+          <div class="step3-perf-field"><label>Envergure (cm)</label><input type="number" id="perf-envergure" placeholder="ex: 180"></div>
+          <div class="step3-perf-field"><label>Usage principal</label>
+            <select id="perf-usage"><option value="">Sélectionner...</option>
+              <option>Route / Sportif</option><option>Endurance / Longue distance</option>
+              <option>All-road / Polyvalent</option><option>Gravel / Bikepacking</option>
+              <option>Trail / Enduro</option></select></div>
+        </div>
+        <p class="step3-note">Nous vous contacterons pour un échange approfondi avant de valider la géométrie.</p>
+      </div>
+      <div class="step3-card-footer"><div class="step3-radio"></div><span class="step3-select-label">Choisir ce niveau</span></div>
+    </div>
+
+    <div class="step3-card" id="s3-titanium" onclick="selectStep3('titanium')">
+      <div class="step3-card-header"><span class="s3-name">TITANIUM</span><span class="s3-price">+ 720 €</span></div>
+      <div class="step3-card-body">
+        <div class="step3-card-tagline">Prenez les commandes</div>
+        <div class="step3-card-desc">Personnalisation avancée : tubes, intégration, formes. Inclut tous les niveaux précédents.</div>
+        <ul class="step3-card-items">
+          <li>Intégration complète des gaines</li>
+          <li>Modification formes / sections des tubes</li>
+          <li>Passage de roues élargi ou réduit</li>
+          <li>Compatibilité composants atypiques</li>
+          <li>Toutes les options Évolution et Performance incluses</li>
+        </ul>
+      </div>
+      <div class="step3-sub" onclick="event.stopPropagation()">
+        <div class="step3-sub-title">Décrivez votre projet</div>
+        <textarea id="ti-description" placeholder="Décrivez vos envies, contraintes, idées..."></textarea>
+        <p class="step3-note">Le niveau Titanium fait l'objet d'un accompagnement personnalisé. Nous vous contacterons pour co-concevoir votre cadre.</p>
+      </div>
+      <div class="step3-card-footer"><div class="step3-radio"></div><span class="step3-select-label">Choisir ce niveau</span></div>
+    </div>
+
+  </div>
+</div>
 <button class="back-btn" onclick="window.history.back()" title="Retour à la page précédente"><i class="ti ti-arrow-left"></i> Retour</button>
 </body>
 </html>
