@@ -464,9 +464,10 @@
   .back-btn:hover { background: #1a1a1a; border-color: #F5C400; color: #F5C400; }
   @media (min-width: 768px) { .back-btn { display: flex; } }
 
-  /* Mode single-modèle : carte unique plus grande */
-  .model-grid.single .model-card { max-width: 320px; }
-  .model-grid.single .mc-photo { height: 280px; object-position: center; }
+  /* Mode single-modèle : carte unique pleine largeur */
+  .model-grid.single { grid-template-columns: 1fr; }
+  .model-grid.single .model-card { max-width: 100%; }
+  .model-grid.single .mc-photo { height: 220px; object-fit: cover; }
 
   @media (prefers-color-scheme: dark) {
     .opt-item.sel { background: #2a2200 !important; border-color: var(--blue) !important; }
