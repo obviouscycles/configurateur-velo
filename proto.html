@@ -466,7 +466,7 @@
 
   /* Mode single-modèle : carte unique plus grande */
   .model-grid.single .model-card { max-width: 320px; }
-  .model-grid.single .mc-photo { height: 200px; }
+  .model-grid.single .mc-photo { height: 280px; object-position: center; }
 
   @media (prefers-color-scheme: dark) {
     .opt-item.sel { background: #2a2200 !important; border-color: var(--blue) !important; }
@@ -554,7 +554,38 @@
     .opt-photo-card.sel .opc-name { color:#FFF8D6 !important; }
     .opt-photo-card.sel .opc-img-wrap { background:#1a1200 !important; border-color:#5a4400 !important; }
   }
+
+  /* ── FENÊTRE PRIX FLOTTANTE (desktop/tablette paysage) ─── */
+  #floating-price {
+    display: none;
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: #1a1a18;
+    border: 0.5px solid #3a3a36;
+    border-radius: 12px;
+    padding: 14px 18px;
+    z-index: 999;
+    min-width: 220px;
+    box-shadow: 0 4px 24px rgba(0,0,0,.5);
+  }
+  @media (min-width: 768px) {
+    #floating-price { display: block; }
+  }
+  #floating-price.hidden { opacity: 0; pointer-events: none; }
+  .fp-type  { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 2px; }
+  .fp-name  { font-size: 14px; font-weight: 500; color: #f2f2f2; margin-bottom: 6px; }
+  .fp-price { font-size: 22px; font-weight: 600; color: #F5C400; }
+  .fp-label { font-size: 11px; color: #888; margin-top: 2px; }
 </style>
+  <!-- Google Analytics GA4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-KGZDWLZ7JZ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-KGZDWLZ7JZ');
+  </script>
 </head>
 <body>
 
@@ -672,10 +703,10 @@
 // ─── DONNÉES ────────────────────────────────────────────────────────────────
 
 const MODELS = [
-  { id: 'route',             name: 'ON/ Route',                 badge: 'Route',          desc: 'Cadre titane, fourche carbone, sportif et polyvalent. Transmission électronique.',                                  basePrice: 5490, assembly: 300, photo: 'https://www.obviouscycles.com/wp-content/uploads/2025/05/on-da-1-mifi-655x460.jpg?m=1747931996' },
-  { id: 'gravel_racing',     name: 'ON/OFF Gravel Racing',      badge: 'Gravel',         desc: 'Cadre titane, géométrie sport, fourche carbone, intégration complète',                 basePrice: 4450, assembly: 300, photo: 'https://www.obviouscycles.com/wp-content/uploads/2024/03/onoff-2024-6-655x427.webp?m=1711027780' },
-  { id: 'gravel_bikepacking',name: 'OUT/QUEST Gravel Aventure', badge: 'Bikepacking',    desc: "Cadre titane, géométrie confort / longue distance, nombreux points d'accroche",         basePrice: 4390, assembly: 300, photo: 'https://www.obviouscycles.com/wp-content/uploads/2024/11/outquest-1-655x450.webp?m=1730756293' },
-  { id: 'vtt_enduro',        name: '/OFF Enduro HT',            badge: 'Trail / Enduro', desc: 'Cadre titane semi-rigide, géométrie enduro, fourche 140/150 mm, boost 148 mm',          basePrice: 5090, assembly: 300, photo: 'https://www.obviouscycles.com/wp-content/uploads/2024/12/off-x0-1-1-655x404.webp?m=1733503243' },
+  { id: 'route',              name: 'ON/',        badge: 'Route',          desc: 'Cadre titane, fourche carbone, sportif et polyvalent. Transmission électronique.',                                  basePrice: 5490, assembly: 300, photo: 'https://www.obviouscycles.com/wp-content/uploads/2025/05/on-da-1-mifi-655x460.jpg?m=1747931996' },
+  { id: 'gravel_racing',      name: 'ON/OFF',     badge: 'Gravel Racing',  desc: 'Cadre titane, géométrie sport, fourche carbone, intégration complète',                 basePrice: 4450, assembly: 300, photo: 'https://www.obviouscycles.com/wp-content/uploads/2024/03/onoff-2024-6-655x427.webp?m=1711027780' },
+  { id: 'gravel_bikepacking', name: 'OUT/QUEST',  badge: 'Gravel Aventure',desc: "Cadre titane, géométrie confort / longue distance, nombreux points d'accroche",         basePrice: 4390, assembly: 300, photo: 'https://www.obviouscycles.com/wp-content/uploads/2024/11/outquest-1-655x450.webp?m=1730756293' },
+  { id: 'vtt_enduro',         name: '/OFF',        badge: 'Enduro HT',      desc: 'Cadre titane semi-rigide, géométrie enduro, fourche 140/150 mm, boost 148 mm',          basePrice: 5090, assembly: 300, photo: 'https://www.obviouscycles.com/wp-content/uploads/2024/12/off-x0-1-1-655x404.webp?m=1733503243' },
 ];
 
 const ALL_OPTIONS = {
@@ -989,7 +1020,7 @@ function renderModels() {
         <span class="mc-price">à partir de ${(m.basePrice + (m.assembly||0)).toLocaleString('fr-FR')} €</span>
       </div>
       ${hasPresets ? `<div class="preset-bar" id="preset-bar-${m.id}" style="display:block" onclick="event.stopPropagation()">
-        <div class="preset-label">3 pré-configurations</div>
+        <div class="preset-label">3 suggestions pour démarrer — tout reste modifiable</div>
         <div class="preset-btns">
           <button class="preset-btn ${window._activePreset === 'Signature' ? 'active' : ''}" onclick="loadPreset('Signature')">Signature</button>
           <button class="preset-btn ${window._activePreset === 'Ti1' ? 'active' : ''}" onclick="loadPreset('Ti1')">Ti1</button>
@@ -1028,7 +1059,7 @@ function selectModel(id) {
   document.getElementById('posts-section').style.display = 'block';
   renderModels();
   renderPosts();
-  updateRecap();
+  updateRecap(); updateFloatingPrice();
   document.getElementById('save-form').classList.remove('open');
   window.scrollTo({ top: 0, behavior: 'instant' });
 }
@@ -1058,10 +1089,17 @@ function renderPosts() {
             const rec = isRecommended(o, selModel);
             const locked = isLocked(o, selModel);
             let priceStr;
-            if (locked) priceStr = '';
-            else if (o.price === 0) priceStr = '±0 €';
-            else if (o.price > 0) priceStr = '+' + o.price.toLocaleString('fr-FR') + ' €';
-            else priceStr = o.price.toLocaleString('fr-FR') + ' €';
+            if (locked) {
+              priceStr = '';
+            } else {
+              const currentOpt = selOpts[p.id] ? opts.find(x => x.id === selOpts[p.id]) : null;
+              const currentPrice = (currentOpt && !isLocked(currentOpt, selModel)) ? currentOpt.price : 0;
+              const diff = o.price - currentPrice;
+              if (selOpts[p.id] === o.id) priceStr = '±0 €';
+              else if (diff === 0) priceStr = '±0 €';
+              else if (diff > 0) priceStr = '+' + diff.toLocaleString('fr-FR') + ' €';
+              else priceStr = diff.toLocaleString('fr-FR') + ' €';
+            }
             const imgHTML = o.image
               ? '<img src="' + o.image + '" alt="' + o.name + '" loading="lazy" onerror="this.style.display=\'none\'">'
               : '<div class="opc-img-placeholder"><i class="ti ti-photo"></i><span>photo à venir</span></div>';
@@ -1084,10 +1122,17 @@ function renderPosts() {
           opts.map(o => {
             const rec = isRecommended(o, selModel);
             let priceStr;
-            if (o.locked) priceStr = '—';
-            else if (o.price === 0) priceStr = '±0 €';
-            else if (o.price > 0) priceStr = '+' + o.price.toLocaleString('fr-FR') + ' €';
-            else priceStr = o.price.toLocaleString('fr-FR') + ' €';
+            if (o.locked || isLocked(o, selModel)) {
+              priceStr = '—';
+            } else {
+              const currentOpt = selOpts[p.id] ? opts.find(x => x.id === selOpts[p.id]) : null;
+              const currentPrice = (currentOpt && !isLocked(currentOpt, selModel)) ? currentOpt.price : 0;
+              const diff = o.price - currentPrice;
+              if (selOpts[p.id] === o.id) priceStr = '±0 €';
+              else if (diff === 0) priceStr = '±0 €';
+              else if (diff > 0) priceStr = '+' + diff.toLocaleString('fr-FR') + ' €';
+              else priceStr = diff.toLocaleString('fr-FR') + ' €';
+            }
             return '<div class="opt-item ' + (selOpts[p.id] === o.id ? 'sel' : '') + '" onclick="selectOpt(\'' + p.id + '\',\'' + o.id + '\')">' +
               '<div class="opt-radio"><div class="radio-dot"></div></div>' +
               '<div class="oi-info">' +
@@ -1169,6 +1214,7 @@ const FORCE_SELECT = [
 ];
 
 function selectOpt(postId, optId) {
+  updateFloatingPrice();
   selOpts[postId] = optId;
 
   // Transmission VTT : gestion des freins
@@ -1242,7 +1288,7 @@ function selectOpt(postId, optId) {
   });
 
   renderModels(); // mettre à jour surbrillance boutons preset
-  renderPosts(); updateRecap();
+  renderPosts(); updateRecap(); updateFloatingPrice();
 }
 
 // ─── RÉCAPITULATIF ────────────────────────────────────────────────────────────
@@ -1296,6 +1342,10 @@ function updateRecap() {
     details += '<div class="recap-price-detail ' + cls + '"><span>' + p.name + ' — ' + opt.name + '</span><span>' + label + '</span></div>';
   });
 
+  // Prix total hors assemblage (surcouts options)
+  const optionsTotal = price - model.basePrice;
+  const baseLabel = 'Base : ' + model.basePrice.toLocaleString('fr-FR') + ' € <span style="font-size:11px;opacity:.6">(dont 300 € assemblage et mise en route)</span>';
+
   const recapHTML =
     '<div class="recap-visual">' +
       '<div class="recap-visual-title">Votre configuration</div>' +
@@ -1304,16 +1354,14 @@ function updateRecap() {
         '<div class="recap-model-info">' +
           '<div class="recap-model-badge">' + model.badge + '</div>' +
           '<div class="recap-model-name">' + model.name + '</div>' +
-          '<div class="recap-model-price">Base : ' + model.basePrice.toLocaleString('fr-FR') + ' €</div>' +
+          '<div class="recap-model-price">' + baseLabel + '</div>' +
         '</div>' +
       '</div>' +
       '<div class="recap-cards">' + cards + '</div>' +
       '<div class="recap-price-block">' +
-        details +
         '<hr class="recap-price-divider">' +
         '<div class="recap-total-block">' +
           '<div class="recap-total-card"><div class="recap-total-label">Prix total</div><div class="recap-total-val price">' + price.toLocaleString('fr-FR') + ' €</div></div>' +
-          ''
         '</div>' +
       '</div>' +
     '</div>';
@@ -1375,7 +1423,7 @@ function restoreConfig(id) {
   if (!cfg) return;
   selModel = cfg.selModel; selOpts = { ...cfg.selOpts }; openPost = null;
   switchTab('config');
-  renderModels(); renderPosts(); updateRecap();
+  renderModels(); renderPosts(); updateRecap(); updateFloatingPrice(); updateFloatingPrice();
   document.getElementById('posts-section').style.display = 'block';
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -1472,7 +1520,7 @@ function resetForceLink(postA, postB, scrollTo) {
   selOpts[postA] = null;
   selOpts[postB] = null;
   openPost = scrollTo || postA;
-  renderPosts(); updateRecap();
+  renderPosts(); updateRecap(); updateFloatingPrice();
   setTimeout(() => {
     const el = document.querySelector('[data-post-id="' + (scrollTo || postA) + '"]');
     if (el) {
@@ -1529,7 +1577,7 @@ function loadPreset(decl) {
   renderModels(); // mettre à jour la surbrillance du bouton actif
   document.getElementById('posts-section').style.display = 'block';
   renderPosts();
-  updateRecap();
+  updateRecap(); updateFloatingPrice();
   // Pas de scroll — on reste en haut de page
 }
 
@@ -1605,8 +1653,29 @@ if (modeleParam) {
   }
 };
 ;
+
+// ─── FENÊTRE PRIX FLOTTANTE ───────────────────────────────────────────────────
+function updateFloatingPrice() {
+  const fp = document.getElementById('floating-price');
+  if (!fp) return;
+  const model = MODELS.find(m => m.id === selModel);
+  if (!model) { fp.classList.add('hidden'); return; }
+  const { price } = computeTotals(selModel, selOpts);
+  document.getElementById('fp-type').textContent = model.badge;
+  document.getElementById('fp-name').textContent = model.name + ' titane';
+  document.getElementById('fp-price').textContent = price.toLocaleString('fr-FR') + ' €';
+  fp.classList.remove('hidden');
+}
 </script>
 
 <button class="back-btn" onclick="window.history.back()" title="Retour à la page précédente"><i class="ti ti-arrow-left"></i> Retour</button>
+
+  <!-- Fenêtre prix flottante -->
+  <div id="floating-price" class="hidden">
+    <div class="fp-type" id="fp-type">—</div>
+    <div class="fp-name" id="fp-name">—</div>
+    <div class="fp-price" id="fp-price">—</div>
+    <div class="fp-label">prix estimé</div>
+  </div>
 </body>
 </html>
