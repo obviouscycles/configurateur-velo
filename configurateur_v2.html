@@ -626,8 +626,10 @@
         <div class="sh-label">Étape 1 sur 3</div>
         <p class="sh-title">Choisissez votre modèle de base</p>
       </div>
-      <div class="model-grid" id="model-grid"></div>
-    <div class="change-model-btn" id="change-model-btn">
+      <div style="padding:0 1.5rem 1.5rem;">
+        <div class="model-grid" id="model-grid"></div>
+      </div>
+    <div class="change-model-btn" id="change-model-btn" style="padding:0 1.5rem;">
       <a href="./"><i class="ti ti-grid-dots"></i> Changer de modèle</a>
     </div>
     </div>
@@ -654,11 +656,11 @@
         <div class="sh-label">Étape 3 sur 3 — Optionnelle</div>
         <p class="sh-title">Souhaitez-vous personnaliser votre cadre ?</p>
       </div>
-      <div class="ood-desc">
+      <div class="ood-desc" style="padding:0 1.5rem;">
         Le configurateur vous a permis de choisir vos composants sur un cadre <strong>standard</strong> — c'est le forfait <strong>Essentiel</strong>, gratuit.<br><br>
         Si vous souhaitez aller plus loin — adapter le cadre à votre morphologie, ajouter des fonctions, ou créer un vélo vraiment unique — trois niveaux supplémentaires sont disponibles, <strong>cumulatifs vers le bas</strong>.
       </div>
-      <div class="ood-actions">
+      <div class="ood-actions" style="padding:0 1.5rem;">
         <button class="ood-btn-yes" onclick="openStep3()"><i class="ti ti-adjustments-plus"></i> Découvrir les niveaux de personnalisation</button>
         <button class="ood-btn-no" onclick="skipOOD()">Non merci, voir ma configuration</button>
       </div>
@@ -1359,11 +1361,16 @@ function updateRecap() {
   if (!model) return;
   const allDone = POST_META.every(p => !!selOpts[p.id]);
   // Afficher OOD si config complète et recap pas encore visible
-  const recapVisible = document.getElementById('recap-section').style.display === 'block';
-  if (allDone && !recapVisible) {
-    document.getElementById('ood-section').style.display = 'block';
-  }
-  if (!allDone) {
+  if (allDone) {
+    // Afficher OOD si recap pas encore visible (premier affichage)
+    const recapVisible = document.getElementById('recap-section').style.display === 'block';
+    if (!recapVisible) {
+      document.getElementById('ood-section').style.display = 'block';
+    }
+    // Toujours garder le recap visible s'il l'était déjà
+    document.getElementById('recap-section').style.display = recapVisible ? 'block' : 'none';
+    document.getElementById('contact-hint').style.display = recapVisible ? 'block' : 'none';
+  } else {
     document.getElementById('ood-section').style.display = 'none';
     document.getElementById('recap-section').style.display = 'none';
     document.getElementById('contact-hint').style.display = 'none';
@@ -1640,6 +1647,10 @@ function loadPreset(decl) {
   renderModels(); // mettre à jour la surbrillance du bouton actif
   document.getElementById('posts-section').style.display = 'block';
   renderPosts();
+  // Afficher directement OOD + recap après chargement preset
+  document.getElementById('ood-section').style.display = 'block';
+  document.getElementById('recap-section').style.display = 'block';
+  document.getElementById('contact-hint').style.display = 'block';
   updateRecap();
   // Pas de scroll — on reste en haut de page
 }
