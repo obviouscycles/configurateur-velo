@@ -1165,6 +1165,9 @@ function selectModel(id) {
     autoSelectLocked(id);
   }
   document.getElementById('posts-section').style.display = 'block';
+  document.getElementById('ood-section').style.display = 'block';
+  document.getElementById('recap-section').style.display = 'block';
+  document.getElementById('contact-hint').style.display = 'block';
   renderModels();
   renderPosts();
   updateRecap();
@@ -1361,15 +1364,14 @@ function updateRecap() {
   if (!model) return;
   const allDone = POST_META.every(p => !!selOpts[p.id]);
   // Afficher OOD si config complète et recap pas encore visible
-  if (allDone) {
-    // Afficher OOD si recap pas encore visible (premier affichage)
-    const recapVisible = document.getElementById('recap-section').style.display === 'block';
-    if (!recapVisible) {
-      document.getElementById('ood-section').style.display = 'block';
+  // Recap toujours visible si un modèle est sélectionné
+  if (selModel) {
+    if (allDone && document.getElementById('ood-section').style.display !== 'none'
+        && document.getElementById('recap-section').style.display !== 'block') {
+      // Config complète et OOD pas encore dismissé → montrer OOD
     }
-    // Toujours garder le recap visible s'il l'était déjà
-    document.getElementById('recap-section').style.display = recapVisible ? 'block' : 'none';
-    document.getElementById('contact-hint').style.display = recapVisible ? 'block' : 'none';
+    document.getElementById('recap-section').style.display = 'block';
+    document.getElementById('contact-hint').style.display = 'block';
   } else {
     document.getElementById('ood-section').style.display = 'none';
     document.getElementById('recap-section').style.display = 'none';
