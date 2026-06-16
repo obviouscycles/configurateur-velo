@@ -479,6 +479,53 @@
     .ph-sel { color: #f2f2f2 !important; }
   }
 
+  .change-model-btn {
+    display: none;
+    margin-top: 12px;
+    text-align: center;
+  }
+  .change-model-btn a {
+    font-size: 12px; color: #888; text-decoration: none;
+    border: 0.5px solid #444; padding: 6px 14px;
+    display: inline-flex; align-items: center; gap: 6px;
+    transition: color .15s, border-color .15s;
+    font-family: var(--font);
+  }
+  .change-model-btn a:hover { color: #F5C400; border-color: #F5C400; }
+
+  /* Boutons pré-config sous la carte modèle */
+  .preset-bar {
+    display: none;
+    padding: 10px 12px 12px;
+    background: #1e1e1e;
+    border-top: 0.5px solid #333;
+  }
+  .preset-label {
+    font-size: 10px; color: #888; text-transform: uppercase;
+    letter-spacing: .08em; margin-bottom: 8px;
+  }
+  .preset-btns { display: flex; gap: 6px; }
+  .preset-btn {
+    flex: 1; padding: 7px 4px; font-size: 12px; font-weight: 500;
+    border: 0.5px solid #444; background: #111; color: #ccc;
+    cursor: pointer; font-family: var(--font); text-align: center;
+    transition: border-color .15s, color .15s, background .15s;
+  }
+  .preset-btn:hover { border-color: var(--blue); color: var(--blue); background: #1a1500; }
+  .preset-btn.active { border-color: var(--blue); color: var(--blue); background: #1a1500; }
+
+  /* Surbrillance pré-config active */
+  .preset-btn.active {
+    border-color: var(--blue) !important;
+    color: var(--blue) !important;
+    background: #1a1500 !important;
+  }
+  /* Carte modèle en surbrillance quand arrivée via URL pré-config */
+  .model-card.preset-active {
+    border: 2px solid var(--blue) !important;
+    box-shadow: 0 0 0 1px var(--blue);
+  }
+
   /* ── PROTO : cartes photo ───────────────────────────────── */
   .opt-photo-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:8px; }
   .opt-photo-card { border:0.5px solid var(--border); border-radius:var(--radius-lg); background:var(--bg); cursor:pointer; overflow:hidden; transition:border-color .15s,background .15s; position:relative; display:flex; flex-direction:column; }
@@ -540,6 +587,9 @@
       <div class="step-label" style="color:#888;">Étape 1 sur 2</div>
       <p class="section-title" style="color:#f2f2f2;">Choisissez votre modèle de base</p>
       <div class="model-grid" id="model-grid"></div>
+    <div class="change-model-btn" id="change-model-btn">
+      <a href="./"><i class="ti ti-grid-dots"></i> Changer de modèle</a>
+    </div>
     </div>
 
     <div id="posts-section" style="display:none">
@@ -558,7 +608,7 @@
       <div id="recap-box-container"></div>
       <div class="btn-row">
         <button class="btn primary" onclick="openOrderModal()">
-          <i class="ti ti-send"></i> Envoyer cette configuration
+          <i class="ti ti-send"></i> Demander mon devis
         </button>
         <button class="btn success" onclick="toggleSaveForm()">
           <i class="ti ti-bookmark"></i> Sauvegarder cette configuration
@@ -589,8 +639,8 @@
 <!-- MODAL COMMANDE -->
 <div class="modal-overlay" id="order-modal">
   <div class="modal">
-    <h3><i class="ti ti-mail"></i> Envoyer ma configuration</h3>
-    <p>Renseignez vos coordonnées et nous vous recontacterons pour finaliser votre commande.</p>
+    <h3><i class="ti ti-file-invoice"></i> Demander mon devis</h3>
+    <p>Renseignez vos coordonnées et nous vous enverrons un devis personnalisé rapidement.</p>
     <div class="field">
       <label>Votre nom</label>
       <input type="text" id="order-name" placeholder="Prénom Nom" />
@@ -598,6 +648,10 @@
     <div class="field">
       <label>Votre email</label>
       <input type="email" id="order-email" placeholder="vous@example.com" />
+    </div>
+    <div class="field">
+      <label>Votre téléphone</label>
+      <input type="tel" id="order-phone" placeholder="+33 6 00 00 00 00" />
     </div>
     <div class="field">
       <label>Message (optionnel)</label>
@@ -618,7 +672,7 @@
 // ─── DONNÉES ────────────────────────────────────────────────────────────────
 
 const MODELS = [
-  { id: 'route',             name: 'ON/ Route',                 badge: 'Route',          desc: 'Cadre titane, fourche carbone, sportif et polyvalent',                                  basePrice: 5550, assembly: 300, photo: 'https://www.obviouscycles.com/wp-content/uploads/2025/05/on-da-1-mifi-655x460.jpg?m=1747931996' },
+  { id: 'route',             name: 'ON/ Route',                 badge: 'Route',          desc: 'Cadre titane, fourche carbone, sportif et polyvalent. Transmission électronique.',                                  basePrice: 5490, assembly: 300, photo: 'https://www.obviouscycles.com/wp-content/uploads/2025/05/on-da-1-mifi-655x460.jpg?m=1747931996' },
   { id: 'gravel_racing',     name: 'ON/OFF Gravel Racing',      badge: 'Gravel',         desc: 'Cadre titane, géométrie sport, fourche carbone, intégration complète',                 basePrice: 4450, assembly: 300, photo: 'https://www.obviouscycles.com/wp-content/uploads/2024/03/onoff-2024-6-655x427.webp?m=1711027780' },
   { id: 'gravel_bikepacking',name: 'OUT/QUEST Gravel Aventure', badge: 'Bikepacking',    desc: "Cadre titane, géométrie confort / longue distance, nombreux points d'accroche",         basePrice: 4390, assembly: 300, photo: 'https://www.obviouscycles.com/wp-content/uploads/2024/11/outquest-1-655x450.webp?m=1730756293' },
   { id: 'vtt_enduro',        name: '/OFF Enduro HT',            badge: 'Trail / Enduro', desc: 'Cadre titane semi-rigide, géométrie enduro, fourche 140/150 mm, boost 148 mm',          basePrice: 5090, assembly: 300, photo: 'https://www.obviouscycles.com/wp-content/uploads/2024/12/off-x0-1-1-655x404.webp?m=1733503243' },
@@ -626,143 +680,146 @@ const MODELS = [
 
 const ALL_OPTIONS = {
   fourche: [
-    { id: 'fourche_rd_car_00',          name: 'Fourche ON/',                      desc: 'Fourche carbone pivot conique',                                       price: 0,   weight: 0,    lockedFor: ['route'],              compat: [{mid:'route',rec:false}],                                                incompat: [], image: '' },
-    { id: 'fourche_gr_car_00',          name: 'Fourche gravel, sans inserts',     desc: 'Fourche gravel carbone sans inserts, pivot conique, pneu max 50 mm',  price: 0,   weight: 0,    lockedFor: ['gravel_racing'],      compat: [{mid:'gravel_racing',rec:true},{mid:'gravel_bikepacking',rec:false}],   incompat: [], image: '' },
-    { id: 'fourche_gr_car_ins',         name: 'Fourche gravel, avec inserts',     desc: 'Fourche gravel carbone avec inserts, pivot conique, pneu max 50 mm',  price: 0,   weight: 0,    lockedFor: ['gravel_bikepacking'], compat: [{mid:'gravel_bikepacking',rec:true},{mid:'gravel_racing',rec:false}],   incompat: [], image: '' },
-    { id: 'fourche_vtt_fox_fac_36_150', name: 'Fox Factory 36 150 mm',            desc: 'Suspendue Fox Factory Kashima Grip2',                                 price: 600, weight: 1780, lockedFor: [],                     compat: [{mid:'vtt_enduro',rec:false}],                                           incompat: [], image: '' },
-    { id: 'fourche_vtt_rs_lyr_ult_150', name: 'Rockshox Lytrik Ultimate 150 mm', desc: 'Suspendue Rockshox Lytrik Ultimate',                                  price: 350, weight: 1750, lockedFor: [],                     compat: [{mid:'vtt_enduro',rec:false}],                                           incompat: [], image: '' },
-    { id: 'fourche_vtt_rs_lyr_sel_150', name: 'Rockshox Lytrik Select 150 mm',   desc: 'Suspendue Rockshox Lytrik Select',                                    price: 0,   weight: 1800, lockedFor: ['vtt_enduro'],         compat: [{mid:'vtt_enduro',rec:false}],                                           incompat: [], image: '' },
+    { id: 'fourche_rd_car_00', name: 'Fourche ON/', desc: 'Fourche carbone pivot conique', price: 0, weight: 0, lockedFor: ['route'], compat: [{mid:'route',rec:false}], incompat: [], image: 'assets/fourche/fourche_rd_car_00.png' },
+    { id: 'fourche_gr_car_00', name: 'Fourche gravel, sans inserts', desc: 'Fourche gravel carbone sans inserts, pivot conique, pneu max 50 mm', price: 0, weight: 0, lockedFor: ['gravel_racing'], compat: [{mid:'gravel_racing',rec:true},{mid:'gravel_bikepacking',rec:false}], incompat: [], image: 'assets/fourche/fourche_gr_car_00.png' },
+    { id: 'fourche_gr_car_ins', name: 'Fourche gravel, avec inserts', desc: 'Fourche gravel carbone avec inserts, pivot conique, pneu max 50 mm', price: 0, weight: 0, lockedFor: ['gravel_bikepacking'], compat: [{mid:'gravel_bikepacking',rec:true},{mid:'gravel_racing',rec:false}], incompat: [], image: 'assets/fourche/fourche_gr_car_ins.png' },
+    { id: 'fourche_vtt_fox_fac_36_150', name: 'Fox Factory 36 150 mm', desc: 'Suspendue Fox Factory Kashima Grip2', price: 600, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false}], incompat: [], image: 'assets/fourche/fourche_vtt_fox_fac_36_150.png' },
+    { id: 'fourche_vtt_rs_lyr_ult_150', name: 'Rockshox Lyrik Ultimate 150 mm', desc: 'Suspendue Rockshox Lyrik Ultimate', price: 350, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false}], incompat: [], image: 'assets/fourche/fourche_vtt_rs_lyr_ult_150.png' },
+    { id: 'fourche_vtt_rs_lyr_sel_150', name: 'Rockshox Lyrik Select 150 mm', desc: 'Suspendue Rockshox Lyrik Select', price: 0, weight: 0, lockedFor: ['vtt_enduro'], compat: [{mid:'vtt_enduro',rec:false}], incompat: [], image: 'assets/fourche/fourche_vtt_rs_lyr_sel_150.png' },
   ],
   roues: [
-    { id: 'roue_gr_ob_35',   name: 'Obvious GR35-S',           desc: 'Carbone hyper polyvalente, moyeu DT350, rayons profilés',                              price: 765,  weight: 1840, lockedFor: [],                                 compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [], image: 'assets/roues/roue_gr_ob_35.png' },
-    { id: 'roue_gr_fu_soa',  name: 'Fulcrum Soniq ALX',        desc: 'Aluminium, la meilleure solution all-road et gravel aluminium',                        price: 0,    weight: 1680, lockedFor: ['gravel_bikepacking','gravel_racing'], compat: [{mid:'gravel_bikepacking',rec:false},{mid:'gravel_racing',rec:false}], incompat: [], image: 'assets/roues/roue_gr_fu_soa.jpg' },
-    { id: 'roue_gr_dt_g16',  name: 'DT Swiss GR 1600 Spline',  desc: "Roue aluminium, largeur interne 24 mm pour pneus jusqu\'à 52 mm",                   price: 75,   weight: 0,    lockedFor: [],                                 compat: [{mid:'gravel_bikepacking',rec:true},{mid:'gravel_racing',rec:false}],  incompat: [], image: 'assets/roues/roue_gr_dt_g16.webp' },
-    { id: 'roue_gr_fu_sgr',  name: 'Fulcrum Sharq GR',         desc: 'Roue compétition gravel, largeur interne 30 mm',                                       price: 1400, weight: 1550, lockedFor: [],                                 compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [], image: 'assets/roues/roue_gr_fu_sgr.jpg' },
-    { id: 'roue_rd_dt_p16',  name: 'DT Swiss PR 1600 Spline',  desc: 'Roues aluminium, équilibre entre légèreté et confort',                                 price: 0,    weight: 0,    lockedFor: ['route'],                          compat: [{mid:'route',rec:false}],                                               incompat: [], image: 'assets/roues/roue_rd_dt_p16.webp' },
-    { id: 'roue_rd_ob_35',   name: 'Obvious RD-35-R',          desc: 'Carbone compétition hyper polyvalente, moyeu DT350, rayons profilés, marquage laser',  price: 730,  weight: 1520, lockedFor: [],                                 compat: [{mid:'route',rec:true}],                                                incompat: [], image: 'assets/roues/roue_rd_ob_35.png' },
-    { id: 'roue_rd_fu_w57',  name: 'Fulcrum Wind 57',          desc: 'Carbone profil haut',                                                                   price: 810,  weight: 1510, lockedFor: [],                                 compat: [{mid:'route',rec:false}],                                               incompat: [], image: 'assets/roues/roue_rd_fu_w57.webp' },
-    { id: 'roue_vtt_ob_30',  name: 'Obvious MT30-S',           desc: 'Roue Enduro Carbone, ultralégère et indestructible',                                    price: 920,  weight: 1240, lockedFor: [],                                 compat: [{mid:'vtt_enduro',rec:false}],                                          incompat: [], image: 'assets/roues/roue_vtt_ob_30.png' },
-    { id: 'roue_vtt_fu_rm5', name: 'Fulcrum Red Metal 5',      desc: 'Roue Enduro aluminium, à toute épreuve',                                                price: 0,    weight: 1240, lockedFor: ['vtt_enduro'],                     compat: [{mid:'vtt_enduro',rec:false}],                                          incompat: [], image: 'assets/roues/roue_vtt_fu_rm5.avif' },
-    { id: 'roue_vtt_dt_e17', name: 'DT Swiss EX 1700 Classic', desc: 'Aluminium et savoir-faire : durabilité et agilité',                                     price: 330,  weight: 0,    lockedFor: [],                                 compat: [{mid:'vtt_enduro',rec:false}],                                          incompat: [], image: 'assets/roues/roue_vtt_dt_e17.webp' },
+    { id: 'roue_gr_ob_35', name: 'Obvious GR35-S', desc: 'Carbone hyper polyvalente, moyeu DT350, rayons profilés', price: 765, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [], image: 'assets/roues/roue_gr_ob_35.png' },
+    { id: 'roue_gr_fu_soa', name: 'Fulcrum Soniq ALX', desc: 'Aluminium, la meilleure solution all-road et gravel aluminium', price: 0, weight: 0, lockedFor: ['gravel_bikepacking','gravel_racing'], compat: [{mid:'gravel_bikepacking',rec:false},{mid:'gravel_racing',rec:false}], incompat: [], image: 'assets/roues/roue_gr_fu_soa.jpg' },
+    { id: 'roue_gr_dt_g16', name: 'DT Swiss GR1600 Spline', desc: 'Roue aluminium, largeur interne 24 mm pour pneus jusqu\'à 52 mm', price: 75, weight: 0, lockedFor: [], compat: [{mid:'gravel_bikepacking',rec:true},{mid:'gravel_racing',rec:false}], incompat: [], image: 'assets/roues/roue_gr_dt_g16.webp' },
+    { id: 'roue_gr_fu_sgr', name: 'Fulcrum Sharq GR', desc: 'Roue compétition gravel, largeur interne 30 mm', price: 1400, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [], image: 'assets/roues/roue_gr_fu_sgr.jpg' },
+    { id: 'roue_rd_dt_p16', name: 'DT Swiss PR1600 Spline', desc: 'Roues aluminium, équilibre entre légèreté et confort', price: 0, weight: 0, lockedFor: ['route'], compat: [{mid:'route',rec:false}], incompat: [], image: 'assets/roues/roue_rd_dt_p16.webp' },
+    { id: 'roue_rd_ob_35', name: 'Obvious RD-35-R', desc: 'Carbone compétition hyper polyvalente, moyeu DT350, rayons profilés, marquage laser', price: 750, weight: 0, lockedFor: [], compat: [{mid:'route',rec:true}], incompat: [], image: 'assets/roues/roue_rd_ob_35.png' },
+    { id: 'roue_rd_fu_w57', name: 'Fulcrum Wind 57', desc: 'Carbone profil haut', price: 810, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: [], image: 'assets/roues/roue_rd_fu_w57.webp' },
+    { id: 'roue_vtt_fu_rm5', name: 'Fulcrum Red Metal 5', desc: 'Roue Enduro aluminium, à toute épreuve', price: 0, weight: 0, lockedFor: ['vtt_enduro'], compat: [{mid:'vtt_enduro',rec:false}], incompat: [], image: 'assets/roues/roue_vtt_fu_rm5.avif' },
+    { id: 'roue_vtt_dt_e17', name: 'DT Swiss EX1700 Classic', desc: 'Aluminium et savoir-faire : durabilité et agilité', price: 330, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false}], incompat: [], image: 'assets/roues/roue_vtt_dt_e17.webp' },
+    { id: 'roue_vtt_ob_30', name: 'Obvious MT30-S', desc: 'Roue Enduro Carbone, ultralégère et indestructible', price: 920, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false}], incompat: [], image: 'assets/roues/roue_vtt_ob_30.png' },
+    { id: 'roue_vtt_hp_f30', name: 'Hope Fortus 30W', desc: 'La roue aluminium de référence en enduro', price: 255, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false}], incompat: [], image: 'assets/roues/roue_vtt_hp_f30.png' },
   ],
   pneus: [
-    { id: 'pneu_gr_sc_r',    name: 'Schwalbe G-One R Pro transparent',   desc: 'Pneu gravel polyvalent',                                              price: 0,  weight: 1600, lockedFor: ['gravel_bikepacking','gravel_racing'], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [], image: '' },
-    { id: 'pneu_gr_sc_rx',   name: 'Schwalbe G-One RX Pro noir',         desc: 'Le meilleur grip pour le gravel',                                     price: 0,  weight: 1600, lockedFor: [],                                 compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [], image: '' },
-    { id: 'pneu_gr_sc_sp',   name: 'Schwalbe G-One Speed noir',          desc: 'Pneu gravel pour les terrains les plus roulants, idéal en all-road',  price: -5, weight: 1650, lockedFor: [],                                 compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [], image: '' },
-    { id: 'pneu_rd_co_gp',   name: 'Continental GP5000 S TR transparent',desc: 'Le meilleur pneu route du moment',                                    price: 0,  weight: 1100, lockedFor: ['route'],                          compat: [{mid:'route',rec:false}],                                               incompat: [], image: '' },
-    { id: 'pneu_vtt_sc_gra', name: 'Schwalbe Magic Mary Gravity',        desc: 'Le pneu le plus agressif pour les enduristes',                        price: 0,  weight: 2700, lockedFor: ['vtt_enduro'],                     compat: [{mid:'vtt_enduro',rec:false}],                                          incompat: [], image: '' },
-  ],
-  frein: [
-    { id: 'frein_all',        name: 'Freins inclus avec la transmission', desc: '',                                    price: 0,   weight: 0, lockedFor: ['gravel_bikepacking','gravel_racing','route'], compat: [{mid:'route',rec:false},{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: ['trans_vtt_sr_e70','trans_vtt_sr_gx','trans_vtt_sr_x0','trans_vtt_sr_xxs'], image: '' },
-    { id: 'frein_vtt_sr_db8', name: 'Freins SRAM DB8',                   desc: '4 pistons, simple et robuste',        price: 0,   weight: 0, lockedFor: ['vtt_enduro'], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre'], image: '' },
-    { id: 'frein_vtt_sr_mvs', name: 'Freins SRAM Maven Silver',          desc: 'Le frein des disciplines Gravity',    price: 230, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre'], image: '' },
-    { id: 'frein_vtt_sr_mvu', name: 'Freins SRAM Maven Ultimate',        desc: 'Le frein de descente haut de gamme', price: 280, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre'], image: '' },
+    { id: 'pneu_gr_sc_r', name: 'Schwalbe G-One R Pro transparent', desc: 'Pneu gravel polyvalent', price: 0, weight: 0, lockedFor: ['gravel_bikepacking','gravel_racing'], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [], image: 'assets/pneus/pneu_gr_sc_r.png' },
+    { id: 'pneu_gr_sc_rx', name: 'Schwalbe G-One RX Pro noir', desc: 'Le meilleur grip pour le gravel', price: 0, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [], image: 'assets/pneus/pneu_gr_sc_rx.png' },
+    { id: 'pneu_gr_sc_sp', name: 'Schwalbe G-One Speed noir', desc: 'Pneu gravel pour les terrains les plus roulants', price: -5, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [], image: 'assets/pneus/pneu_gr_sc_sp.png' },
+    { id: 'pneu_rd_co_gp', name: 'Continental GP5000 S TR transparent', desc: 'Le meilleur pneu route du moment', price: 0, weight: 0, lockedFor: ['route'], compat: [{mid:'route',rec:false}], incompat: [], image: 'assets/pneus/pneu_rd_co_gp.png' },
+    { id: 'pneu_vtt_sc_gra', name: 'Schwalbe Magic Mary Gravity', desc: 'Le pneu le plus agressif pour les enduristes', price: 0, weight: 0, lockedFor: ['vtt_enduro'], compat: [{mid:'vtt_enduro',rec:false}], incompat: [], image: 'assets/pneus/pneu_vtt_sc_gra.png' },
   ],
   transmission: [
-    { id: 'trans_gr_sh_821',  name: 'SHIMANO GRX 820 1x12V',             desc: '1x12v, à câble, haut de gamme Shimano',          price: 275,  weight: 1050, lockedFor: [],                                 compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:true}],  incompat: [], image: '' },
-    { id: 'trans_gr_sh_822',  name: 'SHIMANO GRX 820 2x12V',             desc: '2x12v, à câble, haut de gamme Shimano',          price: 335,  weight: 1200, lockedFor: [],                                 compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [], image: '' },
-    { id: 'trans_gr_sh_611',  name: 'SHIMANO GRX 820/610 1x12V',         desc: '1x12v, à câble, le 12 vitesses accessible',      price: 0,    weight: 1250, lockedFor: ['gravel_bikepacking','gravel_racing'], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [], image: '' },
-    { id: 'trans_gr_sh_cud',  name: 'SHIMANO CUES U6040 DROP 1x11v',     desc: 'Hyper polyvalent 11 vitesses',                   price: -155, weight: 1150, lockedFor: [],                                 compat: [{mid:'gravel_bikepacking',rec:false},{mid:'gravel_racing',rec:false}], incompat: [], image: '' },
-    { id: 'trans_gr_sh_cuf',  name: 'SHIMANO CUES U6040 FLAT 1x11v',     desc: 'Hyper polyvalent 11 vitesses pour cintre plat', price: -155, weight: 1150, lockedFor: [],                                 compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: ['pilotage_rd_ala','pilotage_rd_suz_car','pilotage_rd_suz_alu','pilotage_gr_suz_car','pilotage_gr_suz_alu','pilotage_gr_ger_alu','pilotage_gr_drp_alu'], image: '' },
-    { id: 'trans_gr_sr_ri',   name: 'SRAM RIVAL AXS XPLR 1x13v',         desc: '1x13v sans fil, la solution robuste de SRAM',   price: 420,  weight: 1350, lockedFor: [],                                 compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [], image: '' },
-    { id: 'trans_gr_sr_fo',   name: 'SRAM FORCE AXS XPLR 1x13v',         desc: '1x13v sans fil, le bon compromis SRAM',         price: 820,  weight: 1280, lockedFor: [],                                 compat: [{mid:'gravel_racing',rec:true},{mid:'gravel_bikepacking',rec:false}],  incompat: [], image: '' },
-    { id: 'trans_gr_sr_re',   name: 'SRAM RED AXS XPLR 1x13v',           desc: '1x13v sans fil, hyper performant',              price: 2300, weight: 1120, lockedFor: [],                                 compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [], image: '' },
-    { id: 'trans_gr_ca_ek',   name: 'CAMPAGNOLO EKAR 1x13v',              desc: '1x13v à câble du constructeur italien',         price: 770,  weight: 1050, lockedFor: [],                                 compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [], image: '' },
-    { id: 'trans_gr_ca_re',   name: 'CAMPAGNOLO RECORD X 1x13v',          desc: '1x13v sans fil du constructeur italien',        price: 1300, weight: 1000, lockedFor: [],                                 compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [], image: '' },
-    { id: 'trans_rd_sh_105',  name: 'SHIMANO 105 Di2 2x12v',              desc: '2x12v, accessibilité et performance',           price: 0,    weight: 1200, lockedFor: ['route'],                          compat: [{mid:'route',rec:false}],                                               incompat: [], image: '' },
-    { id: 'trans_rd_sh_ul',   name: 'SHIMANO ULTEGRA R8100 Di2 2x12v',   desc: '2x12v, le meilleur du Di2 Shimano',             price: 550,  weight: 1100, lockedFor: [],                                 compat: [{mid:'route',rec:false}],                                               incompat: [], image: '' },
-    { id: 'trans_rd_sh_da',   name: 'SHIMANO DURA ACE R9200 Di2 2x12v',  desc: '2x12v, le choix des pros',                     price: 2065, weight: 1000, lockedFor: [],                                 compat: [{mid:'route',rec:true}],                                                incompat: [], image: '' },
-    { id: 'trans_rd_sr_ri',   name: 'SRAM RIVAL AXS 2x12v',              desc: '2x12v, accessibilité et performance',           price: -200, weight: 920,  lockedFor: [],                                 compat: [{mid:'route',rec:false}],                                               incompat: [], image: '' },
-    { id: 'trans_rd_sr_fo',   name: 'SRAM FORCE AXS 2x12v',              desc: '2x12v, le meilleur AXS',                       price: 210,  weight: 780,  lockedFor: [],                                 compat: [{mid:'route',rec:false}],                                               incompat: [], image: '' },
-    { id: 'trans_rd_sr_re',   name: 'SRAM RED AXS 2x12v',                desc: '2x12v, le choix des pros',                     price: 1700, weight: 720,  lockedFor: [],                                 compat: [{mid:'route',rec:false}],                                               incompat: [], image: '' },
-    { id: 'trans_rd_ca_re',   name: 'CAMPAGNOLO RECORD ALL-ROAD 2x13v',  desc: '2x13v, sans fil',                              price: 990,  weight: 1000, lockedFor: [],                                 compat: [{mid:'route',rec:false}],                                               incompat: [], image: '' },
-    { id: 'trans_rd_ca_sre',  name: 'CAMPAGNOLO SUPER RECORD 2x13v',     desc: "2x13v, boîtier céramique. Orfèvrerie italienne", price: 2590, weight: 900, lockedFor: [],                                 compat: [{mid:'route',rec:false}],                                               incompat: [], image: '' },
-    { id: 'trans_vtt_sh_m6',  name: 'SHIMANO DEORE M6100',               desc: 'Le choix accessible',                          price: 105,  weight: 1300, lockedFor: [],                                 compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}],                 incompat: [], image: '' },
-    { id: 'trans_vtt_sh_slx', name: 'SHIMANO SLX',                       desc: 'Le choix accessible',                          price: 225,  weight: 1200, lockedFor: [],                                 compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}],                 incompat: [], image: '' },
-    { id: 'trans_vtt_sh_xt',  name: 'SHIMANO XT M8100',                  desc: 'Performance et polyvalence',                   price: 300,  weight: 1050, lockedFor: [],                                 compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}],                 incompat: [], image: '' },
-    { id: 'trans_vtt_sh_xte', name: 'SHIMANO XT 8200 Di2',               desc: 'Shimano XT, sans fil',                         price: 1210, weight: 1100, lockedFor: [],                                 compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}],                 incompat: [], image: '' },
-    { id: 'trans_vtt_sh_xtr', name: 'SHIMANO XTR M9100',                 desc: 'La solution compétition de Shimano',           price: 1020, weight: 1000, lockedFor: [],                                 compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}],                 incompat: [], image: '' },
-    { id: 'trans_vtt_sh_xtre',name: 'SHIMANO XTR M9200 Di2',             desc: 'Shimano XTR, sans fil',                        price: 1950, weight: 1050, lockedFor: [],                                 compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}],                 incompat: [], image: '' },
-    { id: 'trans_vtt_sr_e70', name: 'SRAM EAGLE 70',                     desc: 'Le choix accessible',                          price: 0,    weight: 1350, lockedFor: ['vtt_enduro'],                     compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}],                 incompat: [], image: '' },
-    { id: 'trans_vtt_sr_gx',  name: 'SRAM GX EAGLE',                     desc: 'Le VTT accessible en montage T-Type',          price: 640,  weight: 1350, lockedFor: [],                                 compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}],                 incompat: [], image: '' },
-    { id: 'trans_vtt_sr_x0',  name: 'SRAM XO EAGLE',                     desc: 'Performance et polyvalence en T-Type',         price: 1110, weight: 1300, lockedFor: [],                                 compat: [{mid:'vtt_enduro',rec:true},{mid:'vtt_xc',rec:false}],                  incompat: [], image: '' },
-    { id: 'trans_vtt_sr_xxs', name: 'SRAM XX SL EAGLE',                  desc: 'La solution compétition de SRAM',              price: 1720, weight: 1100, lockedFor: [],                                 compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}],                 incompat: [], image: '' },
+    { id: 'trans_gr_sh_821', name: 'SHIMANO GRX 820 1x12V', desc: '1x12v, à câble, haut de gamme Shimano', price: 275, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:true}], incompat: [], image: 'assets/transmission/trans_gr_sh_821.png' },
+    { id: 'trans_gr_sh_822', name: 'SHIMANO GRX 820 2x12V', desc: '2x12v, à câble, haut de gamme Shimano', price: 335, weight: 0, lockedFor: [], compat: [{mid:'gravel_bikepacking',rec:false}], incompat: [], image: 'assets/transmission/trans_gr_sh_822.png' },
+    { id: 'trans_gr_sh_611', name: 'SHIMANO GRX 820/610 1x12V', desc: '1x12v, à câble, le 12 vitesses accessible', price: 0, weight: 0, lockedFor: ['gravel_bikepacking','gravel_racing'], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [], image: 'assets/transmission/trans_gr_sh_611.png' },
+    { id: 'trans_gr_sh_cud', name: 'SHIMANO CUES U6040 DROP 1x11v', desc: 'Hyper polyvalent 11 vitesses', price: -155, weight: 0, lockedFor: [], compat: [{mid:'gravel_bikepacking',rec:false},{mid:'gravel_racing',rec:false}], incompat: [], image: 'assets/transmission/trans_gr_sh_cud.png' },
+    { id: 'trans_gr_sh_cuf', name: 'SHIMANO CUES U6040 FLAT 1x11v', desc: 'Hyper polyvalent 11 vitesses pour cintre plat', price: -155, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: ['pilotage_rd_ala','pilotage_rd_suz_car','pilotage_rd_suz_alu','pilotage_gr_suz_car','pilotage_gr_suz_alu','pilotage_gr_ger_alu','pilotage_gr_drp_alu','pilotage_gr_gerz_alu'], image: 'assets/transmission/trans_gr_sh_cuf.png' },
+    { id: 'trans_gr_sr_ri', name: 'SRAM RIVAL AXS XPLR 1x13v', desc: '1x13v sans fil, la solution robuste de SRAM', price: 420, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [], image: 'assets/transmission/trans_gr_sr_ri.png' },
+    { id: 'trans_gr_sr_fo', name: 'SRAM FORCE AXS XPLR 1x13v', desc: '1x13v sans fil, le bon compromis SRAM', price: 820, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:true},{mid:'gravel_bikepacking',rec:false}], incompat: [], image: 'assets/transmission/trans_gr_sr_fo.png' },
+    { id: 'trans_gr_sr_re', name: 'SRAM RED AXS XPLR 1x13v', desc: '1x13v sans fil, hyper performant', price: 2300, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [], image: 'assets/transmission/trans_gr_sr_re.png' },
+    { id: 'trans_gr_ca_ek', name: 'CAMPAGNOLO EKAR 1x13v', desc: '1x13v à câble du constructeur italien', price: 770, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [], image: 'assets/transmission/trans_gr_ca_ek.png' },
+    { id: 'trans_gr_ca_re', name: 'CAMPAGNOLO RECORD X 1x13v', desc: '1x13v sans fil du constructeur italien', price: 1300, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [], image: 'assets/transmission/trans_gr_ca_re.png' },
+    { id: 'trans_rd_sh_105', name: 'SHIMANO 105 Di2 2x12v', desc: '2x12v, accessibilité et performance', price: 0, weight: 0, lockedFor: ['route'], compat: [{mid:'route',rec:false}], incompat: [], image: 'assets/transmission/trans_rd_sh_105.png' },
+    { id: 'trans_rd_sh_ul', name: 'SHIMANO ULTEGRA R8100 Di2 2x12v', desc: '2x12v, le meilleur du Di2 Shimano', price: 550, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: [], image: 'assets/transmission/trans_rd_sh_ul.png' },
+    { id: 'trans_rd_sh_da', name: 'SHIMANO DURA ACE R9200 Di2 2x12v', desc: '2x12v, le choix des pros', price: 2065, weight: 0, lockedFor: [], compat: [{mid:'route',rec:true}], incompat: [], image: 'assets/transmission/trans_rd_sh_da.png' },
+    { id: 'trans_rd_sr_ri', name: 'SRAM RIVAL AXS 2x12v', desc: '2x12v, accessibilité et performance', price: -200, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: [], image: 'assets/transmission/trans_rd_sr_ri.png' },
+    { id: 'trans_rd_sr_fo', name: 'SRAM FORCE AXS 2x12v', desc: '2x12v, le meilleur AXS', price: 230, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: [], image: 'assets/transmission/trans_rd_sr_fo.png' },
+    { id: 'trans_rd_sr_re', name: 'SRAM RED AXS 2x12v', desc: '2x12v, le choix des pros', price: 1700, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: [], image: 'assets/transmission/trans_rd_sr_re.png' },
+    { id: 'trans_rd_ca_re', name: 'CAMPAGNOLO RECORD ALL-ROAD 2x13v', desc: '2x13v, sans fil', price: 990, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: [], image: 'assets/transmission/trans_rd_ca_re.png' },
+    { id: 'trans_rd_ca_sre', name: 'CAMPAGNOLO SUPER RECORD 2x13v', desc: '2x13v, boîtier céramique. Orfèvrerie italienne', price: 2590, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: [], image: 'assets/transmission/trans_rd_ca_sre.png' },
+    { id: 'trans_vtt_sh_m6', name: 'SHIMANO DEORE M6100', desc: 'Le choix accessible', price: 105, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], image: 'assets/transmission/trans_vtt_sh_m6.png' },
+    { id: 'trans_vtt_sh_slx', name: 'SHIMANO SLX', desc: 'Performance et accessibilité', price: 225, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], image: 'assets/transmission/trans_vtt_sh_slx.png' },
+    { id: 'trans_vtt_sh_xt', name: 'SHIMANO XT M8100', desc: 'Performance et polyvalence', price: 300, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], image: 'assets/transmission/trans_vtt_sh_xt.png' },
+    { id: 'trans_vtt_sh_xte', name: 'SHIMANO XT 8200 Di2', desc: 'Shimano XT, sans fil', price: 1210, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], image: 'assets/transmission/trans_vtt_sh_xte.png' },
+    { id: 'trans_vtt_sh_xtr', name: 'SHIMANO XTR M9100', desc: 'La solution compétition de Shimano', price: 1020, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], image: 'assets/transmission/trans_vtt_sh_xtr.png' },
+    { id: 'trans_vtt_sh_xtre', name: 'SHIMANO XTR M9200 Di2', desc: 'Shimano XTR, sans fil', price: 1950, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], image: 'assets/transmission/trans_vtt_sh_xtre.png' },
+    { id: 'trans_vtt_sr_e70', name: 'SRAM EAGLE 70', desc: 'Le choix accessible', price: 0, weight: 0, lockedFor: ['vtt_enduro'], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], image: 'assets/transmission/trans_vtt_sr_e70.png' },
+    { id: 'trans_vtt_sr_gx', name: 'SRAM GX EAGLE', desc: 'Le VTT accessible en montage T-Type', price: 640, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], image: 'assets/transmission/trans_vtt_sr_gx.png' },
+    { id: 'trans_vtt_sr_x0', name: 'SRAM XO EAGLE', desc: 'Performance et polyvalence en T-Type', price: 1110, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:true},{mid:'vtt_xc',rec:false}], incompat: [], image: 'assets/transmission/trans_vtt_sr_x0.png' },
+    { id: 'trans_vtt_sr_xxs', name: 'SRAM XX SL EAGLE', desc: 'La solution compétition de SRAM', price: 1720, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], image: 'assets/transmission/trans_vtt_sr_xxs.png' },
   ],
   power: [
-    { id: 'pwr_all',       name: 'Sans mesure de puissance',         desc: '',                                                         price: 0,    weight: 0, lockedFor: [], compat: [], incompat: [], image: '' },
-    { id: 'pwr_gr_sr_ri',  name: 'SRAM Rival XPLR AXS',             desc: "Capteur dans l'axe de pédalier (mono-jambe)",               price: 180,  weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [], image: '' },
-    { id: 'pwr_vtt_sr_x0', name: 'SRAM X0 Eagle AXS',               desc: "Capteur Quarq dans l'étoile du pédalier",                  price: 190,  weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}],                 incompat: [], image: '' },
-    { id: 'pwr_rd_sr_ri',  name: 'SRAM Rival AXS 2x12',             desc: "Capteur dans l'axe de pédalier (mono-jambe)",               price: 200,  weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}],                                               incompat: [], image: '' },
-    { id: 'pwr_gr_sr_fo',  name: 'SRAM Force XPLR AXS',             desc: "Capteur dans l'axe de pédalier (mono-jambe)",               price: 205,  weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [], image: '' },
-    { id: 'pwr_rd_sr_fo',  name: 'SRAM Force AXS 2x12',             desc: "Capteur Quarq dans l'étoile du pédalier",                  price: 360,  weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}],                                               incompat: [], image: '' },
-    { id: 'pwr_vtt_sr_xxs',name: 'SRAM XX SL Eagle AXS',            desc: "Capteur Quarq dans l'étoile du pédalier",                  price: 420,  weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}],                 incompat: [], image: '' },
-    { id: 'pwr_rd_sh_ul',  name: 'Shimano Ultegra R8100-P',         desc: 'Capteur intégré dans les manivelles du pédalier',           price: 540,  weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}],                                               incompat: [], image: '' },
-    { id: 'pwr_rd_sr_re',  name: 'SRAM Red AXS 2x12',               desc: "Capteur Quarq dans l'étoile du pédalier",                  price: 540,  weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}],                                               incompat: [], image: '' },
-    { id: 'pwr_gr_sr_re',  name: 'SRAM Red XPLR AXS',               desc: "Capteur Quarq dans l'étoile du pédalier",                  price: 500,  weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [], image: '' },
-    { id: 'pwr_rd_sh_da',  name: 'Shimano Dura-Ace R9200-P',        desc: 'Capteur intégré dans les manivelles du pédalier',           price: 580,  weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}],                                               incompat: [], image: '' },
-    { id: 'pwr_gr_ca_re',  name: 'Campagnolo Record 1x13',          desc: 'Capteur sur chaque manivelle',                              price: 550,  weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [], image: '' },
-    { id: 'pwr_rd_ca_re',  name: 'Campagnolo Record 2x13',          desc: 'Capteur sur chaque manivelle',                              price: 1050, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}],                                               incompat: [], image: '' },
-    { id: 'pwr_rd_ca_sre', name: 'Campagnolo Super Record 2x13',    desc: 'Capteur sur chaque manivelle',                              price: 1050, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}],                                               incompat: [], image: '' },
+    { id: 'pwr_all', name: 'Sans mesure de puissance', desc: '', price: 0, weight: 0, lockedFor: ['gravel_racing','gravel_bikepacking','vtt_enduro','route'], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false},{mid:'vtt_enduro',rec:false},{mid:'route',rec:false}], incompat: [], image: 'assets/power/pwr_all.png' },
+    { id: 'pwr_gr_sr_ri', name: 'SRAM Rival XPLR AXS', desc: 'Capteur dans l\'axe de pédalier (mono-jambe)', price: 180, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre','trans_vtt_sr_e70','trans_vtt_sr_gx','trans_vtt_sr_x0','trans_vtt_sr_xxs'], image: 'assets/power/pwr_gr_sr_ri.png' },
+    { id: 'pwr_gr_sr_fo', name: 'SRAM Force XPLR AXS', desc: 'Capteur dans l\'axe de pédalier (mono-jambe)', price: 205, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre','trans_vtt_sr_e70','trans_vtt_sr_gx','trans_vtt_sr_x0','trans_vtt_sr_xxs'], image: 'assets/power/pwr_gr_sr_fo.png' },
+    { id: 'pwr_gr_sr_re', name: 'SRAM Red XPLR AXS', desc: 'Capteur Quarq dans l\'étoile du pédalier', price: 500, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre','trans_vtt_sr_e70','trans_vtt_sr_gx','trans_vtt_sr_x0','trans_vtt_sr_xxs'], image: 'assets/power/pwr_gr_sr_re.png' },
+    { id: 'pwr_gr_ca_re', name: 'Campagnolo Record 1x13', desc: 'Capteur sur chaque manivelle', price: 550, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre','trans_vtt_sr_e70','trans_vtt_sr_gx','trans_vtt_sr_x0','trans_vtt_sr_xxs'], image: 'assets/power/pwr_gr_ca_re.png' },
+    { id: 'pwr_rd_sr_ri', name: 'SRAM Rival AXS 2x12', desc: 'Capteur dans l\'axe de pédalier (mono-jambe)', price: 200, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre','trans_vtt_sr_e70','trans_vtt_sr_gx','trans_vtt_sr_x0','trans_vtt_sr_xxs'], image: 'assets/power/pwr_rd_sr_ri.png' },
+    { id: 'pwr_rd_sr_fo', name: 'SRAM Force AXS 2x12', desc: 'Capteur Quarq dans l\'étoile du pédalier', price: 360, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre','trans_vtt_sr_e70','trans_vtt_sr_gx','trans_vtt_sr_x0','trans_vtt_sr_xxs'], image: 'assets/power/pwr_rd_sr_fo.png' },
+    { id: 'pwr_rd_sr_re', name: 'SRAM Red AXS 2x12', desc: 'Capteur Quarq dans l\'étoile du pédalier', price: 540, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_ca_re','trans_rd_ca_sre','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre','trans_vtt_sr_e70','trans_vtt_sr_gx','trans_vtt_sr_x0','trans_vtt_sr_xxs'], image: 'assets/power/pwr_rd_sr_re.png' },
+    { id: 'pwr_rd_sh_ul', name: 'Shimano Ultegra R8100-P', desc: 'Capteur intégré dans les manivelles du pédalier', price: 540, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre','trans_vtt_sr_e70','trans_vtt_sr_gx','trans_vtt_sr_x0','trans_vtt_sr_xxs'], image: 'assets/power/pwr_rd_sh_ul.png' },
+    { id: 'pwr_rd_sh_da', name: 'Shimano Dura-Ace R9200-P', desc: 'Capteur intégré dans les manivelles du pédalier', price: 580, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre','trans_vtt_sr_e70','trans_vtt_sr_gx','trans_vtt_sr_x0','trans_vtt_sr_xxs'], image: 'assets/power/pwr_rd_sh_da.png' },
+    { id: 'pwr_rd_ca_re', name: 'Campagnolo Record 2x13', desc: 'Capteur sur chaque manivelle', price: 1050, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_sre','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre','trans_vtt_sr_e70','trans_vtt_sr_gx','trans_vtt_sr_x0','trans_vtt_sr_xxs'], image: 'assets/power/pwr_rd_ca_re.png' },
+    { id: 'pwr_rd_ca_sre', name: 'Campagnolo Super Record 2x13', desc: 'Capteur sur chaque manivelle', price: 1050, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre','trans_vtt_sr_e70','trans_vtt_sr_gx','trans_vtt_sr_x0','trans_vtt_sr_xxs'], image: 'assets/power/pwr_rd_ca_sre.png' },
+    { id: 'pwr_vtt_sr_x0', name: 'SRAM X0 Eagle AXS', desc: 'Capteur Quarq dans l\'étoile du pédalier', price: 190, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre','trans_vtt_sr_e70','trans_vtt_sr_gx','trans_vtt_sr_xxs'], image: 'assets/power/pwr_vtt_sr_x0.png' },
+    { id: 'pwr_vtt_sr_xxs', name: 'SRAM XX SL Eagle AXS', desc: 'Capteur Quarq dans l\'étoile du pédalier', price: 420, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre','trans_vtt_sr_e70','trans_vtt_sr_gx','trans_vtt_sr_x0'], image: 'assets/power/pwr_vtt_sr_xxs.png' },
+  ],
+  frein: [
+    { id: 'frein_all', name: 'Freins inclus avec la transmission', desc: '', price: 0, weight: 0, lockedFor: ['gravel_bikepacking','gravel_racing','route','vtt_enduro','vtt_xc'], compat: [{mid:'route',rec:false},{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false},{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], image: 'assets/frein/frein_all.png' },
+    { id: 'frein_vtt_hp_tr4', name: 'Freins Hope EVO TR4', desc: '4 pistons. Référence du frein trail', price: 410, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre'], image: 'assets/frein/frein_vtt_hp_tr4.png' },
+    { id: 'frein_vtt_sr_db8', name: 'Freins SRAM DB8', desc: '4 pistons, simple et robuste', price: 0, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], image: 'assets/frein/frein_vtt_sr_db8.png' },
+    { id: 'frein_vtt_sr_mvs', name: 'Freins SRAM Maven Silver', desc: 'Le frein des disciplines Gravity', price: 230, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false}], incompat: [], image: 'assets/frein/frein_vtt_sr_mvs.png' },
+    { id: 'frein_vtt_sr_mvu', name: 'Freins SRAM Maven Ultimate', desc: 'Le frein de descente haut de gamme', price: 280, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false}], incompat: [], image: 'assets/frein/frein_vtt_sr_mvu.png' },
   ],
   pilotage: [
-    { id: 'pilotage_rd_ala',      name: 'Combo Deda Alanera DCR',                               desc: 'Ensemble combiné carbone',                                   price: 395,  weight: 300, lockedFor: [],              compat: [{mid:'route',rec:true}],                                                incompat: [], image: 'assets/pilotage/pilotage_rd_ala.webp' },
-    { id: 'pilotage_rd_suz_car',  name: 'Cintre Deda SuperZero Carbon / Potence Deda SuperBox', desc: 'Cintre route carbone profilé',                               price: 160,  weight: 340, lockedFor: [],              compat: [{mid:'route',rec:false}],                                               incompat: [], image: 'assets/pilotage/pilotage_rd_suz_car.webp' },
-    { id: 'pilotage_rd_suz_alu',  name: 'Cintre Deda SuperZero Alu / Potence Deda SuperBox',   desc: 'Cintre route aluminium profilé',                             price: 0,    weight: 0,   lockedFor: ['route'],       compat: [{mid:'route',rec:false}],                                               incompat: [], image: 'assets/pilotage/pilotage_rd_suz_alu.webp' },
-    { id: 'pilotage_gr_suz_car',  name: 'Cintre Deda SuperZero Carbon / Potence Deda SuperBox',desc: 'Cintre gravel carbone, profilé, flare 8°',                   price: 150,  weight: 340, lockedFor: [],              compat: [{mid:'gravel_racing',rec:false}],                                        incompat: [], image: 'assets/pilotage/pilotage_gr_suz_car.webp' },
-    { id: 'pilotage_gr_suz_alu',  name: 'Cintre Deda SuperZero Alu / Potence Deda SuperBox',   desc: 'Cintre gravel aluminium, profilé, flare 8°',                 price: 0,    weight: 0,   lockedFor: ['gravel_racing'],compat: [{mid:'gravel_racing',rec:true}],                                         incompat: [], image: 'assets/pilotage/pilotage_gr_suz_alu.webp' },
-    { id: 'pilotage_gr_gerz_alu', name: 'Cintre Deda Gera Alu / Potence Deda Superbox',        desc: 'Cintre gravel aluminium, multiposition, flare 12°',          price: -25,  weight: 450, lockedFor: [],              compat: [{mid:'gravel_racing',rec:false}],                                        incompat: [], image: 'assets/pilotage/pilotage_gr_gerz_alu.webp' },
-    { id: 'pilotage_gr_ger_alu',  name: 'Cintre Deda Gera Alu / Potence Deda Zero100',         desc: 'Cintre gravel aluminium, multiposition, flare 12°',          price: 95,   weight: 450, lockedFor: [],              compat: [{mid:'gravel_bikepacking',rec:true}],                                    incompat: [], image: 'assets/pilotage/pilotage_gr_ger_alu.webp' },
-    { id: 'pilotage_gr_drp_alu',  name: 'Cintre gravel Randonneur Ergotec',                    desc: 'Cintre gravel aluminium, flare 12°',                         price: 0,    weight: 0,   lockedFor: ['gravel_bikepacking'], compat: [{mid:'gravel_bikepacking',rec:false}],                             incompat: [], image: 'assets/pilotage/pilotage_gr_drp_alu.jpg' },
-    { id: 'pilotage_gr_flat_ext', name: 'Cintre gravel plat Ergotec',                          desc: 'Cintre plat pour plus de confort',                           price: -20,  weight: 380, lockedFor: [],              compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}],  incompat: ['trans_gr_sh_611','trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_cud','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re'], image: 'assets/pilotage/pilotage_gr_flat_ext.jpg' },
-    { id: 'pilotage_vtt_end',     name: 'Cintre et potence Truvativ Descendant',               desc: 'Potence 50 mm, diamètre 35 mm / Cintre 780 mm, 25 mm rise',  price: 0,    weight: 0,   lockedFor: ['vtt_enduro'],  compat: [{mid:'vtt_enduro',rec:false}],                                          incompat: [], image: 'assets/pilotage/pilotage_vtt_end.webp' },
+    { id: 'pilotage_rd_ala', name: 'Combo Deda Alanera DCR', desc: 'Ensemble combiné carbone', price: 395, weight: 0, lockedFor: [], compat: [{mid:'route',rec:true}], incompat: [], image: 'assets/pilotage/pilotage_rd_ala.webp' },
+    { id: 'pilotage_rd_suz_car', name: 'Cintre Deda SuperZero RS Carbon / Potence Deda SuperBox', desc: 'Cintre route carbone profilé', price: 160, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: [], image: 'assets/pilotage/pilotage_rd_suz_car.webp' },
+    { id: 'pilotage_rd_suz_alu', name: 'Cintre Deda SuperZero RS Alu / Potence Deda SuperBox', desc: 'Cintre route aluminium profilé', price: 0, weight: 0, lockedFor: ['route'], compat: [{mid:'route',rec:false}], incompat: [], image: 'assets/pilotage/pilotage_rd_suz_alu.webp' },
+    { id: 'pilotage_gr_suz_car', name: 'Cintre Deda SuperZero Carbon / Potence Deda SuperBox', desc: 'Cintre gravel carbone, profilé, flare 8°', price: 150, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false}], incompat: [], image: 'assets/pilotage/pilotage_gr_suz_car.webp' },
+    { id: 'pilotage_gr_suz_alu', name: 'Cintre Deda SuperZero Alu / Potence Deda SuperBox', desc: 'Cintre gravel aluminium, profilé, flare 8°', price: 0, weight: 0, lockedFor: ['gravel_racing'], compat: [{mid:'gravel_racing',rec:true}], incompat: [], image: 'assets/pilotage/pilotage_gr_suz_alu.webp' },
+    { id: 'pilotage_gr_gerz_alu', name: 'Cintre Deda Gera Alu / Potence Deda Superbox', desc: 'Cintre gravel aluminium, multiposition, flare 12°', price: -25, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false}], incompat: [], image: 'assets/pilotage/pilotage_gr_gerz_alu.webp' },
+    { id: 'pilotage_gr_ger_alu', name: 'Cintre Deda Gera Alu / Potence Deda Zero100', desc: 'Cintre gravel aluminium, multiposition, flare 12°', price: 95, weight: 0, lockedFor: [], compat: [{mid:'gravel_bikepacking',rec:true}], incompat: [], image: 'assets/pilotage/pilotage_gr_ger_alu.webp' },
+    { id: 'pilotage_gr_drp_alu', name: 'Cintre gravel Randonneur Ergotec', desc: 'Cintre gravel aluminium, flare 12°', price: 0, weight: 0, lockedFor: ['gravel_bikepacking'], compat: [{mid:'gravel_bikepacking',rec:false}], incompat: [], image: 'assets/pilotage/pilotage_gr_drp_alu.jpg' },
+    { id: 'pilotage_gr_flat_ext', name: 'Cintre gravel plat Ergotec', desc: 'Cintre plat pour plus de confort', price: -20, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: ['trans_gr_sh_611','trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_cud','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re'], image: 'assets/pilotage/pilotage_gr_flat_ext.jpg' },
+    { id: 'pilotage_vtt_end', name: 'Cintre et potence Truvativ Descendant', desc: 'Potence 50 mm, Ø35 mm / Cintre 780 mm, 25 mm rise', price: 0, weight: 0, lockedFor: ['vtt_enduro'], compat: [{mid:'vtt_enduro',rec:false}], incompat: [], image: 'assets/pilotage/pilotage_vtt_end.webp' },
   ],
   selle: [
-    { id: 'selle_rd_ant_r5',   name: 'Fizik Antares R5',             desc: 'Course route et VTT',                                         price: 0,   weight: 310, lockedFor: ['route'],              compat: [{mid:'route',rec:false},{mid:'vtt_xc',rec:false}],                                           incompat: [], image: 'assets/selle/selle_rd_ant_r5.webp' },
-    { id: 'selle_rd_ant_r3',   name: 'Fizik Antares R3',             desc: 'Course route et VTT, rail titane',                            price: 50,  weight: 260, lockedFor: [],                     compat: [{mid:'route',rec:false},{mid:'vtt_xc',rec:false}],                                           incompat: [], image: 'assets/selle/selle_rd_ant_r3.webp' },
-    { id: 'selle_rd_ant_r1',   name: 'Fizik Antares R1',             desc: 'Course route et VTT, rail carbone',                           price: 90,  weight: 310, lockedFor: [],                     compat: [{mid:'route',rec:false},{mid:'vtt_xc',rec:false}],                                           incompat: [], image: 'assets/selle/selle_rd_ant_r1.webp' },
-    { id: 'selle_gr_ali_r5',   name: 'Fizik Aliante R5',             desc: 'Route et gravel',                                             price: 0,   weight: 310, lockedFor: ['gravel_racing'],      compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false},{mid:'route',rec:false}], incompat: [], image: 'assets/selle/selle_gr_ali_r5.webp' },
-    { id: 'selle_gr_ali_r3',   name: 'Fizik Aliante R3',             desc: 'Route et gravel, rail titane',                                price: 50,  weight: 260, lockedFor: [],                     compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false},{mid:'route',rec:false}], incompat: [], image: 'assets/selle/selle_gr_ali_r3.webp' },
-    { id: 'selle_rd_arg_r3',   name: 'Fizik Vento Argo R3',          desc: 'Course route et gravel, selle courte, rail titane',           price: 50,  weight: 0,   lockedFor: [],                     compat: [{mid:'route',rec:false},{mid:'gravel_racing',rec:false}],                                     incompat: [], image: 'assets/selle/selle_rd_arg_r3.webp' },
-    { id: 'selle_rd_arg_r1',   name: 'Fizik Vento Argo R1 Light',   desc: 'Course route et gravel, selle courte, rail carbone',          price: 90,  weight: 0,   lockedFor: [],                     compat: [{mid:'route',rec:false},{mid:'gravel_racing',rec:false}],                                     incompat: [], image: 'assets/selle/selle_rd_arg_r1.webp' },
-    { id: 'selle_rd_arg_r00',  name: 'Fizik Vento Argo R00',        desc: 'Course route et gravel, selle courte, rail et coque carbone',  price: 175, weight: 0,   lockedFor: [],                     compat: [{mid:'route',rec:false},{mid:'gravel_racing',rec:false}],                                     incompat: [], image: 'assets/selle/selle_rd_arg_r00.webp' },
-    { id: 'selle_gr_arg_x5',   name: 'Fizik Terra Argo X5',          desc: 'Gravel, selle courte',                                        price: 0,   weight: 0,   lockedFor: ['gravel_bikepacking'], compat: [{mid:'gravel_bikepacking',rec:false},{mid:'gravel_racing',rec:false}],                       incompat: [], image: 'assets/selle/selle_gr_arg_x5.webp' },
-    { id: 'selle_gr_arg_x3',   name: 'Fizik Terra Argo X3',          desc: 'Gravel, selle courte, rail titane',                           price: 50,  weight: 0,   lockedFor: [],                     compat: [{mid:'gravel_bikepacking',rec:false},{mid:'gravel_racing',rec:false}],                        incompat: [], image: 'assets/selle/selle_gr_arg_x3.webp' },
-    { id: 'selle_rd_ari_r3',   name: 'Fizik Arione R3',              desc: 'Course route, rail titane',                                   price: 50,  weight: 0,   lockedFor: [],                     compat: [{mid:'route',rec:false},{mid:'vtt_xc',rec:false}],                                           incompat: [], image: 'assets/selle/selle_rd_ari_r3.webp' },
-    { id: 'selle_rd_ari_r00',  name: 'Fizik Arione R1 Adaptive',    desc: 'Course route, Impression 3D et rail carbone',                 price: 175, weight: 0,   lockedFor: [],                     compat: [{mid:'route',rec:false},{mid:'vtt_xc',rec:false}],                                           incompat: [], image: 'assets/selle/selle_rd_ari_r00.webp' },
-    { id: 'selle_vtt_alpt_x5', name: 'Fizik Alpaca Terra X5',        desc: 'VTT, rail alliage léger, coupe anatomique',                   price: 0,   weight: 220, lockedFor: ['vtt_enduro'],         compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}],                                      incompat: [], image: 'assets/selle/selle_vtt_alpt_x5.webp' },
-    { id: 'selle_br_b17_ho',   name: 'Brooks B17 honey',             desc: 'Cuir, touring',                                               price: 55,  weight: 420, lockedFor: [],                     compat: [{mid:'gravel_bikepacking',rec:false}],                                                       incompat: [], image: 'assets/selle/selle_br_b17_ho.jpg' },
-    { id: 'selle_ber_asp_bk',  name: 'Berthoud Aravis ouverte noir', desc: 'Cuir, fabrication française, longue distance + couvre selle', price: 250, weight: 380, lockedFor: [],                     compat: [{mid:'route',rec:false},{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [], image: 'assets/selle/selle_ber_asp_bk.jpg' },
-    { id: 'selle_bek_lup',     name: 'Selle Berk Lupina Short noir', desc: '99 gr, full carbone, revêtement cuir synthétique',            price: 240, weight: -220,lockedFor: [],                     compat: [{mid:'route',rec:false},{mid:'vtt_xc',rec:false}],                                           incompat: [], image: 'assets/selle/selle_bek_lup.webp' },
+    { id: 'selle_rd_ant_r5', name: 'Fizik Antares R5', desc: 'Course route et VTT', price: 0, weight: 0, lockedFor: ['route'], compat: [{mid:'route',rec:false},{mid:'gravel_racing',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], image: 'assets/selle/selle_rd_ant_r5.webp' },
+    { id: 'selle_rd_ant_r3', name: 'Fizik Antares R3', desc: 'Course route et VTT, rail titane', price: 60, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false},{mid:'gravel_racing',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], image: 'assets/selle/selle_rd_ant_r3.webp' },
+    { id: 'selle_rd_ant_r1', name: 'Fizik Antares R1', desc: 'Course route et VTT, rail carbone', price: 90, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false},{mid:'gravel_racing',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], image: 'assets/selle/selle_rd_ant_r1.webp' },
+    { id: 'selle_gr_ali_r5', name: 'Fizik Aliante R5', desc: 'Route et gravel', price: 0, weight: 0, lockedFor: ['gravel_racing'], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false},{mid:'route',rec:false}], incompat: [], image: 'assets/selle/selle_gr_ali_r5.webp' },
+    { id: 'selle_gr_ali_r3', name: 'Fizik Aliante R3', desc: 'Route et gravel, rail titane', price: 60, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false},{mid:'route',rec:false}], incompat: [], image: 'assets/selle/selle_gr_ali_r3.webp' },
+    { id: 'selle_rd_arg_r3', name: 'Fizik Vento Argo R3', desc: 'Course route et gravel, selle courte, rail titane', price: 60, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false},{mid:'gravel_racing',rec:false}], incompat: [], image: 'assets/selle/selle_rd_arg_r3.webp' },
+    { id: 'selle_rd_arg_r1', name: 'Fizik Vento Argo R1 Light', desc: 'Course route et gravel, selle courte, rail carbone', price: 90, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false},{mid:'gravel_racing',rec:false}], incompat: [], image: 'assets/selle/selle_rd_arg_r1.webp' },
+    { id: 'selle_rd_arg_r00', name: 'Fizik Vento Argo R00', desc: 'Course route et gravel, selle courte, rail et coque carbone', price: 175, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false},{mid:'gravel_racing',rec:false}], incompat: [], image: 'assets/selle/selle_rd_arg_r00.webp' },
+    { id: 'selle_gr_arg_x5', name: 'Fizik Terra Argo X5', desc: 'Gravel, selle courte', price: 0, weight: 0, lockedFor: ['gravel_bikepacking'], compat: [{mid:'gravel_bikepacking',rec:false},{mid:'gravel_racing',rec:false}], incompat: [], image: 'assets/selle/selle_gr_arg_x5.webp' },
+    { id: 'selle_gr_arg_x3', name: 'Fizik Terra Argo X3', desc: 'Gravel, selle courte, rail titane', price: 50, weight: 0, lockedFor: [], compat: [{mid:'gravel_bikepacking',rec:false},{mid:'gravel_racing',rec:false}], incompat: [], image: 'assets/selle/selle_gr_arg_x3.webp' },
+    { id: 'selle_rd_ari_r3', name: 'Fizik Arione R3', desc: 'Course route, rail titane', price: 60, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], image: 'assets/selle/selle_rd_ari_r3.webp' },
+    { id: 'selle_rd_ari_r00', name: 'Fizik Arione R1 Adaptive', desc: 'Course route, impression 3D et rail carbone', price: 175, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], image: 'assets/selle/selle_rd_ari_r00.webp' },
+    { id: 'selle_vtt_alpt_x5', name: 'Fizik Alpaca Terra X5', desc: 'VTT, rail alliage léger, coupe anatomique', price: 0, weight: 0, lockedFor: ['vtt_enduro'], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], image: 'assets/selle/selle_vtt_alpt_x5.webp' },
+    { id: 'selle_br_b17_ho', name: 'Brooks B17 honey', desc: 'Cuir, touring', price: 55, weight: 0, lockedFor: [], compat: [{mid:'gravel_bikepacking',rec:false}], incompat: [], image: 'assets/selle/selle_br_b17_ho.jpg' },
+    { id: 'selle_ber_asp_bk', name: 'Berthoud Aravis ouverte noir', desc: 'Cuir, fabrication française, longue distance + couvre selle', price: 250, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false},{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [], image: 'assets/selle/selle_ber_asp_bk.jpg' },
+    { id: 'selle_bek_lup', name: 'Selle Berk Lupina Short noir', desc: '99 gr, full carbone, revêtement cuir synthétique', price: 240, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], image: 'assets/selle/selle_bek_lup.webp' },
   ],
   tige: [
-    { id: 'tige_rd_ob_car',  name: 'Tige de selle Obvious carbone CS25', desc: 'Diamètre 27,2 mm, recul 25 mm. Compatible rail rond ou oval', price: 0,    weight: 0,    lockedFor: ['gravel_bikepacking','gravel_racing','route'], compat: [{mid:'route',rec:true},{mid:'gravel_racing',rec:true},{mid:'gravel_bikepacking',rec:false}], incompat: [], image: 'assets/tige/tige_rd_ob_car.png' },
-    { id: 'tige_rd_ob_ti',   name: 'Tige de selle Obvious titane TS25',  desc: 'Diamètre 27,2 mm, recul 25 mm. Compatible rail rond ou oval', price: 90,   weight: 45,   lockedFor: [],                                             compat: [{mid:'route',rec:false},{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:true}], incompat: [], image: 'assets/tige/tige_rd_ob_ti.png' },
-    { id: 'tige_vtt_ob_ti',  name: 'Tige de selle Obvious titane TS00',  desc: 'Diamètre 27,2 mm, sans recul. Compatible rail rond ou oval',  price: -120, weight: -280, lockedFor: [],                                             compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}],                                      incompat: [], image: 'assets/tige/tige_vtt_ob_ti.png' },
-    { id: 'tige_vtt_ou_tel', name: 'Tige de selle One-Up Dropper V3',    desc: 'Tige de selle téléscopique',                                 price: 0,    weight: 0,    lockedFor: ['vtt_enduro'],                                 compat: [{mid:'vtt_enduro',rec:true},{mid:'vtt_xc',rec:true}],                                        incompat: [], image: 'assets/tige/tige_vtt_ou_tel.png' },
+    { id: 'tige_rd_ob_car', name: 'Tige de selle Obvious carbone CS25', desc: 'Diamètre 27,2 mm, recul 25 mm. Compatible rail rond ou oval', price: 0, weight: 0, lockedFor: ['gravel_bikepacking','gravel_racing','route'], compat: [{mid:'route',rec:true},{mid:'gravel_racing',rec:true},{mid:'gravel_bikepacking',rec:false}], incompat: [], image: 'assets/tige/tige_rd_ob_car.png' },
+    { id: 'tige_rd_ob_ti', name: 'Tige de selle Obvious titane TS25', desc: 'Diamètre 27,2 mm, recul 25 mm. Compatible rail rond ou oval', price: 90, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false},{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:true}], incompat: [], image: 'assets/tige/tige_rd_ob_ti.png' },
+    { id: 'tige_vtt_ob_ti', name: 'Tige de selle Obvious titane TS00', desc: 'Diamètre 27,2 mm, sans recul. Compatible rail rond ou oval', price: -120, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], image: 'assets/tige/tige_vtt_ob_ti.png' },
+    { id: 'tige_vtt_ou_tel', name: 'Tige de selle One-Up Dropper V3', desc: 'Tige de selle téléscopique', price: 0, weight: 0, lockedFor: ['vtt_enduro'], compat: [{mid:'vtt_enduro',rec:true},{mid:'vtt_xc',rec:true}], incompat: [], image: 'assets/tige/tige_vtt_ou_tel.png' },
   ],
   pedales: [
-    { id: 'ped_no',         name: 'Sans pédales',                          desc: '',                                                              price: 0,   weight: 0,   lockedFor: [], compat: [], incompat: [], image: '' },
-    { id: 'ped_rd_sh_da',   name: 'Pédales Shimano Dura-Ace 9100 Carbone', desc: 'Technologie SPD-SL. Carbone et inox.',                         price: 190, weight: 235, lockedFor: [], compat: [{mid:'route',rec:false}],                                                                                     incompat: [], image: '' },
-    { id: 'ped_rd_sh_ul',   name: 'Pédales Shimano Ultegra R8000 Carbone', desc: 'Technologie SPD-SL. Carbone.',                                 price: 120, weight: 248, lockedFor: [], compat: [{mid:'route',rec:false}],                                                                                     incompat: [], image: '' },
-    { id: 'ped_rd_sh_105',  name: 'Pédales Shimano 105 R7000',             desc: 'Technologie SPD-SL',                                           price: 95,  weight: 276, lockedFor: [], compat: [{mid:'route',rec:false}],                                                                                     incompat: [], image: '' },
-    { id: 'ped_rd_sh_r55',  name: 'Pédales Shimano PD-R550',               desc: 'Pédales automatiques Shimano',                                 price: 75,  weight: 310, lockedFor: [], compat: [{mid:'route',rec:false}],                                                                                     incompat: [], image: '' },
-    { id: 'ped_rd_lk_kbti', name: 'Pédales Look Keo Blade Carbone Ti',     desc: 'Ressort à lame carbone, axe titane et roulements céramique',   price: 300, weight: 190, lockedFor: [], compat: [{mid:'route',rec:false}],                                                                                     incompat: [], image: '' },
-    { id: 'ped_rd_lk_kbc',  name: 'Pédales Look Keo Blade Carbone',        desc: 'Ressort à lame carbone',                                       price: 130, weight: 230, lockedFor: [], compat: [{mid:'route',rec:false}],                                                                                     incompat: [], image: '' },
-    { id: 'ped_rd_lk_k2m',  name: 'Pédales Look Keo 2 Max',                desc: 'Pédales automatiques Look',                                    price: 75,  weight: 260, lockedFor: [], compat: [{mid:'route',rec:false}],                                                                                     incompat: [], image: '' },
-    { id: 'ped_vtt_sh_xtrp',name: 'Pédales Shimano XTR M9220',             desc: 'Pédales XTR Enduro à plateforme. Technologie SPD',             price: 130, weight: 435, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false}],                                                                               incompat: [], image: '' },
-    { id: 'ped_vtt_sh_xtp', name: 'Pédales Shimano XT M8120',              desc: 'Pédales XT Enduro à plateforme. Technologie SPD',              price: 90,  weight: 438, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}],                                                     incompat: [], image: '' },
-    { id: 'ped_vtt_lk_xer', name: 'Pédales Look X-Track En Rage',          desc: 'Compatible SPD',                                               price: 70,  weight: 420, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}],                                                     incompat: [], image: '' },
-    { id: 'ped_vtt_on_com', name: 'Pédales plates One-Up Composite noir',   desc: 'Pédales plates Enduro. Corps composite',                       price: 55,  weight: 355, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false}],                                                                               incompat: [], image: '' },
-    { id: 'ped_vtt_on_alu', name: 'Pédales plates One-Up Aluminium noir',   desc: 'Pédales plates Enduro. Corps aluminium',                       price: 165, weight: 385, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false}],                                                                               incompat: [], image: '' },
-    { id: 'ped_gr_sh_1sd',  name: 'Pédales Shimano PD-ES600',              desc: 'Pédales SPD à 1 seul côté',                                    price: 65,  weight: 280, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}],                                        incompat: [], image: '' },
-    { id: 'ped_gr_sh_xtr',  name: 'Pédales Shimano XTR M9200',             desc: 'Pédales XTR XC. Technologie SPD',                              price: 130, weight: 315, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false},{mid:'vtt_xc',rec:false}],              incompat: [], image: '' },
-    { id: 'ped_gr_sh_xt',   name: 'Pédales Shimano XT M8100',              desc: 'Pédales XT XC. Technologie SPD',                               price: 90,  weight: 343, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false},{mid:'vtt_xc',rec:false}],              incompat: [], image: '' },
-    { id: 'ped_gr_sh_M54',  name: 'Pédales Shimano PD-M540',               desc: 'Pédales XC. Compatible SPD',                                   price: 59,  weight: 350, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false},{mid:'vtt_xc',rec:false}],              incompat: [], image: '' },
-    { id: 'ped_gr_lk_xrct', name: 'Pédales Look X-Track Race Carbon Ti',   desc: 'Compatible SPD, corps carbone, axe titane et roulements céramique', price: 210, weight: 290, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false},{mid:'vtt_xc',rec:false}],      incompat: [], image: '' },
-    { id: 'ped_gr_lk_xrc',  name: 'Pédales Look X-Track Race Carbon',      desc: 'Compatible SPD, corps carbone',                                price: 110, weight: 350, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false},{mid:'vtt_xc',rec:false}],              incompat: [], image: '' },
-    { id: 'ped_gr_lk_xtk',  name: 'Pédales Look X-Track',                  desc: 'Compatible SPD',                                               price: 50,  weight: 400, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false},{mid:'vtt_xc',rec:false}],              incompat: [], image: '' },
+    { id: 'ped_no', name: 'Sans pédales', desc: '', price: 0, weight: 0, lockedFor: ['gravel_racing','gravel_bikepacking','vtt_enduro','route'], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false},{mid:'vtt_enduro',rec:false},{mid:'route',rec:false}], incompat: [], image: '' },
+    { id: 'ped_rd_sh_da', name: 'Pédales Shimano Dura-Ace 9100 Carbone', desc: 'Technologie SPD-SL. Carbone et inox.', price: 190, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: [], image: '' },
+    { id: 'ped_rd_sh_ul', name: 'Pédales Shimano Ultegra R8000 Carbone', desc: 'Technologie SPD-SL. Carbone.', price: 120, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: [], image: '' },
+    { id: 'ped_rd_sh_105', name: 'Pédales Shimano 105 R7000', desc: 'Technologie SPD-SL', price: 95, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: [], image: '' },
+    { id: 'ped_rd_sh_r55', name: 'Pédales Shimano PD-R550', desc: 'Pédales automatiques Shimano', price: 75, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: [], image: '' },
+    { id: 'ped_rd_lk_kbti', name: 'Pédales Look Keo Blade Carbone Ti', desc: 'Ressort à lame carbone, axe titane et roulements céramique', price: 300, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: [], image: '' },
+    { id: 'ped_rd_lk_kbc', name: 'Pédales Look Keo Blade Carbone', desc: 'Ressort à lame carbone', price: 130, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: [], image: '' },
+    { id: 'ped_rd_lk_k2m', name: 'Pédales Look Keo 2 Max', desc: 'Pédales automatiques Look', price: 75, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: [], image: '' },
+    { id: 'ped_vtt_sh_xtrp', name: 'Pédales Shimano XTR M9220', desc: 'Pédales XTR Enduro à plateforme. Technologie SPD', price: 130, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false}], incompat: [], image: '' },
+    { id: 'ped_vtt_sh_xtp', name: 'Pédales Shimano XT M8120', desc: 'Pédales XT Enduro à plateforme. Technologie SPD', price: 90, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], image: '' },
+    { id: 'ped_vtt_lk_xer', name: 'Pédales Look X-Track En Rage', desc: 'Compatible SPD', price: 70, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], image: '' },
+    { id: 'ped_vtt_on_com', name: 'Pédales plates One-Up Composite noir', desc: 'Pédales plates Enduro. Corps composite', price: 55, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false}], incompat: [], image: '' },
+    { id: 'ped_vtt_on_alu', name: 'Pédales plates One-Up Aluminium noir', desc: 'Pédales plates Enduro. Corps aluminium', price: 165, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false}], incompat: [], image: '' },
+    { id: 'ped_gr_sh_1sd', name: 'Pédales Shimano PD-ES600', desc: 'Pédales SPD à 1 seul côté', price: 65, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [], image: '' },
+    { id: 'ped_gr_sh_xtr', name: 'Pédales Shimano XTR M9200', desc: 'Pédales XTR XC. Technologie SPD', price: 130, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], image: '' },
+    { id: 'ped_gr_sh_xt', name: 'Pédales Shimano XT M8100', desc: 'Pédales XT XC. Technologie SPD', price: 90, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], image: '' },
+    { id: 'ped_gr_sh_M54', name: 'Pédales Shimano PD-M540', desc: 'Pédales XC. Compatible SPD', price: 59, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], image: '' },
+    { id: 'ped_gr_lk_xrct', name: 'Pédales Look X-Track Race Carbon Ti', desc: 'Compatible SPD, corps carbone, axe titane et roulements céramique', price: 210, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], image: '' },
+    { id: 'ped_gr_lk_xrc', name: 'Pédales Look X-Track Race Carbon', desc: 'Compatible SPD, corps carbone', price: 110, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], image: '' },
+    { id: 'ped_gr_lk_xtk', name: 'Pédales Look X-Track', desc: 'Compatible SPD', price: 50, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], image: '' },
   ],
 };
+
 const POST_META = [
   { id: 'fourche',      name: 'Fourche',             icon: 'ti-git-fork' },
   { id: 'roues',        name: 'Roues',               icon: 'ti-circle' },
@@ -799,6 +856,17 @@ function optionsFor(postId, modelId) {
     const blocked = incompatFromOthers.includes(o.id);
     return compatible && !blocked;
   });
+
+  // Filtre freins VTT : selon transmission choisie
+  if (postId === 'frein' && selModel === 'vtt_enduro' && selOpts['transmission']) {
+    const isVttTrans = selOpts['transmission'].startsWith('trans_vtt_');
+    const isSramVtt = selOpts['transmission'].startsWith('trans_vtt_sr_');
+    opts = opts.filter(o => {
+      if (isSramVtt) return o.id !== 'frein_all';   // SRAM : tout sauf frein_all
+      if (isVttTrans) return o.id === 'frein_all' || o.id === 'frein_vtt_hp_tr4'; // Shimano : frein_all + Hope
+      return o.id === 'frein_all';
+    });
+  }
 
   // Filtre power : n'afficher que pwr_all + le powermeter de la transmission choisie
   if (postId === 'power' && selOpts['transmission']) {
@@ -904,8 +972,15 @@ function renderModels() {
   }
 
   document.getElementById('model-grid').className = 'model-grid' + (window._singleModel ? ' single' : '');
-  document.getElementById('model-grid').innerHTML = models.map(m => `
-    <div class="model-card ${selModel === m.id ? 'sel' : ''}" onclick="selectModel('${m.id}')">
+
+  // Bouton "Changer de modèle" visible uniquement en mode single
+  const changeBtn = document.getElementById('change-model-btn');
+  if (changeBtn) changeBtn.style.display = window._singleModel ? 'block' : 'none';
+
+  document.getElementById('model-grid').innerHTML = models.map(m => {
+    const isSingle = !!window._singleModel;
+    const hasPresets = isSingle && PRESETS[m.id];
+    return `<div class="model-card ${selModel === m.id ? 'sel' : ''}" onclick="selectModel('${m.id}')">
       ${m.photo ? `<img class="mc-photo" src="${m.photo}" alt="${m.name}" loading="lazy">` : ''}
       <div class="mc-text">
         <span class="mc-badge">${m.badge}</span>
@@ -913,17 +988,49 @@ function renderModels() {
         <span class="mc-desc">${m.desc}</span>
         <span class="mc-price">à partir de ${(m.basePrice + (m.assembly||0)).toLocaleString('fr-FR')} €</span>
       </div>
-    </div>`).join('');
+      ${hasPresets ? `<div class="preset-bar" id="preset-bar-${m.id}" style="display:block" onclick="event.stopPropagation()">
+        <div class="preset-label">3 pré-configurations</div>
+        <div class="preset-btns">
+          <button class="preset-btn ${window._activePreset === 'Signature' ? 'active' : ''}" onclick="loadPreset('Signature')">Signature</button>
+          <button class="preset-btn ${window._activePreset === 'Ti1' ? 'active' : ''}" onclick="loadPreset('Ti1')">Ti1</button>
+          <button class="preset-btn ${window._activePreset === 'Ti2' ? 'active' : ''}" onclick="loadPreset('Ti2')">Ti2</button>
+        </div>
+      </div>` : ''}
+    </div>`;
+  }).join('');
 }
 
 function selectModel(id) {
   selModel = id; selOpts = {}; openPost = null;
-  autoSelectLocked(id);
-  renderModels(); renderPosts();
+  // Passer en mode single uniquement si on vient d'un clic depuis la grille des 4 (pas déjà single)
+  if (!window._singleModel) {
+    window._singleModel = id;
+    renderModels(); // re-render pour afficher mode single
+  }
+  // Charger Ti1 par défaut sauf si un preset est déjà actif (URL pré-config)
+  if (!window._activePreset && PRESETS[id] && PRESETS[id]['Ti1']) {
+    window._activePreset = 'Ti1';
+    selOpts = {...PRESETS[id]['Ti1']};
+    Object.keys(selOpts).forEach(postId => {
+      const optId = selOpts[postId];
+      if (!optId) return;
+      FORCE_SELECT.forEach(rule => {
+        if (rule.if_selected === optId) {
+          Object.entries(rule.force).forEach(([fp, fid]) => {
+            if (!selOpts[fp]) selOpts[fp] = fid;
+          });
+        }
+      });
+    });
+  } else {
+    autoSelectLocked(id);
+  }
   document.getElementById('posts-section').style.display = 'block';
-  document.getElementById('recap-section').style.display = 'none';
+  renderModels();
+  renderPosts();
+  updateRecap();
   document.getElementById('save-form').classList.remove('open');
-  document.getElementById('posts-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  window.scrollTo({ top: 0, behavior: 'instant' });
 }
 
 // ─── RENDU POSTES ─────────────────────────────────────────────────────────────
@@ -939,12 +1046,10 @@ function renderPosts() {
 
   document.getElementById('posts-list').innerHTML = visiblePosts.map(p => {
     const opts = optionsFor(p.id, selModel);
-    // Clear selection if now blocked by incompatibility
     if (selOpts[p.id] && !opts.find(o => o.id === selOpts[p.id])) selOpts[p.id] = null;
     const selOpt = selOpts[p.id] ? opts.find(o => o.id === selOpts[p.id]) : null;
     const isOpen = openPost === p.id;
 
-    // Mode cartes photo si au moins une option a une image
     const hasPhotos = opts.some(o => o.image && o.image.length > 0);
 
     const optsHTML = hasPhotos
@@ -1045,9 +1150,9 @@ function togglePost(id) {
 // Règles de sélection forcée bidirectionnelle
 const FORCE_SELECT = [
   // Cintre plat ↔ CUES FLAT
-  { if_selected: 'trans_gr_sh_cuf',       force: { pilotage: 'pilotage_gr_flat_ext' } },
-  { if_selected: 'pilotage_gr_flat_ext',  force: { transmission: 'trans_gr_sh_cuf' } },
-  // Powermeter → transmission
+  { if_selected: 'trans_gr_sh_cuf',      force: { pilotage: 'pilotage_gr_flat_ext' } },
+  { if_selected: 'pilotage_gr_flat_ext', force: { transmission: 'trans_gr_sh_cuf' } },
+  // Powermeters → transmission
   { if_selected: 'pwr_gr_sr_ri', force: { transmission: 'trans_gr_sr_ri' } },
   { if_selected: 'pwr_gr_sr_fo', force: { transmission: 'trans_gr_sr_fo' } },
   { if_selected: 'pwr_gr_sr_re', force: { transmission: 'trans_gr_sr_re' } },
@@ -1065,6 +1170,40 @@ const FORCE_SELECT = [
 
 function selectOpt(postId, optId) {
   selOpts[postId] = optId;
+
+  // Transmission VTT : gestion des freins
+  if (postId === 'transmission' && selModel === 'vtt_enduro') {
+    const isSramVtt = optId && optId.startsWith('trans_vtt_sr_');
+    if (isSramVtt) {
+      // SRAM → frein_all interdit, pré-sélectionner DB8
+      if (!selOpts['frein'] || selOpts['frein'] === 'frein_all') {
+        selOpts['frein'] = 'frein_vtt_sr_db8';
+      }
+    } else {
+      // Shimano → frein_all par défaut (Hope disponible aussi)
+      if (!selOpts['frein'] || ['frein_vtt_sr_db8','frein_vtt_sr_mvs','frein_vtt_sr_mvu'].includes(selOpts['frein'])) {
+        selOpts['frein'] = 'frein_all';
+      }
+    }
+  }
+  // Si frein_all avec trans SRAM VTT → bloquer
+  if (postId === 'frein' && optId === 'frein_all' && selModel === 'vtt_enduro') {
+    const isSramVtt = selOpts['transmission'] && selOpts['transmission'].startsWith('trans_vtt_sr_');
+    if (isSramVtt) return;
+  }
+
+  // Vérifier si la config courante correspond à un preset
+  const postes = ['fourche','roues','pneus','transmission','power','frein','pilotage','selle','tige','pedales'];
+  const modelPresets = PRESETS[selModel];
+  window._activePreset = null;
+  if (modelPresets) {
+    for (const [decl, preset] of Object.entries(modelPresets)) {
+      if (postes.every(p => selOpts[p] === preset[p])) {
+        window._activePreset = decl;
+        break;
+      }
+    }
+  }
 
   // 1. Si on change de transmission → remettre power sur pwr_all (sauf si pwr_all déjà)
   if (postId === 'transmission') {
@@ -1102,6 +1241,7 @@ function selectOpt(postId, optId) {
     if (allIncompat.includes(selOpts[p.id])) selOpts[p.id] = null;
   });
 
+  renderModels(); // mettre à jour surbrillance boutons preset
   renderPosts(); updateRecap();
 }
 
@@ -1258,11 +1398,10 @@ function renderSaved() {
       <div class="sc-detail">${c.details.map(d => `<span style="opacity:.6">${d.post} :</span> ${d.option}`).join(' &nbsp;·&nbsp; ')}</div>
       <div class="sc-totals">
         <div class="sc-tot">Prix : <strong>${c.price.toLocaleString('fr-FR')} €</strong></div>
-        <div class="sc-tot">Poids : <strong>${(c.weight/1000).toFixed(2)} kg</strong></div>
       </div>
       <div class="sc-actions">
         <button class="sc-btn blue" onclick="restoreConfig(${c.id})"><i class="ti ti-edit"></i> Reprendre / modifier</button>
-        <button class="sc-btn" onclick="openOrderModalFrom(${c.id})"><i class="ti ti-send"></i> Commander</button>
+        <button class="sc-btn" onclick="openOrderModalFrom(${c.id})"><i class="ti ti-send"></i> Demander mon devis</button>
       </div>
     </div>`).join('');
 }
@@ -1292,6 +1431,8 @@ async function sendOrder() {
   btnSend.textContent = 'Envoi en cours...';
   btnSend.disabled = true;
 
+  const phone = document.getElementById('order-phone').value.trim();
+
   try {
     const response = await fetch('https://formspree.io/f/mqeoqewy', {
       method: 'POST',
@@ -1299,8 +1440,11 @@ async function sendOrder() {
       body: JSON.stringify({
         nom: name,
         email: email,
+        telephone: phone || '—',
         configuration: config,
         message: msg || '—',
+        _replyto: email,
+        _subject: 'Demande de devis OBVIOUS-ON-DEMAND — ' + name,
       })
     });
 
@@ -1308,8 +1452,9 @@ async function sendOrder() {
       closeOrderModal();
       document.getElementById('order-name').value = '';
       document.getElementById('order-email').value = '';
+      document.getElementById('order-phone').value = '';
       document.getElementById('order-msg').value = '';
-      alert('✅ Votre configuration a bien été envoyée ! Nous vous recontacterons rapidement.');
+      alert('✅ Votre demande de devis a bien été envoyée !\n\nNous vous recontacterons par email ou téléphone sous 48h pour finaliser votre projet.');
     } else {
       alert("Une erreur s'est produite. Merci de réessayer ou de nous contacter directement à info@obviouscycles.com");
     }
@@ -1339,17 +1484,67 @@ function resetForceLink(postA, postB, scrollTo) {
 // Alias pour compatibilité
 function resetFlatBarForce() { resetForceLink('transmission','pilotage','transmission'); }
 
+
+// Pré-configurations depuis l'onglet Gamme 2026
+const PRESETS = {
+  'gravel_racing': {
+    'Ti2':       {fourche:'fourche_gr_car_00',roues:'roue_gr_fu_soa',pneus:'pneu_gr_sc_r',transmission:'trans_gr_sh_611',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_gr_suz_alu',selle:'selle_rd_ant_r5',tige:'tige_rd_ob_car',pedales:'ped_no'},
+    'Ti1':       {fourche:'fourche_gr_car_00',roues:'roue_gr_ob_35',pneus:'pneu_gr_sc_r',transmission:'trans_gr_sr_fo',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_gr_suz_alu',selle:'selle_rd_ant_r3',tige:'tige_rd_ob_car',pedales:'ped_no'},
+    'Signature': {fourche:'fourche_gr_car_00',roues:'roue_gr_ob_35',pneus:'pneu_gr_sc_r',transmission:'trans_gr_sr_re',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_gr_suz_car',selle:'selle_rd_arg_r00',tige:'tige_rd_ob_car',pedales:'ped_no'},
+  },
+  'gravel_bikepacking': {
+    'Ti2':       {fourche:'fourche_gr_car_ins',roues:'roue_gr_fu_soa',pneus:'pneu_gr_sc_r',transmission:'trans_gr_sh_cud',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_gr_drp_alu',selle:'selle_gr_arg_x5',tige:'tige_rd_ob_car',pedales:'ped_no'},
+    'Ti1':       {fourche:'fourche_gr_car_ins',roues:'roue_gr_dt_g16',pneus:'pneu_gr_sc_r',transmission:'trans_gr_sh_821',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_gr_ger_alu',selle:'selle_gr_arg_x3',tige:'tige_rd_ob_ti',pedales:'ped_no'},
+    'Signature': {fourche:'fourche_gr_car_ins',roues:'roue_gr_ob_35',pneus:'pneu_gr_sc_r',transmission:'trans_gr_ca_re',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_gr_ger_alu',selle:'selle_br_b17_ho',tige:'tige_rd_ob_ti',pedales:'ped_no'},
+  },
+  'route': {
+    'Ti2':       {fourche:'fourche_rd_car_00',roues:'roue_rd_dt_p16',pneus:'pneu_rd_co_gp',transmission:'trans_rd_sh_105',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_rd_suz_alu',selle:'selle_rd_ant_r5',tige:'tige_rd_ob_car',pedales:'ped_no'},
+    'Ti1':       {fourche:'fourche_rd_car_00',roues:'roue_rd_ob_35',pneus:'pneu_rd_co_gp',transmission:'trans_rd_sr_fo',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_rd_suz_alu',selle:'selle_rd_ant_r3',tige:'tige_rd_ob_car',pedales:'ped_no'},
+    'Signature': {fourche:'fourche_rd_car_00',roues:'roue_rd_fu_w57',pneus:'pneu_rd_co_gp',transmission:'trans_rd_sh_da',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_rd_ala',selle:'selle_rd_ari_r00',tige:'tige_rd_ob_car',pedales:'ped_no'},
+  },
+  'vtt_enduro': {
+    'Ti2':       {fourche:'fourche_vtt_rs_lyr_sel_150',roues:'roue_vtt_fu_rm5',pneus:'pneu_vtt_sc_gra',transmission:'trans_vtt_sh_slx',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_vtt_end',selle:'selle_vtt_alpt_x5',tige:'tige_vtt_ou_tel',pedales:'ped_no'},
+    'Ti1':       {fourche:'fourche_vtt_rs_lyr_ult_150',roues:'roue_vtt_hp_f30',pneus:'pneu_vtt_sc_gra',transmission:'trans_vtt_sh_xt',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_vtt_end',selle:'selle_vtt_alpt_x5',tige:'tige_vtt_ou_tel',pedales:'ped_no'},
+    'Signature': {fourche:'fourche_vtt_fox_fac_36_150',roues:'roue_vtt_ob_30',pneus:'pneu_vtt_sc_gra',transmission:'trans_vtt_sr_x0',power:'pwr_all',frein:'frein_vtt_sr_mvs',pilotage:'pilotage_vtt_end',selle:'selle_vtt_alpt_x5',tige:'tige_vtt_ou_tel',pedales:'ped_no'},
+  },
+};
+
+function loadPreset(decl) {
+  const preset = PRESETS[selModel] && PRESETS[selModel][decl];
+  if (!preset) return;
+  window._activePreset = decl;
+  selOpts = {...preset};
+  // Appliquer FORCE_SELECT
+  Object.keys(selOpts).forEach(postId => {
+    const optId = selOpts[postId];
+    if (!optId) return;
+    FORCE_SELECT.forEach(rule => {
+      if (rule.if_selected === optId) {
+        Object.entries(rule.force).forEach(([fp, fid]) => {
+          if (!selOpts[fp]) selOpts[fp] = fid;
+        });
+      }
+    });
+  });
+  renderModels(); // mettre à jour la surbrillance du bouton actif
+  document.getElementById('posts-section').style.display = 'block';
+  renderPosts();
+  updateRecap();
+  // Pas de scroll — on reste en haut de page
+}
+
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 loadSaved();
 renderModels();
 
-// Présélection du modèle via paramètre URL (?modele=ON/ ou ?modele=gravel_racing)
+// Présélection via paramètre URL (?modele=ON/OFF&roues=roue_gr_ob_35...)
 const ALIASES = {
   'ON/':       'route',
   'ON/OFF':    'gravel_racing',
   'OUT/QUEST': 'gravel_bikepacking',
   '/OFF':      'vtt_enduro',
 };
+
 const urlParams = new URLSearchParams(window.location.search);
 const modeleParam = urlParams.get('modele');
 if (modeleParam) {
@@ -1360,10 +1555,56 @@ if (modeleParam) {
     window._singleModel = modeleAuto.id;
     renderModels();
     selectModel(modeleAuto.id);
-    // Remonter en haut de page après sélection auto
+
+    // Pré-charger les postes depuis les paramètres URL
+    const postes = ['fourche','roues','pneus','transmission','power','frein','pilotage','selle','tige','pedales'];
+    let hasPreset = false;
+    postes.forEach(poste => {
+      const val = urlParams.get(poste);
+      if (val) {
+        const opts = optionsFor(poste, modeleAuto.id);
+        if (opts.find(o => o.id === val)) {
+          selOpts[poste] = val;
+          hasPreset = true;
+        }
+      }
+    });
+
+    if (hasPreset) {
+      Object.keys(selOpts).forEach(postId => {
+        const optId = selOpts[postId];
+        if (!optId) return;
+        FORCE_SELECT.forEach(rule => {
+          if (rule.if_selected === optId) {
+            Object.entries(rule.force).forEach(([fp, fid]) => {
+              if (!selOpts[fp]) selOpts[fp] = fid;
+            });
+          }
+        });
+      });
+
+      // Identifier quel preset correspond à la config chargée
+      const modelPresets = PRESETS[modeleAuto.id];
+      if (modelPresets) {
+        const postes = ['fourche','roues','pneus','transmission','power','frein','pilotage','selle','tige','pedales'];
+        for (const [decl, preset] of Object.entries(modelPresets)) {
+          if (postes.every(p => selOpts[p] === preset[p])) {
+            window._activePreset = decl;
+            break;
+          }
+        }
+      }
+
+      document.getElementById('posts-section').style.display = 'block';
+      renderPosts();
+      updateRecap();
+      renderModels(); // re-render pour afficher bouton actif
+    }
+
     setTimeout(() => window.scrollTo({ top: 0, behavior: 'instant' }), 10);
   }
-}
+};
+;
 </script>
 
 <button class="back-btn" onclick="window.history.back()" title="Retour à la page précédente"><i class="ti ti-arrow-left"></i> Retour</button>
