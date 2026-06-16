@@ -467,7 +467,7 @@
   /* Mode single-modèle : carte unique pleine largeur */
   .model-grid.single { grid-template-columns: 1fr; }
   .model-grid.single .model-card { max-width: 100%; }
-  .model-grid.single .mc-photo { height: 220px; object-fit: cover; }
+  .model-grid.single .mc-photo { height: auto; aspect-ratio: 655/450; object-fit: contain; background: #f5f5f0; }
 
   @media (prefers-color-scheme: dark) {
     .opt-item.sel { background: #2a2200 !important; border-color: var(--blue) !important; }
