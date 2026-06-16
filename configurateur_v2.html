@@ -595,6 +595,13 @@
   .step3-ti-form textarea { width: 100%; min-height: 80px; padding: 8px;
     border: 0.5px solid #ccc; font-size: 12px; font-family: var(--font);
     resize: vertical; box-sizing: border-box; }
+
+  /* OOD compact après choix */
+  .ood-desc.hidden { display: none; }
+  .ood-btn-yes.active { background: var(--blue); color: #1a1a00; font-weight: 700; }
+  .ood-btn-no.active  { color: var(--blue); font-weight: 600; text-decoration: none; border-bottom: 1.5px solid var(--blue); }
+  .ood-btn-yes:not(.active) { opacity: .5; }
+  .ood-btn-no:not(.active)  { opacity: .5; }
 </style>
 </head>
 <body>
@@ -624,7 +631,7 @@
     <div style="background:#111111;margin-bottom:1.5rem;overflow:hidden;">
       <div class="step-header">
         <div class="sh-label">Étape 1 sur 3</div>
-        <p class="sh-title">Choisissez votre modèle de base</p>
+        <p class="sh-title">Choisissez votre modèle</p>
       </div>
       <div style="padding:0 1.5rem 1.5rem;">
         <div class="model-grid" id="model-grid"></div>
@@ -651,18 +658,18 @@
     <div class="step-divider"></div>
 
     <!-- ── CADRE OOD ── -->
-    <div id="ood-section">
+    <div id="ood-section" style="padding:1.5rem;">
       <div class="step-header">
         <div class="sh-label">Étape 3 sur 3 — Optionnelle</div>
         <p class="sh-title">Souhaitez-vous personnaliser votre cadre ?</p>
       </div>
-      <div class="ood-desc" style="padding:0 1.5rem;">
+      <div class="ood-desc" id="ood-desc">
         Le configurateur vous a permis de choisir vos composants sur un cadre <strong>standard</strong> — c'est le forfait <strong>Essentiel</strong>, gratuit.<br><br>
         Si vous souhaitez aller plus loin — adapter le cadre à votre morphologie, ajouter des fonctions, ou créer un vélo vraiment unique — trois niveaux supplémentaires sont disponibles, <strong>cumulatifs vers le bas</strong>.
       </div>
-      <div class="ood-actions" style="padding:0 1.5rem;">
-        <button class="ood-btn-yes" onclick="openStep3()"><i class="ti ti-adjustments-plus"></i> Découvrir les niveaux de personnalisation</button>
-        <button class="ood-btn-no" onclick="skipOOD()">Non merci, voir ma configuration</button>
+      <div class="ood-actions">
+        <button class="ood-btn-yes" id="ood-btn-yes" onclick="openStep3()"><i class="ti ti-adjustments-plus"></i> Découvrir les niveaux de personnalisation</button>
+        <button class="ood-btn-no" id="ood-btn-no" onclick="skipOOD()">Non merci, voir ma configuration</button>
       </div>
     </div>
 
@@ -1663,7 +1670,11 @@ let selStep3 = null;
 const STEP3_PRICE = { evolution: 60, performance: 300, titanium: 720 };
 
 function openStep3() {
-  document.getElementById('ood-section').style.display = 'none';
+  // Réduire OOD : masquer description, garder titre + boutons en surbrillance
+  document.getElementById('ood-desc').classList.add('hidden');
+  document.getElementById('ood-btn-yes').classList.add('active');
+  document.getElementById('ood-btn-no').classList.remove('active');
+  // Ouvrir les 3 cartes
   document.getElementById('step3-section').style.display = 'block';
   document.getElementById('recap-section').style.display = 'block';
   document.getElementById('contact-hint').style.display = 'block';
@@ -1674,14 +1685,14 @@ function openStep3() {
 }
 
 function skipOOD() {
-  document.getElementById('ood-section').style.display = 'none';
+  // Réduire OOD : masquer description, garder titre + boutons, "Non merci" en surbrillance
+  document.getElementById('ood-desc').classList.add('hidden');
+  document.getElementById('ood-btn-no').classList.add('active');
+  document.getElementById('ood-btn-yes').classList.remove('active');
+  // Masquer les 3 cartes
   document.getElementById('step3-section').style.display = 'none';
   document.getElementById('recap-section').style.display = 'block';
   document.getElementById('contact-hint').style.display = 'block';
-  setTimeout(() => {
-    const el = document.getElementById('recap-section');
-    if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 70, behavior: 'smooth' });
-  }, 50);
 }
 
 function selectStep3(level) {
