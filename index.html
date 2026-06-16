@@ -607,8 +607,8 @@
 <!-- MODAL COMMANDE -->
 <div class="modal-overlay" id="order-modal">
   <div class="modal">
-    <h3><i class="ti ti-mail"></i> Demander mon devis</h3>
-    <p>Renseignez vos coordonnées et nous vous recontacterons pour finaliser votre commande.</p>
+    <h3><i class="ti ti-file-invoice"></i> Demander mon devis</h3>
+    <p>Renseignez vos coordonnées et nous vous enverrons un devis personnalisé rapidement.</p>
     <div class="field">
       <label>Votre nom</label>
       <input type="text" id="order-name" placeholder="Prénom Nom" />
@@ -616,6 +616,10 @@
     <div class="field">
       <label>Votre email</label>
       <input type="email" id="order-email" placeholder="vous@example.com" />
+    </div>
+    <div class="field">
+      <label>Votre téléphone</label>
+      <input type="tel" id="order-phone" placeholder="+33 6 00 00 00 00" />
     </div>
     <div class="field">
       <label>Message (optionnel)</label>
@@ -1335,11 +1339,10 @@ function renderSaved() {
       <div class="sc-detail">${c.details.map(d => `<span style="opacity:.6">${d.post} :</span> ${d.option}`).join(' &nbsp;·&nbsp; ')}</div>
       <div class="sc-totals">
         <div class="sc-tot">Prix : <strong>${c.price.toLocaleString('fr-FR')} €</strong></div>
-        <div class="sc-tot">Poids : <strong>${(c.weight/1000).toFixed(2)} kg</strong></div>
       </div>
       <div class="sc-actions">
         <button class="sc-btn blue" onclick="restoreConfig(${c.id})"><i class="ti ti-edit"></i> Reprendre / modifier</button>
-        <button class="sc-btn" onclick="openOrderModalFrom(${c.id})"><i class="ti ti-send"></i> Commander</button>
+        <button class="sc-btn" onclick="openOrderModalFrom(${c.id})"><i class="ti ti-send"></i> Demander mon devis</button>
       </div>
     </div>`).join('');
 }
@@ -1369,6 +1372,8 @@ async function sendOrder() {
   btnSend.textContent = 'Envoi en cours...';
   btnSend.disabled = true;
 
+  const phone = document.getElementById('order-phone').value.trim();
+
   try {
     const response = await fetch('https://formspree.io/f/mqeoqewy', {
       method: 'POST',
@@ -1376,8 +1381,11 @@ async function sendOrder() {
       body: JSON.stringify({
         nom: name,
         email: email,
+        telephone: phone || '—',
         configuration: config,
         message: msg || '—',
+        _replyto: email,
+        _subject: 'Demande de devis OBVIOUS-ON-DEMAND — ' + name,
       })
     });
 
@@ -1385,6 +1393,7 @@ async function sendOrder() {
       closeOrderModal();
       document.getElementById('order-name').value = '';
       document.getElementById('order-email').value = '';
+      document.getElementById('order-phone').value = '';
       document.getElementById('order-msg').value = '';
       alert('✅ Votre configuration a bien été envoyée ! Nous vous recontacterons rapidement.');
     } else {
