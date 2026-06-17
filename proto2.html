@@ -607,17 +607,15 @@
     #posts-section   { grid-column: 1; grid-row: 3; }
     #contact-hint    { grid-column: 1; grid-row: 4; }
     /* Colonne droite : récap fixe */
-    #recap-header    { grid-column: 2; grid-row: 2; display: block !important;
-      background: #111111; padding: 1.5rem 1.5rem 0; border-radius: 8px 8px 0 0; }
-    #recap-section   {
+    #recap-col {
       grid-column: 2;
-      grid-row: 3 / 6;
+      grid-row: 2 / 6;
       position: sticky;
-      top: 0;
+      top: 1.5rem;
       display: block !important;
       background: #111111;
-      border-radius: 0 0 8px 8px;
-      padding: 0 1.5rem 1.5rem;
+      border-radius: 8px;
+      padding: 1.5rem;
     }
     /* Masquer fenêtre flottante — le récap est toujours visible */
     #floating-price  { display: none !important; }
@@ -679,30 +677,32 @@
     <div id="contact-hint" style="display:none;margin:1.5rem 0 1rem;padding:14px 20px;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius-lg);text-align:center;">
       <span style="font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--text2);">Pour tout autre montage,&nbsp;</span><a href="https://www.obviouscycles.com/contact/" target="_blank" style="color:#F5C400;text-decoration:none;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.06em;">Contactez-nous</a>
     </div>
-    <div id="recap-header" style="display:none">
-      <div class="step-label">En résumé</div>
-      <p class="section-title" style="color:#f2f2f2;margin-bottom:0;">Votre configuration</p>
-    </div>
-    <div id="recap-section" style="display:none">
-      <div id="recap-box-container"></div>
-      <div class="btn-row">
-        <button class="btn primary" id="btn-devis" onclick="openOrderModal()" disabled style="opacity:.35;cursor:not-allowed">
-          <i class="ti ti-send"></i> Demander mon devis
-        </button>
-        <button class="btn success" id="btn-save" onclick="toggleSaveForm()" disabled style="opacity:.35;cursor:not-allowed">
-          <i class="ti ti-bookmark"></i> Sauvegarder cette configuration
-        </button>
-        <div class="save-form" id="save-form">
-          <div class="save-label">Donnez un nom à cette configuration :</div>
-          <div class="save-input-row">
-            <input type="text" id="save-name-input" placeholder="Ex : Mon gravel bikepacking" maxlength="60" />
-            <button onclick="saveConfig()">Sauvegarder</button>
+    <div id="recap-col" style="display:none">
+      <div id="recap-header">
+        <div class="step-label">En résumé</div>
+        <p class="section-title" style="color:#f2f2f2;margin-bottom:1rem;">Votre configuration</p>
+      </div>
+      <div id="recap-section">
+        <div id="recap-box-container"></div>
+        <div class="btn-row">
+          <button class="btn primary" id="btn-devis" onclick="openOrderModal()" disabled style="opacity:.35;cursor:not-allowed">
+            <i class="ti ti-send"></i> Demander mon devis
+          </button>
+          <button class="btn success" id="btn-save" onclick="toggleSaveForm()" disabled style="opacity:.35;cursor:not-allowed">
+            <i class="ti ti-bookmark"></i> Sauvegarder cette configuration
+          </button>
+          <div class="save-form" id="save-form">
+            <div class="save-label">Donnez un nom à cette configuration :</div>
+            <div class="save-input-row">
+              <input type="text" id="save-name-input" placeholder="Ex : Mon gravel bikepacking" maxlength="60" />
+              <button onclick="saveConfig()">Sauvegarder</button>
+            </div>
+            <div class="toast" id="save-toast"><i class="ti ti-check"></i> Configuration sauvegardée !</div>
           </div>
-          <div class="toast" id="save-toast"><i class="ti ti-check"></i> Configuration sauvegardée !</div>
+          <button class="btn" id="btn-reset" onclick="resetConfig()" disabled style="opacity:.35;cursor:not-allowed">
+            <i class="ti ti-refresh"></i> Recommencer
+          </button>
         </div>
-        <button class="btn" id="btn-reset" onclick="resetConfig()" disabled style="opacity:.35;cursor:not-allowed">
-          <i class="ti ti-refresh"></i> Recommencer
-        </button>
       </div>
     </div>
   </div>
@@ -1348,7 +1348,7 @@ function updateRecap() {
   const model = MODELS.find(m => m.id === selModel);
   if (!model) return;
   const allDone = POST_META.every(p => !!selOpts[p.id]);
-  document.getElementById('recap-section').style.display = allDone ? 'block' : 'none';
+  document.getElementById('recap-col').style.display = allDone ? 'block' : 'none';
   document.getElementById('contact-hint').style.display = allDone ? 'block' : 'none';
   if (!allDone) return;
 
@@ -1423,7 +1423,7 @@ function updateRecap() {
 function resetConfig() {
   selModel = null; selOpts = {}; openPost = null;
   document.getElementById('posts-section').style.display = 'none';
-  document.getElementById('recap-section').style.display = 'none';
+  document.getElementById('recap-col').style.display = 'none';
   document.getElementById('save-form').classList.remove('open');
   renderModels();
   window.scrollTo({ top: 0, behavior: 'smooth' });
