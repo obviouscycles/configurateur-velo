@@ -604,11 +604,11 @@
     /* Colonne gauche */
     .tab-bar      { grid-column: 1; grid-row: 1; }
     #view-config  { grid-column: 1; grid-row: 2; }
-    #view-saved   { grid-column: 1; grid-row: 2; }
+    #view-saved   { grid-column: 1 / 3; grid-row: 2; }
     /* Colonne droite : récap sticky */
     #recap-col {
       grid-column: 2;
-      grid-row: 1 / 6;
+      grid-row: 2 / 6;
       position: sticky;
       top: 1.5rem;
       align-self: start;
@@ -1481,8 +1481,18 @@ function restoreConfig(id) {
   if (!cfg) return;
   selModel = cfg.selModel; selOpts = { ...cfg.selOpts }; openPost = null;
   switchTab('config');
-  renderModels(); renderPosts(); updateRecap(); updateFloatingPrice(); updateFloatingPrice();
+  renderModels(); renderPosts(); updateRecap(); updateFloatingPrice();
   document.getElementById('posts-section').style.display = 'block';
+  // Activer les boutons
+  ['btn-devis','btn-save','btn-reset'].forEach(bid => {
+    const b = document.getElementById(bid);
+    if (b) { b.disabled = false; b.style.opacity = '1'; b.style.cursor = ''; }
+  });
+  // Afficher recap-col sur desktop
+  if (window.innerWidth >= 768) {
+    const rc = document.getElementById('recap-col');
+    if (rc) rc.style.display = 'block';
+  }
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
