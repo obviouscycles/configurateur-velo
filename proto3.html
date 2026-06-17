@@ -566,50 +566,43 @@
   @media (max-width: 767px) {
     #floating-price {
       display: block;
-      bottom: 12px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: calc(100% - 3rem);
-      padding: 8px 16px;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 10px 16px;
       background: #000;
-      border: 0.5px solid #333;
+      border-top: 0.5px solid #333;
       text-align: center;
     }
   }
   #floating-price.hidden { opacity: 0; pointer-events: none; }
-  .fp-type  { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 1px; }
-  .fp-name  { font-size: 12px; font-weight: 500; color: #f2f2f2; margin-bottom: 2px; }
-  .fp-price { font-size: 18px; font-weight: 600; color: #F5C400; }
+  .fp-price-row { display: flex; justify-content: center; align-items: baseline; gap: 8px; }
+  .fp-price-label { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: .06em; }
+  .fp-price { font-size: 20px; font-weight: 600; color: #F5C400; }
 
-  /* ── PROTO3 : layout étape1+étape2 en haut, résumé en bas ── */
+  /* ── PROTO3 : étape1+étape2 côte à côte, résumé en bas ── */
   @media (min-width: 768px) {
-    .main { max-width: 100%; padding: 2rem 2rem 4rem; }
-
-    /* Grille globale : tab-bar + 2 cols + récap */
     .main {
+      max-width: 100%;
+      padding: 2rem 2rem 4rem;
       display: grid;
       grid-template-columns: 1fr 1fr;
       grid-template-rows: auto auto auto;
       gap: 1.5rem;
       align-items: start;
     }
-
-    /* Tab-bar sur toute la largeur */
-    .tab-bar     { grid-column: 1 / 3; grid-row: 1; }
-
-    /* view-config contient step1 + step2 — on les éclate en 2 colonnes */
-    #view-config { grid-column: 1 / 3; grid-row: 2;
-                   display: grid;
-                   grid-template-columns: 1fr 1fr;
-                   grid-template-rows: auto;
-                   gap: 0 1.5rem;
-                   align-items: start; }
-
-    #step1-wrap    { grid-column: 1; grid-row: 1; }
+    .tab-bar { grid-column: 1 / 3; grid-row: 1; }
+    #view-config {
+      grid-column: 1 / 3;
+      grid-row: 2;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 1.5rem;
+      align-items: start;
+    }
+    #step1-wrap    { grid-column: 1; grid-row: 1; margin-bottom: 0; }
     #posts-section { grid-column: 2; grid-row: 1; }
-    #contact-hint  { grid-column: 2; grid-row: 2; }
-
-    /* Résumé sur toute la largeur en bas */
+    #contact-hint  { grid-column: 1 / 3; grid-row: 2; }
     #recap-col {
       grid-column: 1 / 3;
       grid-row: 3;
@@ -617,14 +610,8 @@
       background: #111111;
       padding: 1.5rem;
     }
-
-    /* Mes configurations pleine largeur */
     #view-saved { grid-column: 1 / 3; grid-row: 2; }
-
-    /* Masquer recap quand "Mes configurations" */
     .on-tab-saved #recap-col { display: none !important; }
-
-    /* Fenêtre flottante inutile ici */
     #floating-price { display: none !important; }
   }
 </style>
@@ -675,8 +662,9 @@
 
     <div id="posts-section" style="display:none;border:1.5px solid #111111;padding:1.5rem;">
       <div class="prog-wrap">
-        <div class="step-label">Étape 2 sur 2</div>
+        <div class="step-label" style="color:#888;">Étape 2 sur 2</div>
         <p class="section-title" style="color:#111111;margin-bottom:.5rem;">Configurer vos composants</p>
+        <div class="prog-bar" id="prog-bar"></div>
       </div>
       <div id="posts-list"></div>
     </div>
@@ -1359,7 +1347,6 @@ function updateRecap() {
   if (!model) return;
   const allDone = POST_META.every(p => !!selOpts[p.id]);
   if (window.innerWidth < 768) document.getElementById('recap-col').style.display = allDone ? 'block' : 'none';
-  else document.getElementById('recap-col').style.display = 'block';
   document.getElementById('contact-hint').style.display = allDone ? 'block' : 'none';
   if (!allDone) return;
 
@@ -1434,7 +1421,8 @@ function updateRecap() {
 function resetConfig() {
   selModel = null; selOpts = {}; openPost = null;
   document.getElementById('posts-section').style.display = 'none';
-  if (window.innerWidth < 768) document.getElementById('recap-col').style.display = 'none';  document.getElementById('save-form').classList.remove('open');
+  if (window.innerWidth < 768) document.getElementById('recap-col').style.display = 'none';
+  document.getElementById('save-form').classList.remove('open');
   renderModels();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -1486,7 +1474,8 @@ function restoreConfig(id) {
   window._singleModel = cfg.selModel;
   window._activePreset = null;
   switchTab('config');
-  renderModels(); renderPosts(); updateRecap(); updateFloatingPrice(); initFloatingPriceObserver();
+  renderModels(); renderPosts(); updateRecap(); updateFloatingPrice();
+  initFloatingPriceObserver();
   document.getElementById('posts-section').style.display = 'block';
   ['btn-devis','btn-save','btn-reset'].forEach(bid => {
     const b = document.getElementById(bid);
@@ -1724,28 +1713,32 @@ if (modeleParam) {
 // ─── FENÊTRE PRIX FLOTTANTE ───────────────────────────────────────────────────
 function updateFloatingPrice() {
   const fp = document.getElementById('floating-price');
-  if (!fp) return;
+  if (!fp || window.innerWidth >= 768) return;
   const model = MODELS.find(m => m.id === selModel);
   if (!model) { fp.classList.add('hidden'); return; }
   const { price } = computeTotals(selModel, selOpts);
-  document.getElementById('fp-type').textContent = model.badge;
-  document.getElementById('fp-name').textContent = model.name + ' titane';
   document.getElementById('fp-price').textContent = price.toLocaleString('fr-FR') + ' €';
-  // Visible uniquement sur mobile et si prix total pas encore visible
-  if (window.innerWidth < 768) fp.classList.remove('hidden');
+  fp.classList.remove('hidden');
 }
 
-// ─── MASQUER FENÊTRE FLOTTANTE QUAND PRIX TOTAL VISIBLE ──────────────────────
+// ─── OBSERVER : masquer fenêtre flottante quand prix total visible ─────────
 function initFloatingPriceObserver() {
-  const target = document.getElementById('recap-total-price');
-  if (!target || !('IntersectionObserver' in window)) return;
-  const observer = new IntersectionObserver(entries => {
-    const fp = document.getElementById('floating-price');
-    if (!fp) return;
-    if (entries[0].isIntersecting) fp.classList.add('hidden');
-    else fp.classList.remove('hidden');
-  }, { threshold: 0.5 });
-  observer.observe(target);
+  if (window.innerWidth >= 768) return;
+  const tryObserve = () => {
+    const target = document.getElementById('recap-total-price');
+    if (!target) return false;
+    const observer = new IntersectionObserver(entries => {
+      const fp = document.getElementById('floating-price');
+      if (!fp) return;
+      if (entries[0].isIntersecting) fp.classList.add('hidden');
+      else if (window.innerWidth < 768) fp.classList.remove('hidden');
+    }, { threshold: 0.5 });
+    observer.observe(target);
+    return true;
+  };
+  if (!tryObserve()) {
+    const iv = setInterval(() => { if (tryObserve()) clearInterval(iv); }, 300);
+  }
 }
 </script>
 
@@ -1753,10 +1746,10 @@ function initFloatingPriceObserver() {
 
   <!-- Fenêtre prix flottante -->
   <div id="floating-price" class="hidden">
-    <div class="fp-type" id="fp-type">—</div>
-    <div class="fp-name" id="fp-name">—</div>
-    <div class="fp-price" id="fp-price">—</div>
-
+    <div class="fp-price-row">
+      <span class="fp-price-label">Prix total</span>
+      <span class="fp-price" id="fp-price">—</span>
+    </div>
   </div>
 </body>
 </html>
