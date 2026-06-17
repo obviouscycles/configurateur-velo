@@ -561,25 +561,25 @@
     display: none;
     position: fixed;
     z-index: 999;
-    background: #1a1a18;
-    border: 0.5px solid #3a3a36;
-    border-radius: 10px;
-    box-shadow: 0 4px 24px rgba(0,0,0,.5);
     transition: opacity 0.3s;
   }
   @media (max-width: 767px) {
     #floating-price {
       display: block;
       bottom: 12px;
-      right: 12px;
-      width: calc(50% - 18px);
-      padding: 10px 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 3rem);
+      padding: 8px 16px;
+      background: #000;
+      border: 0.5px solid #333;
+      text-align: center;
     }
   }
   #floating-price.hidden { opacity: 0; pointer-events: none; }
-  .fp-type  { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 2px; }
-  .fp-name  { font-size: 13px; font-weight: 500; color: #f2f2f2; margin-bottom: 4px; }
-  .fp-price { font-size: 20px; font-weight: 600; color: #F5C400; }
+  .fp-type  { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 1px; }
+  .fp-name  { font-size: 12px; font-weight: 500; color: #f2f2f2; margin-bottom: 2px; }
+  .fp-price { font-size: 18px; font-weight: 600; color: #F5C400; }
 
   /* ── PROTO3 : layout étape1+étape2 en haut, résumé en bas ── */
   @media (min-width: 768px) {
@@ -676,7 +676,7 @@
     <div id="posts-section" style="display:none;border:1.5px solid #111111;padding:1.5rem;">
       <div class="prog-wrap">
         <div class="step-label">Étape 2 sur 2</div>
-        <p class="section-title" style="color:#f2f2f2;margin-bottom:.5rem;">Configurez vos composants</p>
+        <p class="section-title" style="color:#111111;margin-bottom:.5rem;">Configurez vos composants</p>
         <div class="prog-bar" id="prog-bar"></div>
       </div>
       <div id="posts-list"></div>
