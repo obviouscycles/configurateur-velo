@@ -664,7 +664,6 @@
       <div class="prog-wrap">
         <div class="step-label" style="color:#888;">Étape 2 sur 2</div>
         <p class="section-title" style="color:#111111;margin-bottom:.5rem;">Configurer vos composants</p>
-        <div class="prog-bar" id="prog-bar"></div>
       </div>
       <div id="posts-list"></div>
     </div>
@@ -1122,7 +1121,8 @@ function renderPosts() {
     return optionsFor('power', selModel).length > 1;
   });
 
-  document.getElementById('prog-bar').innerHTML = visiblePosts.map(p =>
+  const pb = document.getElementById('prog-bar');
+  if (pb) pb.innerHTML = visiblePosts.map(p =>
     '<div class="prog-step ' + (selOpts[p.id] ? 'done' : '') + '"></div>').join('');
 
   document.getElementById('posts-list').innerHTML = visiblePosts.map(p => {
