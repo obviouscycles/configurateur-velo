@@ -607,7 +607,7 @@
     #posts-section   { grid-column: 1; grid-row: 3; }
     #contact-hint    { grid-column: 1; grid-row: 4; }
     /* Colonne droite : récap fixe */
-    #recap-header    { grid-column: 2; grid-row: 1; display: block !important; padding-top: 0; }
+    #recap-header    { grid-column: 2; grid-row: 1; display: block !important; }
     #recap-section   {
       grid-column: 2;
       grid-row: 2 / 6;
@@ -675,14 +675,14 @@
       <div id="posts-list"></div>
     </div>
 
-    <div id="contact-hint" style="display:none;margin:1.5rem 0 1rem;padding:14px 20px;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius-lg);text-align:center;font-size:13px;color:var(--text2);">
-      Pour tout autre montage, <a href="https://www.obviouscycles.com/contact/" target="_blank" style="color:var(--blue);text-decoration:none;font-weight:500;">contactez-nous</a>.
+    <div id="contact-hint" style="display:none;margin:1.5rem 0 1rem;padding:14px 20px;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius-lg);text-align:center;">
+      <a href="https://www.obviouscycles.com/contact/" target="_blank" style="color:var(--blue);text-decoration:none;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.06em;">Pour tout autre montage, contactez-nous</a>
     </div>
-    <div id="recap-header" style="display:none">
-      <div class="step-label" style="color:#888;">En résumé</div>
-      <p class="section-title" style="color:#f2f2f2;margin:0 0 1rem;">Votre configuration</p>
+    <div id="recap-header" style="display:none;background:#111111;padding:1.5rem 1.5rem 0;margin-bottom:0;">
+      <div class="step-label">En résumé</div>
+      <p class="section-title" style="color:#f2f2f2;margin-bottom:0;">Votre configuration</p>
     </div>
-    <div id="recap-section" style="display:none">
+    <div id="recap-section" style="display:none;background:#111111;padding:0 1.5rem 1.5rem;">
       <div id="recap-box-container"></div>
       <div class="btn-row">
         <button class="btn primary" id="btn-devis" onclick="openOrderModal()" disabled style="opacity:.35;cursor:not-allowed">
