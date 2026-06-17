@@ -594,24 +594,24 @@
   /* ── PROTO2 : layout 2 colonnes (desktop/tablette paysage) ── */
   @media (min-width: 768px) {
     .main { max-width: 100%; padding: 2rem 2rem 4rem; }
-    #view-config {
+    .main {
       display: grid;
       grid-template-columns: 1fr 340px;
       grid-template-rows: auto;
       gap: 0 1.5rem;
       align-items: start;
     }
-    /* Colonne gauche : tab-bar, étape 1, étape 2, contact-hint */
-    .tab-bar         { grid-column: 1; grid-row: 1; }
-    #step1-wrap      { grid-column: 1; grid-row: 2; }
-    #posts-section   { grid-column: 1; grid-row: 3; }
-    #contact-hint    { grid-column: 1; grid-row: 4; }
-    /* Colonne droite : récap fixe */
+    /* Colonne gauche */
+    .tab-bar      { grid-column: 1; grid-row: 1; }
+    #view-config  { grid-column: 1; grid-row: 2; }
+    #view-saved   { grid-column: 1; grid-row: 2; }
+    /* Colonne droite : récap sticky */
     #recap-col {
       grid-column: 2;
-      grid-row: 2 / 6;
+      grid-row: 1 / 6;
       position: sticky;
       top: 1.5rem;
+      align-self: start;
       display: block !important;
       background: #111111;
       padding: 1.5rem;
@@ -676,32 +676,34 @@
     <div id="contact-hint" style="display:none;margin:1.5rem 0 1rem;padding:14px 20px;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius-lg);text-align:center;">
       <span style="font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--text2);">Pour tout autre montage,&nbsp;</span><a href="https://www.obviouscycles.com/contact/" target="_blank" style="color:#F5C400;text-decoration:none;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.06em;">Contactez-nous</a>
     </div>
-    <div id="recap-col" style="display:none">
-      <div id="recap-header">
-        <div class="step-label">En résumé</div>
-        <p class="section-title" style="color:#f2f2f2;margin-bottom:1rem;">Votre configuration</p>
-      </div>
-      <div id="recap-section">
-        <div id="recap-box-container"></div>
-        <div class="btn-row">
-          <button class="btn primary" id="btn-devis" onclick="openOrderModal()" disabled style="opacity:.35;cursor:not-allowed">
-            <i class="ti ti-send"></i> Demander mon devis
-          </button>
-          <button class="btn success" id="btn-save" onclick="toggleSaveForm()" disabled style="opacity:.35;cursor:not-allowed">
-            <i class="ti ti-bookmark"></i> Sauvegarder cette configuration
-          </button>
-          <div class="save-form" id="save-form">
-            <div class="save-label">Donnez un nom à cette configuration :</div>
-            <div class="save-input-row">
-              <input type="text" id="save-name-input" placeholder="Ex : Mon gravel bikepacking" maxlength="60" />
-              <button onclick="saveConfig()">Sauvegarder</button>
-            </div>
-            <div class="toast" id="save-toast"><i class="ti ti-check"></i> Configuration sauvegardée !</div>
+  </div>
+
+  <!-- COLONNE DROITE RÉCAP (hors vues, toujours dans la grille desktop) -->
+  <div id="recap-col" style="display:none">
+    <div id="recap-header">
+      <div class="step-label">En résumé</div>
+      <p class="section-title" style="color:#f2f2f2;margin-bottom:1rem;">Votre configuration</p>
+    </div>
+    <div id="recap-section">
+      <div id="recap-box-container"></div>
+      <div class="btn-row">
+        <button class="btn primary" id="btn-devis" onclick="openOrderModal()" disabled style="opacity:.35;cursor:not-allowed">
+          <i class="ti ti-send"></i> Demander mon devis
+        </button>
+        <button class="btn success" id="btn-save" onclick="toggleSaveForm()" disabled style="opacity:.35;cursor:not-allowed">
+          <i class="ti ti-bookmark"></i> Sauvegarder cette configuration
+        </button>
+        <div class="save-form" id="save-form">
+          <div class="save-label">Donnez un nom à cette configuration :</div>
+          <div class="save-input-row">
+            <input type="text" id="save-name-input" placeholder="Ex : Mon gravel bikepacking" maxlength="60" />
+            <button onclick="saveConfig()">Sauvegarder</button>
           </div>
-          <button class="btn" id="btn-reset" onclick="resetConfig()" disabled style="opacity:.35;cursor:not-allowed">
-            <i class="ti ti-refresh"></i> Recommencer
-          </button>
+          <div class="toast" id="save-toast"><i class="ti ti-check"></i> Configuration sauvegardée !</div>
         </div>
+        <button class="btn" id="btn-reset" onclick="resetConfig()" disabled style="opacity:.35;cursor:not-allowed">
+          <i class="ti ti-refresh"></i> Recommencer
+        </button>
       </div>
     </div>
   </div>
@@ -1031,6 +1033,12 @@ function switchTab(tab) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.getElementById('tab-' + tab).classList.add('active');
   document.getElementById('view-' + tab).classList.add('active');
+  // Sur desktop, cacher recap-col quand on bascule sur "Mes configurations"
+  const recapCol = document.getElementById('recap-col');
+  if (recapCol) {
+    if (tab === 'saved') recapCol.style.display = 'none';
+    else if (window.innerWidth >= 768) recapCol.style.display = 'block';
+  }
   if (tab === 'saved') renderSaved();
 }
 
