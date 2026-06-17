@@ -607,12 +607,16 @@
     #posts-section   { grid-column: 1; grid-row: 3; }
     #contact-hint    { grid-column: 1; grid-row: 4; }
     /* Colonne droite : récap fixe */
+    #recap-header    { grid-column: 2; grid-row: 1; display: block !important; padding-top: 0; }
     #recap-section   {
       grid-column: 2;
-      grid-row: 1 / 5;
+      grid-row: 2 / 6;
       position: sticky;
-      top: 1.5rem;
+      top: 0;
+      max-height: 100vh;
+      overflow-y: auto;
       display: block !important;
+      padding-bottom: 2rem;
     }
     /* Masquer fenêtre flottante — le récap est toujours visible */
     #floating-price  { display: none !important; }
@@ -671,17 +675,20 @@
       <div id="posts-list"></div>
     </div>
 
-    <div id="contact-hint" style="display:none;padding:0 0 1rem;font-size:13px;color:var(--text2);">
+    <div id="contact-hint" style="display:none;margin:1.5rem 0 1rem;padding:14px 20px;background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius-lg);text-align:center;font-size:13px;color:var(--text2);">
       Pour tout autre montage, <a href="https://www.obviouscycles.com/contact/" target="_blank" style="color:var(--blue);text-decoration:none;font-weight:500;">contactez-nous</a>.
     </div>
+    <div id="recap-header" style="display:none">
+      <div class="step-label" style="color:#888;">En résumé</div>
+      <p class="section-title" style="color:#f2f2f2;margin:0 0 1rem;">Votre configuration</p>
+    </div>
     <div id="recap-section" style="display:none">
-      <p class="section-title" style="margin-top:.75rem">Votre configuration</p>
       <div id="recap-box-container"></div>
       <div class="btn-row">
-        <button class="btn primary" onclick="openOrderModal()">
+        <button class="btn primary" id="btn-devis" onclick="openOrderModal()" disabled style="opacity:.35;cursor:not-allowed">
           <i class="ti ti-send"></i> Demander mon devis
         </button>
-        <button class="btn success" onclick="toggleSaveForm()">
+        <button class="btn success" id="btn-save" onclick="toggleSaveForm()" disabled style="opacity:.35;cursor:not-allowed">
           <i class="ti ti-bookmark"></i> Sauvegarder cette configuration
         </button>
         <div class="save-form" id="save-form">
@@ -692,7 +699,7 @@
           </div>
           <div class="toast" id="save-toast"><i class="ti ti-check"></i> Configuration sauvegardée !</div>
         </div>
-        <button class="btn" onclick="resetConfig()">
+        <button class="btn" id="btn-reset" onclick="resetConfig()" disabled style="opacity:.35;cursor:not-allowed">
           <i class="ti ti-refresh"></i> Recommencer
         </button>
       </div>
@@ -1073,6 +1080,10 @@ function renderModels() {
 
 function selectModel(id) {
   selModel = id; selOpts = {}; openPost = null;
+  ['btn-devis','btn-save','btn-reset'].forEach(bid => {
+    const b = document.getElementById(bid);
+    if (b) { b.disabled = false; b.style.opacity = '1'; b.style.cursor = ''; }
+  });
   // Passer en mode single uniquement si on vient d'un clic depuis la grille des 4 (pas déjà single)
   if (!window._singleModel) {
     window._singleModel = id;
