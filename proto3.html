@@ -1359,6 +1359,7 @@ function updateRecap() {
   if (!model) return;
   const allDone = POST_META.every(p => !!selOpts[p.id]);
   if (window.innerWidth < 768) document.getElementById('recap-col').style.display = allDone ? 'block' : 'none';
+  else document.getElementById('recap-col').style.display = 'block';
   document.getElementById('contact-hint').style.display = allDone ? 'block' : 'none';
   if (!allDone) return;
 
@@ -1433,8 +1434,7 @@ function updateRecap() {
 function resetConfig() {
   selModel = null; selOpts = {}; openPost = null;
   document.getElementById('posts-section').style.display = 'none';
-  if (window.innerWidth < 768) document.getElementById('recap-col').style.display = 'none';
-  document.getElementById('save-form').classList.remove('open');
+  if (window.innerWidth < 768) document.getElementById('recap-col').style.display = 'none';  document.getElementById('save-form').classList.remove('open');
   renderModels();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
