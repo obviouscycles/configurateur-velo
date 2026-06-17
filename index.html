@@ -1435,8 +1435,10 @@ function restoreConfig(id) {
   const cfg = savedConfigs.find(c => c.id === id);
   if (!cfg) return;
   selModel = cfg.selModel; selOpts = { ...cfg.selOpts }; openPost = null;
+  window._singleModel = cfg.selModel;
+  window._activePreset = null;
   switchTab('config');
-  renderModels(); renderPosts(); updateRecap(); updateFloatingPrice(); updateFloatingPrice();
+  renderModels(); renderPosts(); updateRecap(); updateFloatingPrice();
   document.getElementById('posts-section').style.display = 'block';
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
