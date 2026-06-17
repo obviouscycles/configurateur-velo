@@ -581,11 +581,9 @@
   .fp-name  { font-size: 12px; font-weight: 500; color: #f2f2f2; margin-bottom: 2px; }
   .fp-price { font-size: 18px; font-weight: 600; color: #F5C400; }
 
-  /* ── PROTO3 : layout étape1+étape2 en haut, résumé en bas ── */
+  /* ── PROTO3 : étape1+étape2 en haut, résumé en bas ── */
   @media (min-width: 768px) {
     .main { max-width: 100%; padding: 2rem 2rem 4rem; }
-
-    /* Grille globale : tab-bar + 2 cols + récap */
     .main {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -593,23 +591,15 @@
       gap: 1.5rem;
       align-items: start;
     }
-
-    /* Tab-bar sur toute la largeur */
     .tab-bar     { grid-column: 1 / 3; grid-row: 1; }
-
-    /* view-config contient step1 + step2 — on les éclate en 2 colonnes */
     #view-config { grid-column: 1 / 3; grid-row: 2;
                    display: grid;
                    grid-template-columns: 1fr 1fr;
-                   grid-template-rows: auto;
                    gap: 0 1.5rem;
                    align-items: start; }
-
     #step1-wrap    { grid-column: 1; grid-row: 1; }
     #posts-section { grid-column: 2; grid-row: 1; }
     #contact-hint  { grid-column: 2; grid-row: 2; }
-
-    /* Résumé sur toute la largeur en bas */
     #recap-col {
       grid-column: 1 / 3;
       grid-row: 3;
@@ -617,14 +607,8 @@
       background: #111111;
       padding: 1.5rem;
     }
-
-    /* Mes configurations pleine largeur */
     #view-saved { grid-column: 1 / 3; grid-row: 2; }
-
-    /* Masquer recap quand "Mes configurations" */
     .on-tab-saved #recap-col { display: none !important; }
-
-    /* Fenêtre flottante inutile ici */
     #floating-price { display: none !important; }
   }
 </style>
@@ -1486,7 +1470,8 @@ function restoreConfig(id) {
   window._singleModel = cfg.selModel;
   window._activePreset = null;
   switchTab('config');
-  renderModels(); renderPosts(); updateRecap(); updateFloatingPrice(); initFloatingPriceObserver();
+  renderModels(); renderPosts(); updateRecap(); updateFloatingPrice();
+  setTimeout(initFloatingPriceObserver, 100);
   document.getElementById('posts-section').style.display = 'block';
   ['btn-devis','btn-save','btn-reset'].forEach(bid => {
     const b = document.getElementById(bid);
@@ -1731,7 +1716,6 @@ function updateFloatingPrice() {
   document.getElementById('fp-type').textContent = model.badge;
   document.getElementById('fp-name').textContent = model.name + ' titane';
   document.getElementById('fp-price').textContent = price.toLocaleString('fr-FR') + ' €';
-  // Visible uniquement sur mobile et si prix total pas encore visible
   if (window.innerWidth < 768) fp.classList.remove('hidden');
 }
 
@@ -1743,7 +1727,7 @@ function initFloatingPriceObserver() {
     const fp = document.getElementById('floating-price');
     if (!fp) return;
     if (entries[0].isIntersecting) fp.classList.add('hidden');
-    else fp.classList.remove('hidden');
+    else if (window.innerWidth < 768) fp.classList.remove('hidden');
   }, { threshold: 0.5 });
   observer.observe(target);
 }
