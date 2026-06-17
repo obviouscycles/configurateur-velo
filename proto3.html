@@ -576,22 +576,22 @@
       border-top: 0.5px solid #333;
     }
   }
-  /* Desktop : cadre identique à recap-total-card, centré en bas */
+  /* Desktop : ~60% hauteur du recap-total-card */
   @media (min-width: 768px) {
     #floating-price {
       display: block;
       left: 50%;
       transform: translateX(-50%);
-      min-width: 200px;
-      padding: 1rem 2rem;
+      padding: 4px 2rem;
       background: #000;
       border: 0.5px solid #333;
+      white-space: nowrap;
     }
   }
   #floating-price.hidden { opacity: 0; pointer-events: none; }
   .fp-price-row { display: flex; justify-content: center; align-items: baseline; gap: 8px; }
-  .fp-price-label { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: #666; margin-bottom: 6px; display: block; }
-  .fp-price { font-size: 28px; font-weight: 500; color: #F5C400; letter-spacing: -.02em; }
+  .fp-price-label { font-size: 9px; text-transform: uppercase; letter-spacing: .1em; color: #666; margin-bottom: 1px; display: block; }
+  .fp-price { font-size: 17px; font-weight: 500; color: #F5C400; letter-spacing: -.02em; }
 
   /* ── PROTO3 : étape1+étape2 côte à côte, résumé en bas ── */
   @media (min-width: 768px) {
@@ -1121,7 +1121,7 @@ function selectModel(id) {
   document.getElementById('posts-section').style.display = 'block';
   renderModels();
   renderPosts();
-  updateRecap(); updateFloatingPrice();
+  updateRecap(); updateFloatingPrice(); initFloatingPriceObserver();
   document.getElementById('save-form').classList.remove('open');
   window.scrollTo({ top: 0, behavior: 'instant' });
 }
@@ -1351,7 +1351,7 @@ function selectOpt(postId, optId) {
   });
 
   renderModels(); // mettre à jour surbrillance boutons preset
-  renderPosts(); updateRecap(); updateFloatingPrice();
+  renderPosts(); updateRecap(); updateFloatingPrice(); initFloatingPriceObserver();
 }
 
 // ─── RÉCAPITULATIF ────────────────────────────────────────────────────────────
@@ -1487,8 +1487,7 @@ function restoreConfig(id) {
   window._singleModel = cfg.selModel;
   window._activePreset = null;
   switchTab('config');
-  renderModels(); renderPosts(); updateRecap(); updateFloatingPrice();
-  initFloatingPriceObserver();
+  renderModels(); renderPosts(); updateRecap(); updateFloatingPrice(); initFloatingPriceObserver();
   document.getElementById('posts-section').style.display = 'block';
   ['btn-devis','btn-save','btn-reset'].forEach(bid => {
     const b = document.getElementById(bid);
@@ -1589,7 +1588,7 @@ function resetForceLink(postA, postB, scrollTo) {
   selOpts[postA] = null;
   selOpts[postB] = null;
   openPost = scrollTo || postA;
-  renderPosts(); updateRecap(); updateFloatingPrice();
+  renderPosts(); updateRecap(); updateFloatingPrice(); initFloatingPriceObserver();
   setTimeout(() => {
     const el = document.querySelector('[data-post-id="' + (scrollTo || postA) + '"]');
     if (el) {
@@ -1646,7 +1645,7 @@ function loadPreset(decl) {
   renderModels(); // mettre à jour la surbrillance du bouton actif
   document.getElementById('posts-section').style.display = 'block';
   renderPosts();
-  updateRecap(); updateFloatingPrice();
+  updateRecap(); updateFloatingPrice(); initFloatingPriceObserver();
   // Pas de scroll — on reste en haut de page
 }
 
@@ -1743,22 +1742,21 @@ function updateFloatingPrice() {
 }
 
 // ─── OBSERVER : masquer fenêtre flottante quand prix total visible ─────────
+let _fpObserver = null;
 function initFloatingPriceObserver() {
-  const tryObserve = () => {
-    const target = document.getElementById('recap-total-price');
-    if (!target) return false;
-    const observer = new IntersectionObserver(entries => {
-      const fp = document.getElementById('floating-price');
-      if (!fp) return;
-      if (entries[0].isIntersecting) fp.classList.add('hidden');
-      else if (window.innerWidth < 768) fp.classList.remove('hidden');
-    }, { threshold: 0.5 });
-    observer.observe(target);
-    return true;
-  };
-  if (!tryObserve()) {
-    const iv = setInterval(() => { if (tryObserve()) clearInterval(iv); }, 300);
-  }
+  if (_fpObserver) { _fpObserver.disconnect(); _fpObserver = null; }
+  const target = document.getElementById('recap-total-price');
+  if (!target) return;
+  _fpObserver = new IntersectionObserver(entries => {
+    const fp = document.getElementById('floating-price');
+    if (!fp) return;
+    if (entries[0].isIntersecting) {
+      fp.classList.add('hidden');
+    } else {
+      if (MODELS.find(m => m.id === selModel)) fp.classList.remove('hidden');
+    }
+  }, { threshold: 0.1 });
+  _fpObserver.observe(target);
 }
 </script>
 
