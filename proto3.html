@@ -1423,7 +1423,7 @@ function updateRecap() {
       '<div class="recap-price-block">' +
         '<hr class="recap-price-divider">' +
         '<div class="recap-total-block">' +
-          '<div class="recap-total-card"><div class="recap-total-label">Prix total</div><div class="recap-total-val price" id="recap-total-price">' + price.toLocaleString('fr-FR') + ' €</div></div>' +
+          '<div class="recap-total-card" id="recap-total-card"><div class="recap-total-label">Prix total</div><div class="recap-total-val price" id="recap-total-price">' + price.toLocaleString('fr-FR') + ' €</div></div>' +
         '</div>' +
       '</div>' +
     '</div>';
@@ -1732,6 +1732,14 @@ function updateFloatingPrice() {
   const { price } = computeTotals(selModel, selOpts);
   document.getElementById('fp-price').textContent = price.toLocaleString('fr-FR') + ' €';
   fp.classList.remove('hidden');
+  // Aligner la largeur sur recap-total-card si visible
+  if (window.innerWidth >= 768) {
+    const card = document.getElementById('recap-total-card');
+    if (card) {
+      const w = card.getBoundingClientRect().width;
+      if (w > 0) fp.style.width = w + 'px';
+    }
+  }
 }
 
 // ─── OBSERVER : masquer fenêtre flottante quand prix total visible ─────────
