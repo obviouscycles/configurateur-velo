@@ -556,18 +556,17 @@
     .opt-photo-card.sel .opc-img-wrap { background:#1a1200 !important; border-color:#5a4400 !important; }
   }
 
-  /* ── FENÊTRE PRIX FLOTTANTE ────────────────────────────── */
+  /* ── FENÊTRE PRIX FLOTTANTE (mobile uniquement) ─────── */
   #floating-price {
     display: none;
     position: fixed;
     z-index: 999;
     background: #1a1a18;
     border: 0.5px solid #3a3a36;
-    border-radius: 12px;
-    padding: 14px 18px;
+    border-radius: 10px;
     box-shadow: 0 4px 24px rgba(0,0,0,.5);
+    transition: opacity 0.3s;
   }
-  /* Mobile : en bas à droite, moitié de l'écran */
   @media (max-width: 767px) {
     #floating-price {
       display: block;
@@ -575,15 +574,6 @@
       right: 12px;
       width: calc(50% - 18px);
       padding: 10px 12px;
-    }
-  }
-  /* Desktop + tablette paysage : en bas à droite */
-  @media (min-width: 768px) {
-    #floating-price {
-      display: block;
-      bottom: 24px;
-      right: 24px;
-      min-width: 220px;
     }
   }
   #floating-price.hidden { opacity: 0; pointer-events: none; }
@@ -683,9 +673,10 @@
     </div>
     </div>
 
-    <div id="posts-section" style="display:none">
+    <div id="posts-section" style="display:none;border:1.5px solid #111111;padding:1.5rem;">
       <div class="prog-wrap">
-        <div class="step-label">Étape 2 — configurez vos composants</div>
+        <div class="step-label">Étape 2 sur 2</div>
+        <p class="section-title" style="color:#f2f2f2;margin-bottom:.5rem;">Configurez vos composants</p>
         <div class="prog-bar" id="prog-bar"></div>
       </div>
       <div id="posts-list"></div>
@@ -1432,7 +1423,7 @@ function updateRecap() {
       '<div class="recap-price-block">' +
         '<hr class="recap-price-divider">' +
         '<div class="recap-total-block">' +
-          '<div class="recap-total-card"><div class="recap-total-label">Prix total</div><div class="recap-total-val price">' + price.toLocaleString('fr-FR') + ' €</div></div>' +
+          '<div class="recap-total-card"><div class="recap-total-label">Prix total</div><div class="recap-total-val price" id="recap-total-price">' + price.toLocaleString('fr-FR') + ' €</div></div>' +
         '</div>' +
       '</div>' +
     '</div>';
@@ -1496,7 +1487,7 @@ function restoreConfig(id) {
   window._singleModel = cfg.selModel;
   window._activePreset = null;
   switchTab('config');
-  renderModels(); renderPosts(); updateRecap(); updateFloatingPrice();
+  renderModels(); renderPosts(); updateRecap(); updateFloatingPrice(); initFloatingPriceObserver();
   document.getElementById('posts-section').style.display = 'block';
   ['btn-devis','btn-save','btn-reset'].forEach(bid => {
     const b = document.getElementById(bid);
@@ -1742,6 +1733,19 @@ function updateFloatingPrice() {
   document.getElementById('fp-name').textContent = model.name + ' titane';
   document.getElementById('fp-price').textContent = price.toLocaleString('fr-FR') + ' €';
   fp.classList.remove('hidden');
+}
+
+// ─── MASQUER FENÊTRE FLOTTANTE QUAND PRIX TOTAL VISIBLE ──────────────────────
+function initFloatingPriceObserver() {
+  const target = document.getElementById('recap-total-price');
+  if (!target || !('IntersectionObserver' in window)) return;
+  const observer = new IntersectionObserver(entries => {
+    const fp = document.getElementById('floating-price');
+    if (!fp) return;
+    if (entries[0].isIntersecting) fp.classList.add('hidden');
+    else fp.classList.remove('hidden');
+  }, { threshold: 0.5 });
+  observer.observe(target);
 }
 </script>
 
