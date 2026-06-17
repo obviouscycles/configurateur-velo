@@ -614,7 +614,6 @@
       top: 1.5rem;
       display: block !important;
       background: #111111;
-      border-radius: 8px;
       padding: 1.5rem;
     }
     /* Masquer fenêtre flottante — le récap est toujours visible */
@@ -1348,7 +1347,7 @@ function updateRecap() {
   const model = MODELS.find(m => m.id === selModel);
   if (!model) return;
   const allDone = POST_META.every(p => !!selOpts[p.id]);
-  document.getElementById('recap-col').style.display = allDone ? 'block' : 'none';
+  if (window.innerWidth < 768) document.getElementById('recap-col').style.display = allDone ? 'block' : 'none';
   document.getElementById('contact-hint').style.display = allDone ? 'block' : 'none';
   if (!allDone) return;
 
@@ -1423,7 +1422,7 @@ function updateRecap() {
 function resetConfig() {
   selModel = null; selOpts = {}; openPost = null;
   document.getElementById('posts-section').style.display = 'none';
-  document.getElementById('recap-col').style.display = 'none';
+  if (window.innerWidth < 768) document.getElementById('recap-col').style.display = 'none';
   document.getElementById('save-form').classList.remove('open');
   renderModels();
   window.scrollTo({ top: 0, behavior: 'smooth' });
