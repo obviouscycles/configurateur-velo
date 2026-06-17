@@ -676,8 +676,7 @@
     <div id="posts-section" style="display:none;border:1.5px solid #111111;padding:1.5rem;">
       <div class="prog-wrap">
         <div class="step-label">Étape 2 sur 2</div>
-        <p class="section-title" style="color:#111111;margin-bottom:.5rem;">Configurez vos composants</p>
-        <div class="prog-bar" id="prog-bar"></div>
+        <p class="section-title" style="color:#111111;margin-bottom:.5rem;">Configurer vos composants</p>
       </div>
       <div id="posts-list"></div>
     </div>
@@ -1732,7 +1731,8 @@ function updateFloatingPrice() {
   document.getElementById('fp-type').textContent = model.badge;
   document.getElementById('fp-name').textContent = model.name + ' titane';
   document.getElementById('fp-price').textContent = price.toLocaleString('fr-FR') + ' €';
-  fp.classList.remove('hidden');
+  // Visible uniquement sur mobile et si prix total pas encore visible
+  if (window.innerWidth < 768) fp.classList.remove('hidden');
 }
 
 // ─── MASQUER FENÊTRE FLOTTANTE QUAND PRIX TOTAL VISIBLE ──────────────────────
