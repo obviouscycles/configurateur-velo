@@ -1460,8 +1460,9 @@ function updateRecap() {
   const model = MODELS.find(m => m.id === selModel);
   if (!model) return;
   const allDone = POST_META.every(p => !!selOpts[p.id]);
+  const bottomRow = document.getElementById('bottom-row');
+  if (bottomRow) bottomRow.style.display = allDone ? (window.innerWidth >= 768 ? 'grid' : 'block') : 'none';
   if (window.innerWidth < 768) document.getElementById('recap-col').style.display = allDone ? 'block' : 'none';
-  document.getElementById('contact-hint').style.display = allDone ? 'block' : 'none';
   if (!allDone) return;
 
   const { price, weight } = computeTotals(selModel, selOpts);
