@@ -683,6 +683,7 @@
     .on-tab-saved #view-config { display: none !important; }
     .on-tab-saved #view-saved  { display: block !important; }
     .on-tab-saved #recap-col { display: none !important; }
+    .on-tab-saved #bottom-row { display: none !important; }
     /* floating-price géré par JS + observer */
   }
 </style>
@@ -738,76 +739,76 @@
       <div id="posts-list"></div>
     </div>
 
-    <div id="contact-hint" style="display:none">
-      <div class="contact-block">
-        <p class="contact-intro">Un composant hors catalogue, besoin d'aide pour vos choix ou pour définir la taille de votre vélo ?</p>
-        <div class="contact-cols">
-
-          <!-- Colonne gauche : contacter Obvious -->
-          <div class="contact-col">
-            <div class="contact-col-title">Contacter Obvious</div>
-            <div class="contact-col-desc">On répond vite.</div>
-            <div class="contact-btns">
-              <a href="tel:+33695582935" class="contact-btn contact-btn-tel">
-                <i class="ti ti-phone"></i> 06 95 58 29 35
-              </a>
-              <a href="https://www.obviouscycles.com/contact/" target="_blank" class="contact-btn contact-btn-msg">
-                <i class="ti ti-message"></i> Message
-              </a>
-            </div>
-          </div>
-
-          <!-- Séparateur -->
-          <div class="contact-sep"><span>ou</span></div>
-
-          <!-- Colonne droite : être rappelé -->
-          <div class="contact-col">
-            <div class="contact-col-title">Être rappelé</div>
-            <div class="contact-col-desc">Laissez vos coordonnées, on vous recontacte.</div>
-            <div class="contact-form" id="contact-form">
-              <input type="tel" id="cf-phone" placeholder="Téléphone" class="contact-input" />
-              <input type="email" id="cf-email" placeholder="E-mail" class="contact-input" />
-              <button class="contact-btn contact-btn-send" onclick="sendCallback()">
-                <i class="ti ti-send"></i> Envoyer
-              </button>
-              <div id="cf-toast" class="cf-toast" style="display:none"><i class="ti ti-check"></i> Message envoyé !</div>
-              <div id="cf-error" class="cf-error" style="display:none">Merci de renseigner au moins un contact.</div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
   </div>
 
-  <!-- COLONNE DROITE RÉCAP (hors vues, toujours dans la grille desktop) -->
-  <div id="recap-col" style="display:none">
-    <div id="recap-header">
-      <div class="step-label">En résumé</div>
-      <p class="section-title" style="color:#f2f2f2;margin-bottom:1rem;">Votre configuration</p>
-    </div>
-    <div id="recap-section">
-      <div id="recap-box-container"></div>
-      <div class="btn-row">
-        <button class="btn primary" id="btn-devis" onclick="openOrderModal()" disabled style="opacity:.35;cursor:not-allowed">
-          <i class="ti ti-send"></i> Demander mon devis
-        </button>
-        <button class="btn success" id="btn-save" onclick="toggleSaveForm()" disabled style="opacity:.35;cursor:not-allowed">
-          <i class="ti ti-bookmark"></i> Sauvegarder cette configuration
-        </button>
-        <div class="save-form" id="save-form">
-          <div class="save-label">Donnez un nom à cette configuration :</div>
-          <div class="save-input-row">
-            <input type="text" id="save-name-input" placeholder="Ex : Mon gravel bikepacking" maxlength="60" />
-            <button onclick="saveConfig()">Sauvegarder</button>
+  <!-- LIGNE 3 : RÉSUMÉ (70%) + CONTACT (30%) -->
+  <div id="bottom-row" style="display:none">
+
+    <!-- Résumé -->
+    <div id="recap-col">
+      <div id="recap-header">
+        <div class="step-label">En résumé</div>
+        <p class="section-title" style="color:#f2f2f2;margin-bottom:1rem;">Votre configuration</p>
+      </div>
+      <div id="recap-section">
+        <div id="recap-box-container"></div>
+        <div class="btn-row">
+          <button class="btn primary" id="btn-devis" onclick="openOrderModal()" disabled style="opacity:.35;cursor:not-allowed">
+            <i class="ti ti-send"></i> Demander mon devis
+          </button>
+          <button class="btn success" id="btn-save" onclick="toggleSaveForm()" disabled style="opacity:.35;cursor:not-allowed">
+            <i class="ti ti-bookmark"></i> Sauvegarder cette configuration
+          </button>
+          <div class="save-form" id="save-form">
+            <div class="save-label">Donnez un nom à cette configuration :</div>
+            <div class="save-input-row">
+              <input type="text" id="save-name-input" placeholder="Ex : Mon gravel bikepacking" maxlength="60" />
+              <button onclick="saveConfig()">Sauvegarder</button>
+            </div>
+            <div class="toast" id="save-toast"><i class="ti ti-check"></i> Configuration sauvegardée !</div>
           </div>
-          <div class="toast" id="save-toast"><i class="ti ti-check"></i> Configuration sauvegardée !</div>
+          <button class="btn" id="btn-reset" onclick="resetConfig()" disabled style="opacity:.35;cursor:not-allowed">
+            <i class="ti ti-refresh"></i> Recommencer
+          </button>
         </div>
-        <button class="btn" id="btn-reset" onclick="resetConfig()" disabled style="opacity:.35;cursor:not-allowed">
-          <i class="ti ti-refresh"></i> Recommencer
-        </button>
       </div>
     </div>
+
+    <!-- Contact sticky -->
+    <div id="contact-hint">
+      <div class="step-label">Aide - Contact</div>
+      <p class="section-title" style="color:#f2f2f2;margin-bottom:1rem;">Nous contacter</p>
+      <p class="contact-intro" style="margin-bottom:1rem;">Un composant hors catalogue, besoin d'aide pour vos choix ou pour définir la taille de votre vélo ?</p>
+
+      <!-- Nous contacter -->
+      <div class="contact-col-title">Contacter Obvious</div>
+      <div class="contact-col-desc" style="margin-bottom:.75rem;">On répond vite.</div>
+      <div class="contact-btns" style="margin-bottom:1.25rem;">
+        <a href="tel:+33695582935" class="contact-btn contact-btn-tel">
+          <i class="ti ti-phone"></i> 06 95 58 29 35
+        </a>
+        <a href="https://www.obviouscycles.com/contact/" target="_blank" class="contact-btn contact-btn-msg">
+          <i class="ti ti-message"></i> Message
+        </a>
+      </div>
+
+      <!-- Séparateur -->
+      <div style="border-top:1.5px solid #2a2a2a;margin:0 0 1.25rem;"></div>
+
+      <!-- Être rappelé -->
+      <div class="contact-col-title">Être rappelé</div>
+      <div class="contact-col-desc" style="margin-bottom:.75rem;">Laissez vos coordonnées, on vous recontacte.</div>
+      <div class="contact-form" id="contact-form">
+        <input type="tel" id="cf-phone" placeholder="Téléphone" class="contact-input" />
+        <input type="email" id="cf-email" placeholder="E-mail" class="contact-input" />
+        <button class="contact-btn contact-btn-send" onclick="sendCallback()">
+          <i class="ti ti-send"></i> Envoyer
+        </button>
+        <div id="cf-toast" class="cf-toast" style="display:none"><i class="ti ti-check"></i> Message envoyé !</div>
+        <div id="cf-error" class="cf-error" style="display:none">Merci de renseigner au moins un contact.</div>
+      </div>
+    </div>
+
   </div>
 
   <!-- VUE SAUVEGARDES -->
@@ -1859,7 +1860,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const fp = document.getElementById('floating-price');
   if (fp) {
     fp.addEventListener('click', () => {
-      const recap = document.getElementById('recap-col');
+      const recap = document.getElementById('bottom-row') || document.getElementById('recap-col');
       if (recap) {
         const top = recap.getBoundingClientRect().top + window.pageYOffset - 20;
         window.scrollTo({ top, behavior: 'smooth' });
