@@ -1726,11 +1726,15 @@ if (modeleParam) {
 // ─── CLIC FENÊTRE FLOTTANTE → scroll vers résumé ─────────────────────────────
 document.getElementById('floating-price').addEventListener('click', () => {
   const recap = document.getElementById('recap-col');
-  if (recap) recap.scrollIntoView({ behavior: 'smooth' });
+  if (recap) {
+    const top = recap.getBoundingClientRect().top + window.pageYOffset - 20;
+    window.scrollTo({ top, behavior: 'smooth' });
+  }
 });
 
 // ─── ACTUALISER → retour en haut de page ─────────────────────────────────────
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+window.scrollTo(0, 0);
 window.addEventListener('beforeunload', () => window.scrollTo(0, 0));
 
 // ─── FENÊTRE PRIX FLOTTANTE ───────────────────────────────────────────────────
@@ -1756,7 +1760,8 @@ function updateFloatingPrice() {
 let _fpObserver = null;
 function initFloatingPriceObserver() {
   if (_fpObserver) { _fpObserver.disconnect(); _fpObserver = null; }
-  const target = document.getElementById('recap-total-price');
+  // Observer recap-col (toujours dans le DOM, contrairement à recap-total-price)
+  const target = document.getElementById('recap-col');
   if (!target) return;
   _fpObserver = new IntersectionObserver(entries => {
     const fp = document.getElementById('floating-price');
@@ -1766,7 +1771,7 @@ function initFloatingPriceObserver() {
     } else {
       if (MODELS.find(m => m.id === selModel)) fp.classList.remove('hidden');
     }
-  }, { threshold: 0.1 });
+  }, { threshold: 0.15 });
   _fpObserver.observe(target);
 }
 </script>
