@@ -1122,7 +1122,7 @@ function selectModel(id) {
   document.getElementById('posts-section').style.display = 'block';
   renderModels();
   renderPosts();
-  updateRecap(); updateFloatingPrice(); initFloatingPriceObserver();
+  updateRecap(); updateFloatingPrice();
   document.getElementById('save-form').classList.remove('open');
   window.scrollTo({ top: 0, behavior: 'instant' });
 }
@@ -1352,7 +1352,7 @@ function selectOpt(postId, optId) {
   });
 
   renderModels(); // mettre à jour surbrillance boutons preset
-  renderPosts(); updateRecap(); updateFloatingPrice(); initFloatingPriceObserver();
+  renderPosts(); updateRecap(); updateFloatingPrice();
 }
 
 // ─── RÉCAPITULATIF ────────────────────────────────────────────────────────────
@@ -1488,7 +1488,7 @@ function restoreConfig(id) {
   window._singleModel = cfg.selModel;
   window._activePreset = null;
   switchTab('config');
-  renderModels(); renderPosts(); updateRecap(); updateFloatingPrice(); initFloatingPriceObserver();
+  renderModels(); renderPosts(); updateRecap(); updateFloatingPrice();
   document.getElementById('posts-section').style.display = 'block';
   ['btn-devis','btn-save','btn-reset'].forEach(bid => {
     const b = document.getElementById(bid);
@@ -1589,7 +1589,7 @@ function resetForceLink(postA, postB, scrollTo) {
   selOpts[postA] = null;
   selOpts[postB] = null;
   openPost = scrollTo || postA;
-  renderPosts(); updateRecap(); updateFloatingPrice(); initFloatingPriceObserver();
+  renderPosts(); updateRecap(); updateFloatingPrice();
   setTimeout(() => {
     const el = document.querySelector('[data-post-id="' + (scrollTo || postA) + '"]');
     if (el) {
@@ -1646,7 +1646,7 @@ function loadPreset(decl) {
   renderModels(); // mettre à jour la surbrillance du bouton actif
   document.getElementById('posts-section').style.display = 'block';
   renderPosts();
-  updateRecap(); updateFloatingPrice(); initFloatingPriceObserver();
+  updateRecap(); updateFloatingPrice();
   // Pas de scroll — on reste en haut de page
 }
 
@@ -1723,18 +1723,37 @@ if (modeleParam) {
 };
 ;
 
-// ─── CLIC FENÊTRE FLOTTANTE → scroll vers résumé ─────────────────────────────
-document.getElementById('floating-price').addEventListener('click', () => {
-  const recap = document.getElementById('recap-col');
-  if (recap) {
-    const top = recap.getBoundingClientRect().top + window.pageYOffset - 20;
-    window.scrollTo({ top, behavior: 'smooth' });
+// ─── INIT AU CHARGEMENT ──────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  // Clic fenêtre flottante → scroll vers résumé
+  const fp = document.getElementById('floating-price');
+  if (fp) {
+    fp.addEventListener('click', () => {
+      const recap = document.getElementById('recap-col');
+      if (recap) {
+        const top = recap.getBoundingClientRect().top + window.pageYOffset - 20;
+        window.scrollTo({ top, behavior: 'smooth' });
+      }
+    });
   }
+
+  // Disparition fenêtre flottante quand prix fixe est atteint par scroll
+  window.addEventListener('scroll', () => {
+    const fp = document.getElementById('floating-price');
+    const fixed = document.getElementById('recap-total-card');
+    if (!fp || !fixed) return;
+    const fixedRect = fixed.getBoundingClientRect();
+    const fpRect = fp.getBoundingClientRect();
+    if (fixedRect.top <= window.innerHeight) {
+      fp.classList.add('hidden');
+    } else {
+      if (MODELS.find(m => m.id === selModel)) fp.classList.remove('hidden');
+    }
+  }, { passive: true });
 });
 
 // ─── ACTUALISER → retour en haut de page ─────────────────────────────────────
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
-window.scrollTo(0, 0);
 window.addEventListener('beforeunload', () => window.scrollTo(0, 0));
 
 // ─── FENÊTRE PRIX FLOTTANTE ───────────────────────────────────────────────────
@@ -1757,23 +1776,6 @@ function updateFloatingPrice() {
 }
 
 // ─── OBSERVER : masquer fenêtre flottante quand prix total visible ─────────
-let _fpObserver = null;
-function initFloatingPriceObserver() {
-  if (_fpObserver) { _fpObserver.disconnect(); _fpObserver = null; }
-  // Observer recap-col (toujours dans le DOM, contrairement à recap-total-price)
-  const target = document.getElementById('recap-col');
-  if (!target) return;
-  _fpObserver = new IntersectionObserver(entries => {
-    const fp = document.getElementById('floating-price');
-    if (!fp) return;
-    if (entries[0].isIntersecting) {
-      fp.classList.add('hidden');
-    } else {
-      if (MODELS.find(m => m.id === selModel)) fp.classList.remove('hidden');
-    }
-  }, { threshold: 0.15 });
-  _fpObserver.observe(target);
-}
 </script>
 
 <button class="back-btn" onclick="window.history.back()" title="Retour à la page précédente"><i class="ti ti-arrow-left"></i> Retour</button>
