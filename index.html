@@ -1723,6 +1723,16 @@ if (modeleParam) {
 };
 ;
 
+// ─── CLIC FENÊTRE FLOTTANTE → scroll vers résumé ─────────────────────────────
+document.getElementById('floating-price').addEventListener('click', () => {
+  const recap = document.getElementById('recap-col');
+  if (recap) recap.scrollIntoView({ behavior: 'smooth' });
+});
+
+// ─── ACTUALISER → retour en haut de page ─────────────────────────────────────
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+window.addEventListener('beforeunload', () => window.scrollTo(0, 0));
+
 // ─── FENÊTRE PRIX FLOTTANTE ───────────────────────────────────────────────────
 function updateFloatingPrice() {
   const fp = document.getElementById('floating-price');
@@ -1764,7 +1774,7 @@ function initFloatingPriceObserver() {
 <button class="back-btn" onclick="window.history.back()" title="Retour à la page précédente"><i class="ti ti-arrow-left"></i> Retour</button>
 
   <!-- Fenêtre prix flottante -->
-  <div id="floating-price" class="hidden">
+  <div id="floating-price" class="hidden" style="cursor:pointer">
     <span class="fp-price-label">Prix total</span>
     <div class="fp-price" id="fp-price">—</div>
   </div>
