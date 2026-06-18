@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <link rel="icon" type="image/webp" href="https://www.obviouscycles.com/wp-content/uploads/2023/04/favicon-512-light.webp">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OBVIOUS-ON-DEMAND — Montage à la carte</title>
+<title>OBVIOUS-ON-DEMAND — Montage à la carte [PROTO4]</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -694,7 +694,7 @@
       align-items: start;
     }
     #recap-col   { grid-column: 1; background: #111111; padding: 1.5rem; }
-    #contact-hint { grid-column: 2; background: #111111; padding: 1.5rem; position: sticky; top: 1.5rem; align-self: start; }
+    #contact-hint { grid-column: 2; background: #111111; padding: 1.5rem; position: sticky; top: 0; align-self: start; }
     /* floating-price géré par JS + observer */
   }
 </style>
@@ -790,7 +790,7 @@
       <div class="step-label">Aide - Contact</div>
 
       <!-- Contacter Obvious -->
-      <div class="contact-col-title">Contacter Obvious</div>
+      <div class="contact-col-title" style="color:#ffffff;text-transform:none;font-size:18px;font-weight:500;letter-spacing:0;margin-bottom:.5rem;">Contacter Obvious</div>
       <div class="contact-btns" style="margin-bottom:1.25rem;">
         <a href="tel:+33695582935" class="contact-btn contact-btn-tel">
           <i class="ti ti-phone"></i> 06 95 58 29 35
@@ -804,7 +804,7 @@
       <div style="border-top:1.5px solid #2a2a2a;margin:0 0 1.25rem;"></div>
 
       <!-- Être rappelé -->
-      <div class="contact-col-title">Être rappelé</div>
+      <div class="contact-col-title" style="color:#ffffff;text-transform:none;font-size:18px;font-weight:500;letter-spacing:0;margin-bottom:.5rem;">Être rappelé</div>
       <div class="contact-form" id="contact-form">
         <input type="tel" id="cf-phone" placeholder="Téléphone" class="contact-input" />
         <input type="email" id="cf-email" placeholder="E-mail" class="contact-input" />
