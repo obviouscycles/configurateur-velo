@@ -1247,7 +1247,10 @@ function renderPosts() {
             const locked = isLocked(o, selModel);
             let priceStr;
             if (locked) {
-              priceStr = '';
+              const currentOpt = selOpts[p.id] ? opts.find(x => x.id === selOpts[p.id]) : null;
+              const currentPrice = (currentOpt && !isLocked(currentOpt, selModel)) ? currentOpt.price : 0;
+              if (currentPrice === 0) priceStr = '';
+              else priceStr = (-currentPrice).toLocaleString('fr-FR') + ' €';
             } else {
               const currentOpt = selOpts[p.id] ? opts.find(x => x.id === selOpts[p.id]) : null;
               const currentPrice = (currentOpt && !isLocked(currentOpt, selModel)) ? currentOpt.price : 0;
@@ -1270,7 +1273,7 @@ function renderPosts() {
                 '</div>' : '') +
                 '<div class="opc-name">' + o.name + '</div>' +
                 (o.desc ? '<div class="opc-desc">' + o.desc + '</div>' : '') +
-                (!locked ? '<div class="opc-price' + (o.price < 0 ? ' negative' : '') + '">' + priceStr + '</div>' : '') +
+                (priceStr ? '<div class="opc-price' + (priceStr.startsWith('-') ? ' negative' : '') + '">' + priceStr + '</div>' : '') +
               '</div>' +
             '</div>';
           }).join('') +
@@ -1280,7 +1283,10 @@ function renderPosts() {
             const rec = isRecommended(o, selModel);
             let priceStr;
             if (o.locked || isLocked(o, selModel)) {
-              priceStr = '—';
+              const currentOpt = selOpts[p.id] ? opts.find(x => x.id === selOpts[p.id]) : null;
+              const currentPrice = (currentOpt && !isLocked(currentOpt, selModel)) ? currentOpt.price : 0;
+              if (currentPrice === 0) priceStr = '—';
+              else priceStr = (-currentPrice).toLocaleString('fr-FR') + ' €';
             } else {
               const currentOpt = selOpts[p.id] ? opts.find(x => x.id === selOpts[p.id]) : null;
               const currentPrice = (currentOpt && !isLocked(currentOpt, selModel)) ? currentOpt.price : 0;
