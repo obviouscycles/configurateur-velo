@@ -682,12 +682,12 @@
     .on-tab-saved #view-saved  { display: block !important; }
     .on-tab-saved #recap-col { display: none !important; }
     .on-tab-saved #bottom-row { display: none !important; }
-    /* Ligne 3 : 50/50, recap gauche, contact droite */
+    /* Ligne 3 : 70/30, recap gauche, contact droite */
     #bottom-row {
       grid-column: 1 / 3;
       grid-row: 3;
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 70fr 30fr;
       gap: 1.5rem;
       align-items: start;
     }
