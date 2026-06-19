@@ -650,8 +650,9 @@
   }
   /* Mobile : espacement et fond des blocs */
   @media (max-width: 767px) {
-    #recap-col { background: #111111; padding: 1.5rem; margin-top: 1.5rem; }
-    #bottom-row { display: flex; flex-direction: column; gap: 1.5rem; }
+    #bottom-row { flex-direction: column; }
+    #recap-col  { background: #111111; padding: 1.5rem; margin-top: 1.5rem; }
+    #contact-hint { background: transparent; border: 1.5px solid #111111; padding: 1.5rem; margin-top: 1.5rem; display: block !important; }
   }
 
   /* ── PROTO3 : étape1+étape2 côte à côte, résumé en bas ── */
@@ -682,17 +683,17 @@
     .on-tab-saved #view-saved  { display: block !important; }
     .on-tab-saved #recap-col { display: none !important; }
     .on-tab-saved #bottom-row { display: none !important; }
-    /* Ligne 3 : 70/30, recap gauche, contact droite */
+    /* Ligne 3 : Flexbox 70/30, recap gauche, contact droite */
     #bottom-row {
       grid-column: 1 / 3;
       grid-row: 3;
-      display: grid;
-      grid-template-columns: 70fr 30fr;
+      display: flex;
+      flex-direction: row;
       gap: 1.5rem;
-      align-items: start;
+      align-items: flex-start;
     }
-    #recap-col    { grid-column: 1; background: #111111; padding: 1.5rem; align-self: start; }
-    #contact-hint  { grid-column: 2; background: transparent; border: 1.5px solid #111111; padding: 1.5rem; align-self: start; }
+    #recap-col    { flex: 7; min-width: 0; background: #111111; padding: 1.5rem; }
+    #contact-hint  { flex: 3; min-width: 0; background: transparent; border: 1.5px solid #111111; padding: 1.5rem; }
     /* floating-price géré par JS + observer */
   }
 </style>
