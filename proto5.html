@@ -341,8 +341,23 @@
   .recap-card {
     background: #1e1e1e;
     border: 0.5px solid #333;
-    padding: 10px 12px;
-    display: flex; flex-direction: column; gap: 4px;
+    padding: 0;
+    display: flex; flex-direction: column; gap: 0;
+    overflow: hidden;
+  }
+  .recap-card-img {
+    width: 100%; aspect-ratio: 4/3;
+    background: #111; display: flex; align-items: center; justify-content: center;
+    overflow: hidden; border-bottom: 0.5px solid #2a2a2a;
+  }
+  .recap-card-img img {
+    width: 100%; height: 100%; object-fit: contain; padding: 8px;
+  }
+  .recap-card-img .no-img {
+    font-size: 22px; opacity: .2; color: #888;
+  }
+  .recap-card-body {
+    padding: 10px 12px; display: flex; flex-direction: column; gap: 4px;
   }
   .recap-card-header {
     display: flex; align-items: center; gap: 7px;
@@ -671,7 +686,7 @@
       grid-column: 1 / 3;
       grid-row: 2;
       display: grid;
-      grid-template-columns: 70fr 30fr;
+      grid-template-columns: 1fr 1fr;
       gap: 0 1.5rem;
       align-items: start;
     }
@@ -709,8 +724,10 @@
 
 <header>
   <div class="logo" style="display:flex;align-items:center;gap:10px;">
-    <img src="https://www.obviouscycles.com/wp-content/uploads/2023/04/favicon-512.png" alt="Obvious Cycles" style="height:32px;width:32px;object-fit:contain;">
-    <span>OBVIOUS-ON-DEMAND</span>
+    <a href="https://www.obviouscycles.com/" title="Retour au site" class="back-link" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit;">
+      <img src="https://www.obviouscycles.com/wp-content/uploads/2023/04/favicon-512.png" alt="Obvious Cycles" style="height:32px;width:32px;object-fit:contain;">
+      <span>OBVIOUS-ON-DEMAND</span>
+    </a>
   </div>
   <div style="display:flex;align-items:center;gap:10px;">
     <div style="font-size:12px;color:#ffffff;opacity:.7">Montage à la carte</div>
@@ -1492,10 +1509,17 @@ function updateRecap() {
     else if (opt.price > 0)   { priceLabel = '+' + opt.price.toLocaleString('fr-FR') + ' €'; priceClass = 'pos';  }
     else                      { priceLabel = opt.price.toLocaleString('fr-FR') + ' €'; priceClass = 'neg';  }
 
+    const imgSrc = opt.image || '';
+    const imgHTML = imgSrc
+      ? '<img src="' + imgSrc + '" alt="' + opt.name + '" loading="lazy" onerror="this.parentNode.innerHTML='<i class=\"ti ti-photo no-img\"></i>'">'
+      : '<i class="ti ti-photo no-img"></i>';
     cards += '<div class="recap-card">' +
-      '<div class="recap-card-header"><i class="ti ' + (postIcons[p.id]||'ti-point') + '"></i>' + p.name + '</div>' +
-      '<div class="recap-card-name">' + opt.name + '</div>' +
-      '<div class="recap-card-price ' + priceClass + '">' + priceLabel + '</div>' +
+      '<div class="recap-card-img">' + imgHTML + '</div>' +
+      '<div class="recap-card-body">' +
+        '<div class="recap-card-header"><i class="ti ' + (postIcons[p.id]||'ti-point') + '"></i>' + p.name + '</div>' +
+        '<div class="recap-card-name">' + opt.name + '</div>' +
+        '<div class="recap-card-price ' + priceClass + '">' + priceLabel + '</div>' +
+      '</div>' +
     '</div>';
   });
 
@@ -1891,7 +1915,8 @@ window.addEventListener('DOMContentLoaded', () => {
   }, { passive: true });
 });
 
-// ─── ACTUALISER → retour en haut de page ─────────────────────────────────────
+// ─── LIEN RETOUR AU SITE ─────────────────────────────────────────────────────
+document.querySelectorAll('.back-link').forEach(el => el.href = 'https://www.obviouscycles.com/velos-titane/');
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 window.addEventListener('beforeunload', () => window.scrollTo(0, 0));
 
@@ -1917,7 +1942,7 @@ function updateFloatingPrice() {
 // ─── OBSERVER : masquer fenêtre flottante quand prix total visible ─────────
 </script>
 
-<button class="back-btn" onclick="window.history.back()" title="Retour à la page précédente"><i class="ti ti-arrow-left"></i> Retour</button>
+<a class="back-btn back-link" href="https://www.obviouscycles.com/" title="Retour au site"><i class="ti ti-arrow-left"></i> Retour au site</a>
 
   <!-- Fenêtre prix flottante -->
   <div id="floating-price" class="hidden" style="cursor:pointer">

@@ -1894,11 +1894,7 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 // ─── LIEN RETOUR AU SITE ─────────────────────────────────────────────────────
-(function() {
-  const ref = document.referrer;
-  const backUrl = (ref && ref.includes('obviouscycles.com')) ? ref : 'https://www.obviouscycles.com/';
-  document.querySelectorAll('.back-link').forEach(el => el.href = backUrl);
-})();
+document.querySelectorAll('.back-link').forEach(el => el.href = 'https://www.obviouscycles.com/velos-titane/');
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 window.addEventListener('beforeunload', () => window.scrollTo(0, 0));
 
