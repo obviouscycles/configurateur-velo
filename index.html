@@ -709,7 +709,7 @@
 
 <header>
   <div class="logo" style="display:flex;align-items:center;gap:10px;">
-    <a href="https://www.obviouscycles.com/" title="Retour au site" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit;">
+    <a href="https://www.obviouscycles.com/" title="Retour au site" class="back-link" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit;">
       <img src="https://www.obviouscycles.com/wp-content/uploads/2023/04/favicon-512.png" alt="Obvious Cycles" style="height:32px;width:32px;object-fit:contain;">
       <span>OBVIOUS-ON-DEMAND</span>
     </a>
@@ -1893,7 +1893,12 @@ window.addEventListener('DOMContentLoaded', () => {
   }, { passive: true });
 });
 
-// ─── ACTUALISER → retour en haut de page ─────────────────────────────────────
+// ─── LIEN RETOUR AU SITE ─────────────────────────────────────────────────────
+(function() {
+  const ref = document.referrer;
+  const backUrl = (ref && ref.includes('obviouscycles.com')) ? ref : 'https://www.obviouscycles.com/';
+  document.querySelectorAll('.back-link').forEach(el => el.href = backUrl);
+})();
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 window.addEventListener('beforeunload', () => window.scrollTo(0, 0));
 
@@ -1919,7 +1924,7 @@ function updateFloatingPrice() {
 // ─── OBSERVER : masquer fenêtre flottante quand prix total visible ─────────
 </script>
 
-<a class="back-btn" href="https://www.obviouscycles.com/" title="Retour au site"><i class="ti ti-arrow-left"></i> Retour au site</a>
+<a class="back-btn back-link" href="https://www.obviouscycles.com/" title="Retour au site"><i class="ti ti-arrow-left"></i> Retour au site</a>
 
   <!-- Fenêtre prix flottante -->
   <div id="floating-price" class="hidden" style="cursor:pointer">
