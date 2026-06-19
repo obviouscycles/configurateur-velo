@@ -350,15 +350,8 @@
     background: #111; display: flex; align-items: center; justify-content: center;
     overflow: hidden; border-bottom: 0.5px solid #2a2a2a;
   }
-  .recap-card-img img {
-    width: 100%; height: 100%; object-fit: contain; padding: 8px;
-  }
-  .recap-card-img .no-img {
-    font-size: 22px; opacity: .2; color: #888;
-  }
-  .recap-card-body {
-    padding: 10px 12px; display: flex; flex-direction: column; gap: 4px;
-  }
+  .recap-card-img img { width: 100%; height: 100%; object-fit: contain; padding: 8px; }
+  .recap-card-body { padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; }
   .recap-card-header {
     display: flex; align-items: center; gap: 7px;
     font-size: 10px; font-weight: 500; color: #888;
@@ -724,7 +717,7 @@
 
 <header>
   <div class="logo" style="display:flex;align-items:center;gap:10px;">
-    <a href="https://www.obviouscycles.com/" title="Retour au site" class="back-link" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit;">
+    <a href="https://www.obviouscycles.com/velos-titane/" title="Retour au site" class="back-link" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit;">
       <img src="https://www.obviouscycles.com/wp-content/uploads/2023/04/favicon-512.png" alt="Obvious Cycles" style="height:32px;width:32px;object-fit:contain;">
       <span>OBVIOUS-ON-DEMAND</span>
     </a>
@@ -1509,12 +1502,10 @@ function updateRecap() {
     else if (opt.price > 0)   { priceLabel = '+' + opt.price.toLocaleString('fr-FR') + ' €'; priceClass = 'pos';  }
     else                      { priceLabel = opt.price.toLocaleString('fr-FR') + ' €'; priceClass = 'neg';  }
 
-    const imgSrc = opt.image || '';
-    const imgHTML = imgSrc
-      ? '<img src="' + imgSrc + '" alt="' + opt.name + '" loading="lazy" onerror="this.parentNode.innerHTML='<i class=\"ti ti-photo no-img\"></i>'">'
-      : '<i class="ti ti-photo no-img"></i>';
+    var imgSrc = opt.image || '';
+    var imgTag = imgSrc ? '<img src="' + imgSrc + '" alt="" loading="lazy">' : '<i class="ti ti-photo" style="font-size:22px;opacity:.2;color:#888"></i>';
     cards += '<div class="recap-card">' +
-      '<div class="recap-card-img">' + imgHTML + '</div>' +
+      '<div class="recap-card-img">' + imgTag + '</div>' +
       '<div class="recap-card-body">' +
         '<div class="recap-card-header"><i class="ti ' + (postIcons[p.id]||'ti-point') + '"></i>' + p.name + '</div>' +
         '<div class="recap-card-name">' + opt.name + '</div>' +
@@ -1942,7 +1933,7 @@ function updateFloatingPrice() {
 // ─── OBSERVER : masquer fenêtre flottante quand prix total visible ─────────
 </script>
 
-<a class="back-btn back-link" href="https://www.obviouscycles.com/" title="Retour au site"><i class="ti ti-arrow-left"></i> Retour au site</a>
+<a class="back-btn back-link" href="https://www.obviouscycles.com/velos-titane/" title="Retour au site"><i class="ti ti-arrow-left"></i> Retour au site</a>
 
   <!-- Fenêtre prix flottante -->
   <div id="floating-price" class="hidden" style="cursor:pointer">
