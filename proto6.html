@@ -684,15 +684,11 @@
     .on-tab-saved #view-saved  { display: block !important; }
     .on-tab-saved #recap-col { display: none !important; }
     .on-tab-saved #bottom-row { display: none !important; }
-    /* Onglet taille : bottom-row visible + view-size en colonne droite */
-    .on-tab-size #bottom-row { display: flex !important; }
-    .on-tab-size #view-size { display: block !important; }
-    .on-tab-size #recap-col { flex: 7; }
-    /* Cacher btn-row dans recap quand on est sur l'onglet taille */
-    .on-tab-size .btn-row { display: none; }
-    /* Bouton devis uniquement sur onglet taille */
-    #btn-devis-size { display: none; }
-    .on-tab-size #btn-devis-size { display: block !important; }
+    /* Onglet taille : masquer view-config, afficher bottom-row */
+    .on-tab-size #view-config { display: none !important; }
+    .on-tab-size #bottom-row  { display: flex !important; }
+    .on-tab-size #view-size   { display: block !important; }
+    .on-tab-size .btn-row     { display: none; }
     /* Ligne 3 : Flexbox 70/30, recap gauche, contact droite */
     #bottom-row {
       grid-column: 1 / 3;
@@ -703,16 +699,9 @@
       align-items: flex-start;
     }
     #recap-col    { flex: 7; min-width: 0; background: #111111; padding: 1.5rem; }
-    /* Sur onglet taille : view-size devient la colonne droite */
-    .on-tab-size #bottom-row { align-items: start; }
-    .on-tab-size #view-size {
-      flex: 3; min-width: 0;
-      background: transparent;
-      border: 1.5px solid #111111;
-      padding: 1.5rem;
-      display: block !important;
-    }
+
     #contact-hint  { flex: 3; min-width: 0; background: transparent; border: 1.5px solid #111111; padding: 1.5rem; position: sticky; top: 64px; align-self: flex-start; }
+    #view-size     { flex: 3; min-width: 0; align-self: flex-start; }
     /* floating-price géré par JS + observer */
   }
 
@@ -878,45 +867,12 @@
     </div>
 
     <!-- Contact sticky -->
-    <div id="contact-hint">
-      <div class="step-label" style="color:#888;">Aide - Contact</div>
-
-      <!-- Contacter Obvious -->
-      <div class="contact-col-title" style="color:#111111;text-transform:none;font-size:18px;font-weight:500;letter-spacing:0;margin-bottom:.5rem;">Contacter Obvious</div>
-      <p style="font-size:13px;color:var(--text2);margin-bottom:.75rem;line-height:1.5;">Un autre montage, une question sur les tailles, besoin d'aide. Contactez-nous pour nous en faire part.</p>
-      <div class="contact-btns" style="margin-bottom:1.25rem;">
-        <a href="tel:+33695582935" class="contact-btn contact-btn-tel">
-          <i class="ti ti-phone"></i> 06 95 58 29 35
-        </a>
-        <a href="https://www.obviouscycles.com/contact/#ancragemail" target="_blank" class="contact-btn contact-btn-msg">
-          <i class="ti ti-message"></i> Message
-        </a>
-        <a href="https://www.obviouscycles.com/contact/#ancragerdv" target="_blank" class="contact-btn contact-btn-rdv">
-          <i class="ti ti-calendar"></i> Prendre rdv
-        </a>
-      </div>
-
-      <!-- Séparateur -->
-      <div style="border-top:1.5px solid #2a2a2a;margin:0 0 1.25rem;"></div>
-
-      <!-- Être rappelé -->
-      <div class="contact-col-title" style="color:#111111;text-transform:none;font-size:18px;font-weight:500;letter-spacing:0;margin-bottom:.5rem;">Être rappelé</div>
-      <p style="font-size:13px;color:var(--text2);margin-bottom:.75rem;line-height:1.5;">Nous vous contacterons pour vous aider à finaliser votre vélo et répondre à vos questions.</p>
-      <div class="contact-form" id="contact-form">
-        <input type="tel" id="cf-phone" placeholder="Téléphone" class="contact-input" />
-        <input type="email" id="cf-email" placeholder="E-mail" class="contact-input" />
-        <button class="contact-btn contact-btn-send" onclick="sendCallback()">
-          <i class="ti ti-send"></i> Envoyer
-        </button>
-        <div id="cf-toast" class="cf-toast" style="display:none"><i class="ti ti-check"></i> Message envoyé !</div>
-        <div id="cf-error" class="cf-error" style="display:none">Merci de renseigner au moins un contact.</div>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- VUE TAILLE (intégrée dans bottom-row via CSS) -->
-  <div class="view" id="view-size" style="display:none">
+    <!-- Vue taille : visible seulement sur onglet "Votre taille" -->
+    <div id="view-size" style="display:none">
+      <div style="background:#111111;padding:1.5rem;">
+        <div class="step-label" style="color:#888;">Votre taille</div>
+        <p class="section-title" style="color:#f2f2f2;margin-bottom:1.5rem;">Dimensions de votre vélo</p>
+        
     <div style="background:#111111;padding:1.5rem;margin-bottom:1.5rem;">
       <div class="step-label" style="color:#888;">Votre taille</div>
       <p class="section-title" style="color:#f2f2f2;margin-bottom:1.5rem;">Dimensions de votre vélo</p>
@@ -986,8 +942,54 @@
       </div>
 
     </div>
+  
+        <!-- Bouton devis ici -->
+        <div style="margin-top:1.5rem;">
+          <button class="btn primary" onclick="openOrderModal()" style="width:100%;">
+            <i class="ti ti-send"></i> Demander mon devis
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="contact-hint">
+      <div class="step-label" style="color:#888;">Aide - Contact</div>
+
+      <!-- Contacter Obvious -->
+      <div class="contact-col-title" style="color:#111111;text-transform:none;font-size:18px;font-weight:500;letter-spacing:0;margin-bottom:.5rem;">Contacter Obvious</div>
+      <p style="font-size:13px;color:var(--text2);margin-bottom:.75rem;line-height:1.5;">Un autre montage, une question sur les tailles, besoin d'aide. Contactez-nous pour nous en faire part.</p>
+      <div class="contact-btns" style="margin-bottom:1.25rem;">
+        <a href="tel:+33695582935" class="contact-btn contact-btn-tel">
+          <i class="ti ti-phone"></i> 06 95 58 29 35
+        </a>
+        <a href="https://www.obviouscycles.com/contact/#ancragemail" target="_blank" class="contact-btn contact-btn-msg">
+          <i class="ti ti-message"></i> Message
+        </a>
+        <a href="https://www.obviouscycles.com/contact/#ancragerdv" target="_blank" class="contact-btn contact-btn-rdv">
+          <i class="ti ti-calendar"></i> Prendre rdv
+        </a>
+      </div>
+
+      <!-- Séparateur -->
+      <div style="border-top:1.5px solid #2a2a2a;margin:0 0 1.25rem;"></div>
+
+      <!-- Être rappelé -->
+      <div class="contact-col-title" style="color:#111111;text-transform:none;font-size:18px;font-weight:500;letter-spacing:0;margin-bottom:.5rem;">Être rappelé</div>
+      <p style="font-size:13px;color:var(--text2);margin-bottom:.75rem;line-height:1.5;">Nous vous contacterons pour vous aider à finaliser votre vélo et répondre à vos questions.</p>
+      <div class="contact-form" id="contact-form">
+        <input type="tel" id="cf-phone" placeholder="Téléphone" class="contact-input" />
+        <input type="email" id="cf-email" placeholder="E-mail" class="contact-input" />
+        <button class="contact-btn contact-btn-send" onclick="sendCallback()">
+          <i class="ti ti-send"></i> Envoyer
+        </button>
+        <div id="cf-toast" class="cf-toast" style="display:none"><i class="ti ti-check"></i> Message envoyé !</div>
+        <div id="cf-error" class="cf-error" style="display:none">Merci de renseigner au moins un contact.</div>
+      </div>
+    </div>
+
   </div>
 
+  
   <!-- VUE SAUVEGARDES -->
   <div class="view" id="view-saved">
     <p class="section-title">Mes configurations sauvegardées</p>
