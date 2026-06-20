@@ -870,7 +870,7 @@
 
     <!-- Contact sticky -->
     <!-- Vue taille : visible seulement sur onglet "Votre taille" -->
-    <div id="size-right-col" style="display:none;flex-direction:column;gap:1.5rem;flex:3;min-width:0;">
+    <div id="size-right-col" style="display:none;flex-direction:column;gap:1.5rem;flex:3;min-width:0;align-self:flex-start;">
 
     <div id="view-size" style="display:block">
       <div style="background:#111111;padding:1.5rem;">
@@ -947,6 +947,43 @@
 
       </div>
     </div>
+
+    <!-- Contact sticky dupliqué pour onglet taille -->
+    <div id="contact-hint-size" style="background:transparent;border:1.5px solid #111111;padding:1.5rem;position:sticky;top:64px;align-self:flex-start;">
+
+      <div class="step-label" style="color:#888;">Aide - Contact</div>
+
+      <!-- Contacter Obvious -->
+      <div class="contact-col-title" style="color:#111111;text-transform:none;font-size:18px;font-weight:500;letter-spacing:0;margin-bottom:.5rem;">Contacter Obvious</div>
+      <p style="font-size:13px;color:var(--text2);margin-bottom:.75rem;line-height:1.5;">Un autre montage, une question sur les tailles, besoin d'aide. Contactez-nous pour nous en faire part.</p>
+      <div class="contact-btns" style="margin-bottom:1.25rem;">
+        <a href="tel:+33695582935" class="contact-btn contact-btn-tel">
+          <i class="ti ti-phone"></i> 06 95 58 29 35
+        </a>
+        <a href="https://www.obviouscycles.com/contact/#ancragemail" target="_blank" class="contact-btn contact-btn-msg">
+          <i class="ti ti-message"></i> Message
+        </a>
+        <a href="https://www.obviouscycles.com/contact/#ancragerdv" target="_blank" class="contact-btn contact-btn-rdv">
+          <i class="ti ti-calendar"></i> Prendre rdv
+        </a>
+      </div>
+
+      <!-- Séparateur -->
+      <div style="border-top:1.5px solid #2a2a2a;margin:0 0 1.25rem;"></div>
+
+      <!-- Être rappelé -->
+      <div class="contact-col-title" style="color:#111111;text-transform:none;font-size:18px;font-weight:500;letter-spacing:0;margin-bottom:.5rem;">Être rappelé</div>
+      <p style="font-size:13px;color:var(--text2);margin-bottom:.75rem;line-height:1.5;">Nous vous contacterons pour vous aider à finaliser votre vélo et répondre à vos questions.</p>
+      <div class="contact-form" id="contact-form">
+        <input type="tel" id="cf-phone-s" placeholder="Téléphone" class="contact-input" />
+        <input type="email" id="cf-email-s" placeholder="E-mail" class="contact-input" />
+        <button class="contact-btn contact-btn-send" onclick="sendCallbackSize()">
+          <i class="ti ti-send"></i> Envoyer
+        </button>
+        <div id="cf-toast-s" class="cf-toast" style="display:none"><i class="ti ti-check"></i> Message envoyé !</div>
+        <div id="cf-error-s" class="cf-error" style="display:none">Merci de renseigner au moins un contact.</div>
+      </div>
+        </div>
 
     </div><!-- /size-right-col -->
 
@@ -2017,6 +2054,25 @@ if (modeleParam) {
 ;
 
 // ─── ÊTRE RAPPELÉ (Formspree) ─────────────────────────────────────────────────
+async function sendCallbackSize() {
+  const phone = document.getElementById('cf-phone-s').value.trim();
+  const email = document.getElementById('cf-email-s').value.trim();
+  const toast = document.getElementById('cf-toast-s');
+  const error = document.getElementById('cf-error-s');
+  toast.style.display = 'none'; error.style.display = 'none';
+  if (!phone && !email) { error.style.display = 'block'; return; }
+  const model = MODELS.find(m => m.id === selModel);
+  try {
+    const res = await fetch('https://formspree.io/f/mqeoqewy', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ telephone: phone, email, modele: model ? model.name : '', _subject: 'Demande de rappel — Obvious Configurateur' })
+    });
+    if (res.ok) { toast.style.display = 'block'; document.getElementById('cf-phone-s').value = ''; document.getElementById('cf-email-s').value = ''; }
+    else { error.textContent = 'Erreur, réessayez.'; error.style.display = 'block'; }
+  } catch(e) { error.textContent = 'Erreur réseau.'; error.style.display = 'block'; }
+}
+
 async function sendCallback() {
   const phone = document.getElementById('cf-phone').value.trim();
   const email = document.getElementById('cf-email').value.trim();
@@ -2150,6 +2206,7 @@ function calcSize() {
   if (matches.length === 1) {
     const t = matches[0];
     selSize.taille = t.taille;
+    showSizeActionBtns();
     main.innerHTML = 'Taille recommandée : <span style="color:#F5C400">' + t.taille + '</span>';
     let info = 'Stature ' + t.stature_min + '–' + t.stature_max + ' cm';
     if (selle) info += ' · Hauteur de selle ' + t.selle_min + '–' + t.selle_max + ' mm';
@@ -2172,6 +2229,7 @@ function chooseUsage(usage) {
   const sorted = [...overlapTailles].sort((a,b) => a.stature_min - b.stature_min);
   const chosen = usage === 'sport' ? sorted[0] : sorted[sorted.length-1];
   selSize.taille = chosen.taille;
+  showSizeActionBtns();
   document.getElementById('guide-result-main').innerHTML =
     'Taille recommandée : <span style="color:#F5C400">' + chosen.taille + '</span>' +
     ' <span style="font-size:13px;color:var(--text2)">(' + (usage==='sport'?'usage sportif':'usage confort') + ')</span>';
@@ -2269,6 +2327,11 @@ function saveConfigFromSize() {
   setTimeout(() => { document.getElementById('save-toast-size').style.display = 'none'; nameInput.value = ''; }, 2500);
 }
 
+function showSizeActionBtns() {
+  const btns = document.getElementById('size-action-btns');
+  if (btns) btns.style.display = 'block';
+}
+
 function validateDims() {
   const summary = document.getElementById('dims-summary');
   const lines = [];
@@ -2287,6 +2350,7 @@ function validateDims() {
     summary.innerHTML = '✅ <strong>Dimensions enregistrées :</strong><br>' + lines.join(' · ');
   }
   summary.classList.add('show');
+  showSizeActionBtns();
 }
 </script>
 
