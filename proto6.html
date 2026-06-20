@@ -659,11 +659,11 @@
     /* Mobile onglet taille : masquer étapes 1+2, afficher bottom-row */
     .on-tab-size #view-config  { display: none !important; }
     .on-tab-size #bottom-row   { display: flex !important; flex-direction: column; }
-    .on-tab-size #size-right-col { display: flex !important; margin-top: 1.5rem; }
+    .on-tab-size #size-right-col { display: flex !important; margin-top: 1.5rem; position: static !important; }
     /* Masquer contact-hint original sur onglet taille mobile (contact-hint-size le remplace) */
     .on-tab-size #contact-hint { display: none !important; }
     /* contact-hint-size visible sur onglet taille */
-    #contact-hint-size { background: transparent; border: 1.5px solid #111111; padding: 1.5rem; margin-top: 1.5rem; }
+    #contact-hint-size { background: transparent; border: 1.5px solid #111111; padding: 1.5rem; margin-top: 1.5rem; position: static !important; }
 
     /* Mobile onglet configurer : masquer size-right-col */
     #size-right-col { display: none !important; }
@@ -702,6 +702,7 @@
     .on-tab-size #bottom-row     { display: flex !important; }
     .on-tab-size #size-right-col { display: flex !important; }
     .on-tab-size .btn-row:not(#size-action-btns .btn-row) { display: none; }
+    .on-tab-size #size-base-btns { display: flex !important; flex-direction: column; gap: 8px; }
     .on-tab-size #size-action-btns { display: none; }
     .on-tab-size #size-action-btns.show { display: block !important; }
     /* Sur onglet taille, contact-hint passe sous size-right-col */
@@ -789,10 +790,10 @@
   }
   .size-validate-btn:hover { opacity: .85; }
   .size-summary {
-    margin-top: 1.5rem; padding: 1rem 1.25rem; background: #111; border: 0.5px solid #333; font-size: 13px; color: var(--text2); display: none;
+    margin-top: 1.5rem; padding: 1rem 1.25rem; background: #1a1500; border: 0.5px solid #F5C400; font-size: 13px; color: #f2f2f2; display: none; line-height: 1.8;
   }
   .size-summary.show { display: block; }
-  .size-summary strong { color: var(--text1); }
+  .size-summary strong { color: #F5C400; font-weight: 600; }
 </style>
   <!-- Google Analytics GA4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-KGZDWLZ7JZ"></script>
@@ -871,11 +872,9 @@
             <button class="btn" onclick="switchTab('config')"><i class="ti ti-arrow-left"></i> Revenir à la configuration</button>
           </div>
         </div>
-        <div id="size-base-btns" style="display:none;margin-bottom:1rem;">
-          <div class="btn-row">
-            <button class="btn success" onclick="toggleSaveForm()"><i class="ti ti-bookmark"></i> Sauvegarder</button>
-            <button class="btn" onclick="switchTab('config')"><i class="ti ti-arrow-left"></i> Revenir à la configuration</button>
-          </div>
+        <div id="size-base-btns" style="display:none;margin-bottom:1rem;display:flex;flex-direction:column;gap:8px;">
+          <button class="btn success" onclick="toggleSaveForm()"><i class="ti ti-bookmark"></i> Sauvegarder</button>
+          <button class="btn" onclick="switchTab('config')"><i class="ti ti-arrow-left"></i> Revenir à la configuration</button>
         </div>
         <div class="btn-row">
           <button class="btn primary" id="btn-size" onclick="switchTab('size')" disabled style="opacity:.35;cursor:not-allowed">
@@ -961,6 +960,8 @@
         <div class="dims-grid" id="dims-grid"></div>
         <button class="size-validate-btn" onclick="validateDims()"><i class="ti ti-check"></i> Valider ces dimensions</button>
         <div class="size-summary" id="dims-summary"></div>
+
+      <p style="font-size:12px;color:var(--text3);margin-top:1.25rem;font-style:italic;line-height:1.5;">Vous n'avez pas toutes les informations ? Nous vous recontacterons de toute façon pour affiner et valider vos cotes.</p>
       </div>
 
       <!-- 3 boutons -->
@@ -2303,11 +2304,11 @@ function buildDimsGrid() {
     // Cas spécial : pilotage_rd_ala = monobloc
     if (selOpts.pilotage === 'pilotage_rd_ala') {
       if (pilOpt.dims.cintre && pilOpt.dims.cintre.length > 1)
-        fields.push({id:'dim-cintre', label:'Largeur ensemble (mm)', options: pilOpt.dims.cintre, key:'cintre',
+        fields.push({id:'dim-cintre', label:'Largeur ensemble ext-ext (mm)', options: pilOpt.dims.cintre, key:'cintre',
           note:'Ensemble monobloc cintre + potence'});
     } else {
       if (pilOpt.dims.cintre && pilOpt.dims.cintre.length > 1)
-        fields.push({id:'dim-cintre', label:'Largeur cintre (mm)', options: pilOpt.dims.cintre, key:'cintre'});
+        fields.push({id:'dim-cintre', label:'Largeur cintre ext-ext (mm)', options: pilOpt.dims.cintre, key:'cintre'});
       if (pilOpt.dims.potence && pilOpt.dims.potence.length > 1)
         fields.push({id:'dim-potence', label:'Longueur potence (mm)', options: pilOpt.dims.potence, key:'potence'});
     }
