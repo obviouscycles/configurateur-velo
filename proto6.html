@@ -659,7 +659,8 @@
     /* Mobile onglet taille : masquer étapes 1+2, afficher bottom-row */
     .on-tab-size #view-config  { display: none !important; }
     .on-tab-size #bottom-row   { display: flex !important; flex-direction: column; }
-    .on-tab-size #size-right-col { display: flex !important; margin-top: 1.5rem; position: static !important; }
+    .on-tab-size #size-right-col { display: flex !important; margin-top: 1.5rem; position: static !important; flex-direction: column; width: 100%; }
+    .on-tab-size #recap-col { width: 100%; }
     /* Masquer contact-hint original sur onglet taille mobile (contact-hint-size le remplace) */
     .on-tab-size #contact-hint { display: none !important; }
     /* contact-hint-size visible sur onglet taille */
@@ -726,7 +727,7 @@
 
   /* ── PROTO6 : PAGE TAILLE ──────────────────────────────── */
   .size-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
-  @media (max-width: 600px) { .size-cards { grid-template-columns: 1fr; } }
+  @media (max-width: 767px) { .size-cards { grid-template-columns: 1fr; } }
   .size-card {
     background: var(--bg2); border: 0.5px solid var(--border);
     padding: 1.5rem; cursor: pointer; transition: border-color .15s, background .15s;
@@ -921,6 +922,8 @@
         </div>
       </div>
 
+      <p style="font-size:12px;color:var(--text3);margin:-0.5rem 0 1rem;font-style:italic;line-height:1.5;">Vous n'avez pas toutes les informations ? Nous vous recontacterons de toute façon pour affiner et valider vos cotes.</p>
+
       <!-- Panel "Laissez-vous guider" -->
       <div class="size-panel" id="panel-guide">
         <div class="size-form-row">
@@ -961,21 +964,9 @@
         <button class="size-validate-btn" onclick="validateDims()"><i class="ti ti-check"></i> Valider ces dimensions</button>
         <div class="size-summary" id="dims-summary"></div>
 
-      <p style="font-size:12px;color:var(--text3);margin-top:1.25rem;font-style:italic;line-height:1.5;">Vous n'avez pas toutes les informations ? Nous vous recontacterons de toute façon pour affiner et valider vos cotes.</p>
       </div>
 
-      <!-- 3 boutons -->
-      <div class="btn-row" style="margin-top:1.5rem;">
-        <button class="btn primary" onclick="openOrderModal()">
-          <i class="ti ti-send"></i> Demander votre devis
-        </button>
-        <button class="btn success" onclick="toggleSaveForm()">
-          <i class="ti ti-bookmark"></i> Sauvegarder cette configuration
-        </button>
-        <button class="btn" onclick="switchTab('config')">
-          <i class="ti ti-arrow-left"></i> Revenir à la configuration
-        </button>
-      </div>
+
 
       </div>
     </div>
