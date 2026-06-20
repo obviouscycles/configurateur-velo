@@ -704,6 +704,7 @@
     .on-tab-size #size-right-col { display: flex !important; }
     .on-tab-size .btn-row:not(#size-action-btns .btn-row) { display: none; }
     .on-tab-size #size-base-btns { display: flex !important; flex-direction: column; gap: 8px; }
+    #size-base-btns { display: none !important; }
     .on-tab-size #size-action-btns { display: none; }
     .on-tab-size #size-action-btns.show { display: block !important; }
     /* Sur onglet taille, contact-hint passe sous size-right-col */
@@ -873,7 +874,7 @@
             <button class="btn" onclick="switchTab('config')"><i class="ti ti-arrow-left"></i> Revenir à la configuration</button>
           </div>
         </div>
-        <div id="size-base-btns" style="display:none;margin-bottom:1rem;display:flex;flex-direction:column;gap:8px;">
+        <div id="size-base-btns" style="display:none;margin-bottom:1rem;">
           <button class="btn success" onclick="toggleSaveForm()"><i class="ti ti-bookmark"></i> Sauvegarder</button>
           <button class="btn" onclick="switchTab('config')"><i class="ti ti-arrow-left"></i> Revenir à la configuration</button>
         </div>
