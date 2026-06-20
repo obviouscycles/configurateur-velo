@@ -689,7 +689,9 @@
     .on-tab-size #bottom-row     { display: flex !important; }
     .on-tab-size #size-right-col { display: flex !important; }
     .on-tab-size .btn-row        { display: none; }
-    #size-right-col { display: none; flex-direction: column; gap: 1.5rem; flex: 3; min-width: 0; }
+    /* Sur onglet taille, contact-hint passe sous size-right-col */
+    .on-tab-size #contact-hint   { display: none !important; }
+    #size-right-col { display: none; flex-direction: column; gap: 0; flex: 3; min-width: 0; }
     /* Ligne 3 : Flexbox 70/30, recap gauche, contact droite */
     #bottom-row {
       grid-column: 1 / 3;
@@ -874,10 +876,6 @@
       <div style="background:#111111;padding:1.5rem;">
         <div class="step-label" style="color:#888;">Votre taille</div>
         <p class="section-title" style="color:#f2f2f2;margin-bottom:1.5rem;">Dimensions de votre vélo</p>
-        
-    <div style="background:#111111;padding:1.5rem;margin-bottom:1.5rem;">
-      <div class="step-label" style="color:#888;">Votre taille</div>
-      <p class="section-title" style="color:#f2f2f2;margin-bottom:1.5rem;">Dimensions de votre vélo</p>
 
       <!-- Les 2 grandes cartes -->
       <div class="size-cards">
@@ -929,14 +927,12 @@
 
       <!-- Panel "Je connais mes dimensions" -->
       <div class="size-panel" id="panel-manual">
-        <div class="dims-grid" id="dims-grid">
-          <!-- Généré par JS selon le modèle et la configuration -->
-        </div>
+        <div class="dims-grid" id="dims-grid"></div>
         <button class="size-validate-btn" onclick="validateDims()"><i class="ti ti-check"></i> Valider ces dimensions</button>
         <div class="size-summary" id="dims-summary"></div>
       </div>
 
-      <!-- Bouton devis uniquement ici -->
+      <!-- 3 boutons -->
       <div class="btn-row" style="margin-top:1.5rem;">
         <button class="btn primary" onclick="openOrderModal()">
           <i class="ti ti-send"></i> Demander votre devis
@@ -949,16 +945,10 @@
         </button>
       </div>
 
-    </div>
-  
-        <!-- Bouton devis ici -->
-        <div style="margin-top:1.5rem;">
-          <button class="btn primary" onclick="openOrderModal()" style="width:100%;">
-            <i class="ti ti-send"></i> Demander mon devis
-          </button>
-        </div>
       </div>
     </div>
+
+    </div><!-- /size-right-col -->
 
     <div id="contact-hint">
       <div class="step-label" style="color:#888;">Aide - Contact</div>
@@ -994,8 +984,6 @@
         <div id="cf-error" class="cf-error" style="display:none">Merci de renseigner au moins un contact.</div>
       </div>
     </div><!-- /contact-hint -->
-
-    </div><!-- /size-right-col -->
 
   </div><!-- /bottom-row -->
 
