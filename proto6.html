@@ -732,6 +732,8 @@
   }
   .size-card:hover { border-color: var(--border2); }
   .size-card.active { border: 1.5px solid #F5C400; background: #1a1500; }
+  .size-card.active .size-card-title { color: #F5C400; }
+  .size-card.active .size-card-desc  { color: #c8a800; }
   .size-card-icon { font-size: 28px; color: #F5C400; margin-bottom: .75rem; }
   .size-card-title { font-size: 16px; font-weight: 500; color: var(--text1); margin-bottom: .4rem; }
   .size-card-desc  { font-size: 13px; color: var(--text2); line-height: 1.5; }
@@ -865,6 +867,12 @@
         <div id="size-action-btns" style="display:none;margin-bottom:1rem;">
           <div class="btn-row">
             <button class="btn primary" onclick="openOrderModal()"><i class="ti ti-send"></i> Demander votre devis</button>
+            <button class="btn success" onclick="toggleSaveForm()"><i class="ti ti-bookmark"></i> Sauvegarder</button>
+            <button class="btn" onclick="switchTab('config')"><i class="ti ti-arrow-left"></i> Revenir à la configuration</button>
+          </div>
+        </div>
+        <div id="size-base-btns" style="display:none;margin-bottom:1rem;">
+          <div class="btn-row">
             <button class="btn success" onclick="toggleSaveForm()"><i class="ti ti-bookmark"></i> Sauvegarder</button>
             <button class="btn" onclick="switchTab('config')"><i class="ti ti-arrow-left"></i> Revenir à la configuration</button>
           </div>
@@ -1375,9 +1383,13 @@ function switchTab(tab) {
   if (tab !== 'size') document.getElementById('view-' + tab).classList.add('active');
   document.body.classList.toggle('on-tab-saved', tab === 'saved');
   document.body.classList.toggle('on-tab-size', tab === 'size');
+  const sbb2 = document.getElementById('size-base-btns');
+  if (sbb2) sbb2.style.display = (tab === 'size') ? 'block' : 'none';
   if (tab === 'saved') renderSaved();
   if (tab === 'size') {
-    // Afficher bottom-row si pas encore visible
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    const sbb = document.getElementById('size-base-btns');
+    if (sbb) sbb.style.display = 'block';
     const br = document.getElementById('bottom-row');
     if (br && br.style.display === 'none') {
       br.style.display = window.innerWidth >= 768 ? 'flex' : 'block';
