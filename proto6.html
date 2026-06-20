@@ -688,10 +688,13 @@
     .on-tab-size #view-config    { display: none !important; }
     .on-tab-size #bottom-row     { display: flex !important; }
     .on-tab-size #size-right-col { display: flex !important; }
-    .on-tab-size .btn-row        { display: none; }
+    .on-tab-size .btn-row:not(#size-action-btns .btn-row) { display: none; }
+    .on-tab-size #size-action-btns { display: none; }
+    .on-tab-size #size-action-btns.show { display: block !important; }
     /* Sur onglet taille, contact-hint passe sous size-right-col */
     .on-tab-size #contact-hint   { display: none !important; }
-    #size-right-col { display: none; flex-direction: column; gap: 1.5rem; flex: 3; min-width: 0; align-self: flex-start; }
+    #size-right-col { display: none; flex-direction: column; gap: 0; flex: 3; min-width: 0; align-self: flex-start; }
+    #contact-hint-size { margin-top: 1.5rem; }
     /* Ligne 3 : Flexbox 70/30, recap gauche, contact droite */
     #bottom-row {
       grid-column: 1 / 3;
@@ -2336,7 +2339,7 @@ function saveConfigFromSize() {
 
 function showSizeActionBtns() {
   const btns = document.getElementById('size-action-btns');
-  if (btns) btns.style.display = 'block';
+  if (btns) btns.classList.add('show');
 }
 
 function validateDims() {
