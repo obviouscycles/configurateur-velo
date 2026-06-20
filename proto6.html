@@ -691,7 +691,7 @@
     .on-tab-size .btn-row        { display: none; }
     /* Sur onglet taille, contact-hint passe sous size-right-col */
     .on-tab-size #contact-hint   { display: none !important; }
-    #size-right-col { display: none; flex-direction: column; gap: 0; flex: 3; min-width: 0; }
+    #size-right-col { display: none; flex-direction: column; gap: 1.5rem; flex: 3; min-width: 0; align-self: flex-start; }
     /* Ligne 3 : Flexbox 70/30, recap gauche, contact droite */
     #bottom-row {
       grid-column: 1 / 3;
@@ -846,6 +846,13 @@
       </div>
       <div id="recap-section">
         <div id="recap-box-container"></div>
+        <div id="size-action-btns" style="display:none;margin-bottom:1rem;">
+          <div class="btn-row">
+            <button class="btn primary" onclick="openOrderModal()"><i class="ti ti-send"></i> Demander votre devis</button>
+            <button class="btn success" onclick="toggleSaveForm()"><i class="ti ti-bookmark"></i> Sauvegarder</button>
+            <button class="btn" onclick="switchTab('config')"><i class="ti ti-arrow-left"></i> Revenir à la configuration</button>
+          </div>
+        </div>
         <div class="btn-row">
           <button class="btn primary" id="btn-size" onclick="switchTab('size')" disabled style="opacity:.35;cursor:not-allowed">
             <i class="ti ti-ruler"></i> Choisir votre taille
@@ -870,7 +877,7 @@
 
     <!-- Contact sticky -->
     <!-- Vue taille : visible seulement sur onglet "Votre taille" -->
-    <div id="size-right-col" style="display:none;flex-direction:column;gap:1.5rem;flex:3;min-width:0;align-self:flex-start;">
+    <div id="size-right-col" style="flex-direction:column;gap:1.5rem;flex:3;min-width:0;align-self:flex-start;">
 
     <div id="view-size" style="display:block">
       <div style="background:#111111;padding:1.5rem;">
