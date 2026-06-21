@@ -697,7 +697,7 @@
     .on-tab-size #view-config    { display: none !important; }
     .on-tab-size #bottom-row     { display: flex !important; }
     .on-tab-size #size-right-col { display: flex !important; }
-    .on-tab-size .btn-row:not(#size-action-btns .btn-row) { display: none; }
+    .on-tab-size #btn-row-config { display: none !important; }
     .on-tab-size #size-base-btns { display: flex !important; flex-direction: column; gap: 8px; }
     #size-base-btns { display: none !important; }
     .on-tab-size #size-action-btns { display: none; }
@@ -937,8 +937,7 @@
           <button class="btn success" onclick="toggleSaveForm()"><i class="ti ti-bookmark"></i> Sauvegarder</button>
           <button class="btn" onclick="switchTab('config')"><i class="ti ti-arrow-left"></i> Revenir à la configuration</button>
         </div>
-        <div class="btn-row">
-          <button class="btn primary" id="btn-size" onclick="switchTab('size')" disabled style="opacity:.35;cursor:not-allowed">
+        <div class="btn-row" id="btn-row-config">
             <i class="ti ti-ruler"></i> Choisir votre taille
           </button>
           <button class="btn success" id="btn-save" onclick="toggleSaveForm()" disabled style="opacity:.35;cursor:not-allowed">
