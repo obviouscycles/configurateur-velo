@@ -1907,7 +1907,26 @@ function toggleSaveForm() {
   }
 }
 
+// ─── SYNCHRONISER selSize DEPUIS LA GRILLE ACTUELLE ──────────────────────────
+function syncSelSize() {
+  const keyMap = {
+    'dim-taille':'taille', 'dim-manivelle':'manivelle', 'dim-plateaux':'plateaux',
+    'dim-cassette':'cassette', 'dim-cintre':'cintre', 'dim-potence':'potence',
+    'dim-section':'section', 'dim-debattement':'debattement', 'dim-largeur-selle':'largeur_selle'
+  };
+  Object.entries(keyMap).forEach(([id, key]) => {
+    const el = document.getElementById(id);
+    if (el) {
+      // select
+      if (el.tagName === 'SELECT' && el.value) selSize[key] = el.value;
+    } else {
+      // dim-single : valeur déjà dans selSize via buildDimsGrid, rien à faire
+    }
+  });
+}
+
 function saveConfig() {
+  syncSelSize();
   const name = document.getElementById('save-name-input').value.trim();
   if (!name) return;
   const model = MODELS.find(m => m.id === selModel);
@@ -1993,6 +2012,7 @@ function buildSizeText() {
 }
 
 function openOrderModal() {
+  syncSelSize();
   document.getElementById('order-config-display').value = buildConfigText(selModel, selOpts);
   const sizeText = buildSizeText();
   const sizeField = document.getElementById('order-size-field');
