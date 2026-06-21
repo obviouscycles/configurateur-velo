@@ -652,23 +652,18 @@
   }
   /* Mobile : espacement et fond des blocs */
   @media (max-width: 767px) {
-    #bottom-row { flex-direction: column; }
-    #recap-col  { background: #111111; padding: 1.5rem; margin-top: 1.5rem; }
-    #contact-hint { background: transparent; border: 1.5px solid #111111; padding: 1.5rem; margin-top: 1.5rem; display: block !important; }
+    #bottom-row  { flex-direction: column; }
+    #recap-col   { background: #111111; padding: 1.5rem; margin-top: 1.5rem; }
+    /* Contact-hint masqué sur mobile — remplacé par le FAB */
+    #contact-hint      { display: none !important; }
+    #contact-hint-size { display: none !important; }
+    #size-right-col    { display: none !important; }
 
-    /* Mobile onglet taille : masquer étapes 1+2, afficher bottom-row */
-    .on-tab-size #view-config  { display: none !important; }
-    .on-tab-size #bottom-row   { display: flex !important; flex-direction: column; }
-    .on-tab-size #size-right-col { display: flex !important; margin-top: 0; position: static !important; flex-direction: column; width: 100%; order: 1; }
-    .on-tab-size #recap-col { width: 100%; margin-top: 1.5rem; order: 2; }
-    /* Masquer contact-hint original sur onglet taille mobile */
-    .on-tab-size #contact-hint { display: none !important; }
-    /* Masquer contact-hint-size sur mobile — remplacé par le FAB */
-    #contact-hint-size { display: none; }
-
-    /* Mobile onglet configurer : masquer size-right-col */
-    #size-right-col { display: none !important; }
-    .on-tab-size #size-right-col { display: flex !important; }
+    /* Onglet taille */
+    .on-tab-size #view-config    { display: none !important; }
+    .on-tab-size #bottom-row     { display: flex !important; flex-direction: column; }
+    .on-tab-size #size-right-col { display: flex !important; flex-direction: column; width: 100%; order: 1; margin-top: 0; }
+    .on-tab-size #recap-col      { width: 100%; margin-top: 1.5rem; order: 2; }
   }
 
   /* ── PROTO3 : étape1+étape2 côte à côte, résumé en bas ── */
