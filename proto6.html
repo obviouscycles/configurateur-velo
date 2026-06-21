@@ -2539,7 +2539,192 @@ function chooseUsage(usage) {
 }
 
 // ─── GRILLE DIMENSIONS MANUELLES ─────────────────────────────────────────────
-const DEFAULTS_BY_TAILLE = {"route": {"XXS": {"manivelle": 165, "cintre": 380, "potence": 80}, "XS": {"manivelle": 165, "cintre": 400, "potence": 90}, "S": {"manivelle": 170, "cintre": 400, "potence": 90}, "M": {"manivelle": 170, "cintre": 420, "potence": 100}, "L": {"manivelle": 172.5, "cintre": 420, "potence": 110}, "XL": {"manivelle": 175, "cintre": 440, "potence": 120}}, "gravel_racing": {"XS": {"manivelle": 165, "cintre": 400, "potence": 80}, "S": {"manivelle": 170, "cintre": 420, "potence": 90}, "M": {"manivelle": 170, "cintre": 420, "potence": 100}, "L": {"manivelle": 172.5, "cintre": 440, "potence": 110}, "XL": {"manivelle": 175, "cintre": 460, "potence": 120}}, "gravel_bikepacking": {"XS": {"manivelle": 165, "cintre": 400, "potence": 80}, "S": {"manivelle": 170, "cintre": 420, "potence": 90}, "M": {"manivelle": 170, "cintre": 420, "potence": 100}, "L": {"manivelle": 172.5, "cintre": 440, "potence": 110}, "XL": {"manivelle": 175, "cintre": 460, "potence": 120}}, "vtt_enduro": {"S": {"manivelle": 165, "debattement": 150}, "M": {"manivelle": 170, "debattement": 150}, "L": {"manivelle": 170, "debattement": 150}, "XL": {"manivelle": 172.5, "debattement": 150}}};
+const DEFAULTS_BY_TAILLE = {
+  "route": {
+    "XXS": {
+      "section": 28,
+      "cassette": "11x34",
+      "plateaux": "52x36",
+      "manivelle": 165,
+      "cintre": 380,
+      "potence": 80,
+      "largeur_selle": 145
+    },
+    "XS": {
+      "section": 28,
+      "cassette": "11x34",
+      "plateaux": "52x36",
+      "manivelle": 165,
+      "cintre": 400,
+      "potence": 90,
+      "largeur_selle": 145
+    },
+    "S": {
+      "section": 28,
+      "cassette": "11x34",
+      "plateaux": "52x36",
+      "manivelle": 170,
+      "cintre": 400,
+      "potence": 90,
+      "largeur_selle": 145
+    },
+    "M": {
+      "section": 28,
+      "cassette": "11x34",
+      "plateaux": "52x36",
+      "manivelle": 170,
+      "cintre": 420,
+      "potence": 100,
+      "largeur_selle": 145
+    },
+    "L": {
+      "section": 28,
+      "cassette": "11x34",
+      "plateaux": "52x36",
+      "manivelle": 172.5,
+      "cintre": 420,
+      "potence": 110,
+      "largeur_selle": 145
+    },
+    "XL": {
+      "section": 28,
+      "cassette": "11x34",
+      "plateaux": "52x36",
+      "manivelle": 175,
+      "cintre": 440,
+      "potence": 120,
+      "largeur_selle": 145
+    }
+  },
+  "gravel_racing": {
+    "XS": {
+      "section": 45,
+      "cassette": "10x45",
+      "plateaux": "40",
+      "manivelle": 165,
+      "cintre": 400,
+      "potence": 80,
+      "largeur_selle": 145
+    },
+    "S": {
+      "section": 45,
+      "cassette": "10x45",
+      "plateaux": "40",
+      "manivelle": 170,
+      "cintre": 420,
+      "potence": 90,
+      "largeur_selle": 145
+    },
+    "M": {
+      "section": 45,
+      "cassette": "10x45",
+      "plateaux": "40",
+      "manivelle": 170,
+      "cintre": 420,
+      "potence": 100,
+      "largeur_selle": 145
+    },
+    "L": {
+      "section": 45,
+      "cassette": "10x45",
+      "plateaux": "40",
+      "manivelle": 172.5,
+      "cintre": 440,
+      "potence": 110,
+      "largeur_selle": 145
+    },
+    "XL": {
+      "section": 45,
+      "cassette": "10x45",
+      "plateaux": "40",
+      "manivelle": 175,
+      "cintre": 460,
+      "potence": 120,
+      "largeur_selle": 145
+    }
+  },
+  "gravel_bikepacking": {
+    "XS": {
+      "section": 40,
+      "cassette": "10x51",
+      "plateaux": "40",
+      "manivelle": 165,
+      "cintre": 400,
+      "potence": 80,
+      "largeur_selle": 145
+    },
+    "S": {
+      "section": 40,
+      "cassette": "10x52",
+      "plateaux": "40",
+      "manivelle": 170,
+      "cintre": 420,
+      "potence": 90,
+      "largeur_selle": 145
+    },
+    "M": {
+      "section": 40,
+      "cassette": "10x53",
+      "plateaux": "40",
+      "manivelle": 170,
+      "cintre": 420,
+      "potence": 100,
+      "largeur_selle": 145
+    },
+    "L": {
+      "section": 40,
+      "cassette": "10x54",
+      "plateaux": "40",
+      "manivelle": 172.5,
+      "cintre": 440,
+      "potence": 110,
+      "largeur_selle": 145
+    },
+    "XL": {
+      "section": 40,
+      "cassette": "10x55",
+      "plateaux": "40",
+      "manivelle": 175,
+      "cintre": 460,
+      "potence": 120,
+      "largeur_selle": 145
+    }
+  },
+  "vtt_enduro": {
+    "S": {
+      "debattement": 150,
+      "section": "2.4\"",
+      "cassette": "10x52",
+      "plateaux": "32",
+      "manivelle": 165,
+      "largeur_selle": 145
+    },
+    "M": {
+      "debattement": 150,
+      "section": "2.4\"",
+      "cassette": "10x52",
+      "plateaux": "32",
+      "manivelle": 170,
+      "largeur_selle": 145
+    },
+    "L": {
+      "debattement": 150,
+      "section": "2.4\"",
+      "cassette": "10x52",
+      "plateaux": "32",
+      "manivelle": 170,
+      "largeur_selle": 145
+    },
+    "XL": {
+      "debattement": 150,
+      "section": "2.4\"",
+      "cassette": "10x52",
+      "plateaux": "32",
+      "manivelle": 172.5,
+      "largeur_selle": 145
+    }
+  }
+}
 
 function buildDimsGrid() {
   const grid = document.getElementById('dims-grid');
@@ -2615,13 +2800,18 @@ function buildDimsGrid() {
           const nums = f.options.map(Number).filter(n => !isNaN(n));
           if (nums.length > 0) {
             let best;
-            if (f.key === 'manivelle') {
-              // Prendre la plus petite valeur ≤ defVal
+            if (f.key === 'manivelle' || f.key === 'potence') {
+              // Plus petit ou égal, sinon le plus petit dispo
               const lte = nums.filter(n => n <= defVal);
               best = lte.length > 0 ? Math.max(...lte) : Math.min(...nums);
             } else {
-              // Prendre la plus proche
-              best = nums.reduce((a,b) => Math.abs(b-defVal) < Math.abs(a-defVal) ? b : a);
+              // Plus proche, égalité → le plus grand
+              best = nums.reduce((a,b) => {
+                const da = Math.abs(a - defVal);
+                const db = Math.abs(b - defVal);
+                if (da === db) return Math.max(a, b);
+                return da < db ? a : b;
+              });
             }
             selSize[f.key] = String(best);
           } else {
@@ -2634,6 +2824,16 @@ function buildDimsGrid() {
   }
 
   grid.innerHTML = fields.map(f => {
+    // Valeur unique : enregistrer dans selSize et afficher sans select
+    if (f.options.length === 1) {
+      selSize[f.key] = String(f.options[0]);
+      const unit = f.key==='manivelle'||f.key==='potence'||f.key==='cintre'||f.key==='debattement'||f.key==='largeur_selle' ? ' mm' : '';
+      return `<div class="dim-field">
+        <label>${f.label}</label>
+        <div class="dim-single">${f.options[0]}${unit}</div>
+        ${f.note ? `<span class="dim-note">${f.note}</span>` : ''}
+      </div>`;
+    }
     const optHTML = f.options.map(o =>
       `<option value="${o}" ${selSize[f.key]==o?'selected':''}>` + o + (
         f.key==='manivelle'?' mm':f.key==='potence'?' mm':''
