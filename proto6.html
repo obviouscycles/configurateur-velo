@@ -2565,6 +2565,9 @@ function saveConfigFromSize() {
 function showSizeActionBtns() {
   const btns = document.getElementById('size-action-btns');
   if (btns) btns.classList.add('show');
+  // Masquer les 2 boutons de base — les 3 boutons les remplacent
+  const base = document.getElementById('size-base-btns');
+  if (base) base.style.display = 'none';
 }
 
 function validateDims() {
