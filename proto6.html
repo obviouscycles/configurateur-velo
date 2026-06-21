@@ -951,17 +951,18 @@
           <button class="btn success" id="btn-save" onclick="toggleSaveForm()" disabled style="opacity:.35;cursor:not-allowed">
             <i class="ti ti-bookmark"></i> Sauvegarder cette configuration
           </button>
-          <div class="save-form" id="save-form">
-            <div class="save-label">Donnez un nom à cette configuration :</div>
-            <div class="save-input-row">
-              <input type="text" id="save-name-input" placeholder="Ex : Mon gravel bikepacking" maxlength="60" />
-              <button onclick="saveConfig()">Sauvegarder</button>
-            </div>
-            <div class="toast" id="save-toast"><i class="ti ti-check"></i> Configuration sauvegardée !</div>
-          </div>
           <button class="btn" id="btn-reset" onclick="resetConfig()" disabled style="opacity:.35;cursor:not-allowed">
             <i class="ti ti-refresh"></i> Recommencer
           </button>
+        </div>
+        <!-- save-form hors de btn-row-config pour être accessible depuis tous les onglets -->
+        <div class="save-form" id="save-form">
+          <div class="save-label">Donnez un nom à cette configuration :</div>
+          <div class="save-input-row">
+            <input type="text" id="save-name-input" placeholder="Ex : Mon gravel bikepacking" maxlength="60" />
+            <button onclick="saveConfig()">Sauvegarder</button>
+          </div>
+          <div class="toast" id="save-toast"><i class="ti ti-check"></i> Configuration sauvegardée !</div>
         </div>
       </div>
     </div>
