@@ -698,8 +698,6 @@
     .on-tab-size #bottom-row     { display: flex !important; }
     .on-tab-size #size-right-col { display: flex !important; }
     .on-tab-size #btn-row-config { display: none !important; }
-    .on-tab-size #size-base-btns { display: flex !important; flex-direction: column; gap: 8px; }
-    #size-base-btns { display: none !important; }
     .on-tab-size #size-action-btns { display: none; }
     .on-tab-size #size-action-btns.show { display: block !important; }
     /* Sur onglet taille, contact-hint passe sous size-right-col */
@@ -1445,16 +1443,20 @@ function switchTab(tab) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.getElementById('tab-' + tab).classList.add('active');
-  if (tab !== 'size') document.getElementById('view-' + tab).classList.add('active');
+  if (tab !== 'size') {
+    document.getElementById('view-' + tab).classList.add('active');
+    const sbbOff = document.getElementById('size-base-btns');
+    if (sbbOff) sbbOff.style.display = 'none';
+  }
   document.body.classList.toggle('on-tab-saved', tab === 'saved');
   document.body.classList.toggle('on-tab-size', tab === 'size');
-  const sbb2 = document.getElementById('size-base-btns');
-  if (sbb2) sbb2.style.display = (tab === 'size') ? 'block' : 'none';
   if (tab === 'saved') renderSaved();
   if (tab === 'size') {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    const sbb = document.getElementById('size-base-btns');
-    if (sbb) sbb.style.display = 'block';
+    // Afficher size-base-btns si allDone
+    const allDoneNow = POST_META.every(p => !!selOpts[p.id]);
+    const sbbNow = document.getElementById('size-base-btns');
+    if (sbbNow) sbbNow.style.display = allDoneNow ? 'flex' : 'none';
     const br = document.getElementById('bottom-row');
     if (br && br.style.display === 'none') {
       br.style.display = window.innerWidth >= 768 ? 'flex' : 'block';
@@ -1785,6 +1787,9 @@ function updateRecap() {
   const allDone = POST_META.every(p => !!selOpts[p.id]);
   const bottomRow = document.getElementById('bottom-row');
   if (bottomRow) bottomRow.style.display = allDone ? (window.innerWidth >= 768 ? 'flex' : 'block') : 'none';
+  // size-base-btns : visible seulement sur onglet 2 quand allDone
+  const sbb = document.getElementById('size-base-btns');
+  if (sbb) sbb.style.display = (allDone && document.body.classList.contains('on-tab-size')) ? 'flex' : 'none';
   if (window.innerWidth < 768) document.getElementById('recap-col').style.display = allDone ? 'block' : 'none';
   if (!allDone) return;
 
