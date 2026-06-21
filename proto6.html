@@ -1006,6 +1006,17 @@
             </div>
             <input type="number" class="size-input" id="guide-selle" placeholder="Ex : 82" min="60" max="110" step="0.5">
           </div>
+          <div class="size-field">
+            <label>Distance inter-acromions (mm)
+              <span style="color:var(--text3)">optionnel</span>
+              <span style="cursor:pointer;color:#F5C400;font-size:13px;margin-left:4px;" onclick="const t=document.getElementById('acro-tooltip');t.style.display=t.style.display==='block'?'none':'block';" title="Comment mesurer ?">ⓘ</span>
+            </label>
+            <div id="acro-tooltip" style="display:none;font-size:11px;color:var(--text2);background:var(--bg2);border:0.5px solid var(--border);padding:10px 12px;margin-bottom:8px;line-height:1.6;">
+              <strong style="color:var(--text1);">Comment mesurer :</strong><br>
+              Debout, bras le long du corps. Mesurez la distance entre les deux pointes d'épaules (acromions) d'un côté à l'autre. En mm. Faites-vous aider.
+            </div>
+            <input type="number" class="size-input" id="guide-acro" placeholder="Ex : 390" min="300" max="500">
+          </div>
           <div style="display:flex;align-items:flex-end;">
             <button class="size-btn" onclick="calcSize()"><i class="ti ti-calculator"></i> Calculer</button>
           </div>
@@ -2454,6 +2465,7 @@ function toggleSizeMode(mode) {
 function calcSize() {
   const stature = parseInt(document.getElementById('guide-stature').value);
   const selle   = parseInt(document.getElementById('guide-selle').value) || null;
+  const acro    = parseInt(document.getElementById('guide-acro').value) || null;
   const result  = document.getElementById('guide-result');
   const main    = document.getElementById('guide-result-main');
   const sub     = document.getElementById('guide-result-sub');
@@ -2507,10 +2519,13 @@ function calcSize() {
     // Pré-remplir avec les valeurs par défaut de cette taille
     const defs = DEFAULTS_BY_TAILLE[selModel] ? DEFAULTS_BY_TAILLE[selModel][t.taille] : {};
     if (defs) Object.assign(selSize, Object.fromEntries(Object.entries(defs).map(([k,v]) => [k, String(v)])));
+    // Calculer cintre depuis inter-acromions
+    if (acro) calcCintreFromAcro(acro);
     main.innerHTML = 'Taille recommandée : <span style="color:#F5C400">' + t.taille + '</span>';
     let info = 'Stature ' + t.stature_min + '–' + t.stature_max + ' cm';
     if (selle) info += ' · Entrejambe ' + t.ej_min + '–' + t.ej_max + ' cm';
-    sub.textContent = info;
+    if (acro && selSize.cintre) info += ' · Cintre recommandé : <span style="color:#F5C400">' + selSize.cintre + ' mm</span>';
+    sub.innerHTML = info;
     return;
   }
 
@@ -2533,9 +2548,14 @@ function chooseUsage(usage) {
   selSize.taille = chosen.taille;
   const defsC = DEFAULTS_BY_TAILLE[selModel] ? DEFAULTS_BY_TAILLE[selModel][chosen.taille] : {};
   if (defsC) Object.assign(selSize, Object.fromEntries(Object.entries(defsC).map(([k,v]) => [k, String(v)])));
+  const acroU = parseInt(document.getElementById('guide-acro').value) || null;
+  if (acroU) calcCintreFromAcro(acroU);
+  const cintreInfo = (acroU && selSize.cintre) ? ' · Cintre recommandé : <span style="color:#F5C400">' + selSize.cintre + ' mm</span>' : '';
   document.getElementById('guide-result-main').innerHTML =
     'Taille recommandée : <span style="color:#F5C400">' + chosen.taille + '</span>' +
     ' <span style="font-size:13px;color:var(--text2)">(' + (usage==='sport'?'usage sportif':'usage confort') + ')</span>';
+  document.getElementById('guide-result-sub').innerHTML =
+    'Stature ' + chosen.stature_min + '–' + chosen.stature_max + ' cm' + cintreInfo;
 }
 
 // ─── GRILLE DIMENSIONS MANUELLES ─────────────────────────────────────────────
@@ -2932,6 +2952,53 @@ async function sendCallbackDrawer() {
     if (res.ok) { toast.style.display = 'block'; document.getElementById('cf-phone-d').value = ''; document.getElementById('cf-email-d').value = ''; }
     else { error.textContent = 'Erreur, réessayez.'; error.style.display = 'block'; }
   } catch(e) { error.textContent = 'Erreur réseau.'; error.style.display = 'block'; }
+}
+
+// ─── CALCUL CINTRE DEPUIS INTER-ACROMIONS ─────────────────────────────────────
+function calcCintreFromAcro(acro) {
+  // Récupérer les options de cintre disponibles selon le pilotage sélectionné
+  const pilOpt = selOpts.pilotage ? ALL_OPTIONS.pilotage.find(o => o.id === selOpts.pilotage) : null;
+  if (!pilOpt || !pilOpt.dims || !pilOpt.dims.cintre) return;
+  const available = pilOpt.dims.cintre.map(Number);
+  if (available.length === 0) return;
+
+  let target;
+  if (selModel === 'route') {
+    target = acro;
+  } else if (selModel === 'gravel_racing' || selModel === 'gravel_bikepacking') {
+    target = acro;
+  } else if (selModel === 'vtt_enduro') {
+    // Valeur du milieu ou immédiatement au dessus
+    const sorted = [...available].sort((a,b) => a-b);
+    const mid = (sorted.length - 1) / 2;
+    target = sorted[Math.ceil(mid)];
+    selSize.cintre = String(target);
+    return;
+  } else {
+    target = acro;
+  }
+
+  // Trouver la valeur la plus proche selon la règle
+  const nums = [...available].sort((a,b) => a-b);
+  let best;
+  if (selModel === 'route') {
+    // Plus proche, égalité → plus petit
+    best = nums.reduce((a,b) => {
+      const da = Math.abs(a - target);
+      const db = Math.abs(b - target);
+      if (da === db) return Math.min(a, b);
+      return da < db ? a : b;
+    });
+  } else {
+    // gravel : plus proche, égalité → plus grand
+    best = nums.reduce((a,b) => {
+      const da = Math.abs(a - target);
+      const db = Math.abs(b - target);
+      if (da === db) return Math.max(a, b);
+      return da < db ? a : b;
+    });
+  }
+  selSize.cintre = String(best);
 }
 </script>
 
