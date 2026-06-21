@@ -932,14 +932,14 @@
         <div id="size-action-btns" style="display:none;margin-bottom:1rem;">
           <div class="btn-row">
             <button class="btn primary" onclick="openOrderModal()"><i class="ti ti-send"></i> Demander votre devis</button>
-            <button class="btn success" onclick="toggleSaveForm()"><i class="ti ti-bookmark"></i> Sauvegarder</button>
+            <button class="btn success" onclick="toggleSaveForm()"><i class="ti ti-bookmark"></i> Sauvegarder cette configuration</button>
             <button class="btn" onclick="switchTab('config')"><i class="ti ti-arrow-left"></i> Revenir à la configuration</button>
           </div>
         </div>
 
         <!-- Boutons onglet 2 "Votre taille" : permanents -->
         <div id="size-base-btns" style="display:none;margin-bottom:1rem;">
-          <button class="btn success" onclick="toggleSaveForm()"><i class="ti ti-bookmark"></i> Sauvegarder</button>
+          <button class="btn success" onclick="toggleSaveForm()"><i class="ti ti-bookmark"></i> Sauvegarder cette configuration</button>
           <button class="btn" onclick="switchTab('config')"><i class="ti ti-arrow-left"></i> Revenir à la configuration</button>
         </div>
 
@@ -1915,7 +1915,7 @@ function saveConfig() {
     const opt = optionsFor(p.id, selModel).find(o => o.id === selOpts[p.id]);
     return { post: p.name, option: opt ? opt.name : '—', locked: opt ? !!opt.locked : false, price: opt && !opt.locked ? opt.price : 0 };
   });
-  const entry = { id: Date.now(), name, modelName: model.name, modelBadge: model.badge, date: new Date().toLocaleDateString('fr-FR'), price, weight, details, selModel, selOpts: { ...selOpts } };
+  const entry = { id: Date.now(), name, modelName: model.name, modelBadge: model.badge, date: new Date().toLocaleDateString('fr-FR'), price, weight, details, selModel, selOpts: { ...selOpts }, selSize: { ...selSize } };
   savedConfigs.unshift(entry);
   persistSaved();
   updateSavedCount();
@@ -2017,7 +2017,8 @@ async function sendOrder() {
   const email = document.getElementById('order-email').value.trim();
   const msg = document.getElementById('order-msg').value.trim();
   const config = document.getElementById('order-config-display').value;
-  if (!name || !email) { alert('Merci de renseigner votre nom et votre email.'); return; }
+  if (!name) { alert('Merci de renseigner votre nom et prénom.'); return; }
+  if (!email && !document.getElementById('order-phone').value.trim()) { alert('Merci de renseigner au moins votre email ou votre téléphone pour que nous puissions vous recontacter.'); return; }
 
   const btnSend = document.querySelector('.btn-send');
   btnSend.textContent = 'Envoi en cours...';
