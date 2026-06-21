@@ -804,24 +804,27 @@
     display: none;
     position: fixed;
     bottom: 20px;
-    left: 16px;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background: #111111;
-    border: 1.5px solid #333;
-    color: #F5C400;
-    font-size: 20px;
+    left: 12px;
+    height: 44px;
+    border-radius: 22px;
+    background: #F5C400;
+    border: none;
+    color: #1a1a00;
+    font-size: 14px;
+    font-weight: 600;
     cursor: pointer;
     z-index: 1000;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 12px rgba(0,0,0,.5);
-    transition: background .15s;
+    gap: 6px;
+    padding: 0 14px;
+    box-shadow: 0 3px 16px rgba(0,0,0,.5);
+    transition: opacity .15s;
+    white-space: nowrap;
   }
-  #fab-contact:hover { background: #1a1a1a; }
+  #fab-contact:hover { opacity: .9; }
   @media (max-width: 767px) {
-    .on-tab-size #fab-contact { display: flex; }
+    #fab-contact { display: flex; }
   }
   /* Drawer */
   #contact-drawer {
@@ -2690,8 +2693,9 @@ async function sendCallbackDrawer() {
   </div>
 
   <!-- FAB Aide-Contact (mobile onglet taille) -->
-  <div id="fab-contact" onclick="openContactDrawer()" title="Aide &amp; Contact">
-    <i class="ti ti-headset"></i>
+  <div id="fab-contact" onclick="openContactDrawer()">
+    <i class="ti ti-headset" style="font-size:17px;"></i>
+    <span>Aide &amp; Contact</span>
   </div>
 
   <!-- Drawer Aide-Contact -->
