@@ -1959,6 +1959,20 @@ function renderSaved() {
 }
 
 // ─── MODAL COMMANDE ───────────────────────────────────────────────────────────
+function buildSizeText() {
+  const lines = [];
+  if (selSize.taille)        lines.push('Taille cadre : ' + selSize.taille);
+  if (selSize.manivelle)     lines.push('Manivelle : ' + selSize.manivelle + ' mm');
+  if (selSize.plateaux)      lines.push('Plateau(x) : ' + selSize.plateaux);
+  if (selSize.cassette)      lines.push('Cassette : ' + selSize.cassette);
+  if (selSize.cintre)        lines.push('Cintre : ' + selSize.cintre + ' mm');
+  if (selSize.potence)       lines.push('Potence : ' + selSize.potence + ' mm');
+  if (selSize.section)       lines.push('Section pneu : ' + selSize.section);
+  if (selSize.debattement)   lines.push('Débattement fourche : ' + selSize.debattement + ' mm');
+  if (selSize.largeur_selle) lines.push('Largeur selle : ' + selSize.largeur_selle + ' mm');
+  return lines.length ? lines.join('\n') : '—';
+}
+
 function openOrderModal() {
   document.getElementById('order-config-display').value = buildConfigText(selModel, selOpts);
   document.getElementById('order-modal').classList.add('open');
@@ -1994,6 +2008,7 @@ async function sendOrder() {
         email: email,
         telephone: phone || '—',
         configuration: config,
+        dimensions: buildSizeText(),
         message: msg || '—',
         _replyto: email,
         _subject: 'Demande de devis OBVIOUS-ON-DEMAND — ' + name,
