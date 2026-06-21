@@ -659,12 +659,12 @@
     /* Mobile onglet taille : masquer étapes 1+2, afficher bottom-row */
     .on-tab-size #view-config  { display: none !important; }
     .on-tab-size #bottom-row   { display: flex !important; flex-direction: column; }
-    .on-tab-size #size-right-col { display: flex !important; margin-top: 1.5rem; position: static !important; flex-direction: column; width: 100%; }
-    .on-tab-size #recap-col { width: 100%; }
-    /* Masquer contact-hint original sur onglet taille mobile (contact-hint-size le remplace) */
+    .on-tab-size #size-right-col { display: flex !important; margin-top: 0; position: static !important; flex-direction: column; width: 100%; order: 1; }
+    .on-tab-size #recap-col { width: 100%; margin-top: 1.5rem; order: 2; }
+    /* Masquer contact-hint original sur onglet taille mobile */
     .on-tab-size #contact-hint { display: none !important; }
-    /* contact-hint-size visible sur onglet taille */
-    #contact-hint-size { background: transparent; border: 1.5px solid #111111; padding: 1.5rem; margin-top: 1.5rem; position: static !important; }
+    /* Masquer contact-hint-size sur mobile — remplacé par le FAB */
+    #contact-hint-size { display: none; }
 
     /* Mobile onglet configurer : masquer size-right-col */
     #size-right-col { display: none !important; }
@@ -798,6 +798,65 @@
   }
   .size-summary.show { display: block; }
   .size-summary strong { color: #F5C400; font-weight: 600; }
+
+  /* ── FAB AIDE-CONTACT (mobile uniquement) ──────────── */
+  #fab-contact {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    left: 16px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #111111;
+    border: 1.5px solid #333;
+    color: #F5C400;
+    font-size: 20px;
+    cursor: pointer;
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 12px rgba(0,0,0,.5);
+    transition: background .15s;
+  }
+  #fab-contact:hover { background: #1a1a1a; }
+  @media (max-width: 767px) {
+    .on-tab-size #fab-contact { display: flex; }
+  }
+  /* Drawer */
+  #contact-drawer {
+    display: none;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: #111111;
+    border-top: 1.5px solid #333;
+    padding: 1.25rem 1.5rem 2rem;
+    z-index: 1001;
+    max-height: 80vh;
+    overflow-y: auto;
+    transform: translateY(100%);
+    transition: transform .3s ease;
+  }
+  #contact-drawer.open {
+    display: block;
+    transform: translateY(0);
+  }
+  #contact-drawer-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.5);
+    z-index: 1000;
+  }
+  #contact-drawer-overlay.open { display: block; }
+  .drawer-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 1.25rem;
+  }
+  .drawer-close {
+    background: none; border: none; color: #888; font-size: 20px; cursor: pointer; padding: 4px;
+  }
+  .drawer-close:hover { color: #f2f2f2; }
 </style>
   <!-- Google Analytics GA4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-KGZDWLZ7JZ"></script>
@@ -2590,6 +2649,36 @@ function validateDims() {
   summary.classList.add('show');
   showSizeActionBtns();
 }
+
+// ─── DRAWER AIDE-CONTACT (mobile) ─────────────────────────────────────────────
+function openContactDrawer() {
+  document.getElementById('contact-drawer').classList.add('open');
+  document.getElementById('contact-drawer-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeContactDrawer() {
+  document.getElementById('contact-drawer').classList.remove('open');
+  document.getElementById('contact-drawer-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+async function sendCallbackDrawer() {
+  const phone = document.getElementById('cf-phone-d').value.trim();
+  const email = document.getElementById('cf-email-d').value.trim();
+  const toast = document.getElementById('cf-toast-d');
+  const error = document.getElementById('cf-error-d');
+  toast.style.display = 'none'; error.style.display = 'none';
+  if (!phone && !email) { error.style.display = 'block'; return; }
+  const model = MODELS.find(m => m.id === selModel);
+  try {
+    const res = await fetch('https://formspree.io/f/mqeoqewy', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ telephone: phone, email, modele: model ? model.name : '', _subject: 'Demande de rappel — Obvious Configurateur' })
+    });
+    if (res.ok) { toast.style.display = 'block'; document.getElementById('cf-phone-d').value = ''; document.getElementById('cf-email-d').value = ''; }
+    else { error.textContent = 'Erreur, réessayez.'; error.style.display = 'block'; }
+  } catch(e) { error.textContent = 'Erreur réseau.'; error.style.display = 'block'; }
+}
 </script>
 
 <a class="back-btn back-link" href="https://www.obviouscycles.com/velos-titane/" title="Retour au site"><i class="ti ti-arrow-left"></i> Retour au site</a>
@@ -2598,6 +2687,40 @@ function validateDims() {
   <div id="floating-price" class="hidden" style="cursor:pointer">
     <span class="fp-price-label">Prix total</span>
     <div class="fp-price" id="fp-price">—</div>
+  </div>
+
+  <!-- FAB Aide-Contact (mobile onglet taille) -->
+  <div id="fab-contact" onclick="openContactDrawer()" title="Aide &amp; Contact">
+    <i class="ti ti-headset"></i>
+  </div>
+
+  <!-- Drawer Aide-Contact -->
+  <div id="contact-drawer-overlay" onclick="closeContactDrawer()"></div>
+  <div id="contact-drawer">
+    <div class="drawer-header">
+      <div class="step-label" style="color:#888;">Aide - Contact</div>
+      <button class="drawer-close" onclick="closeContactDrawer()"><i class="ti ti-x"></i></button>
+    </div>
+
+    <div class="contact-col-title" style="color:#f2f2f2;text-transform:none;font-size:18px;font-weight:500;letter-spacing:0;margin-bottom:.5rem;">Contacter Obvious</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:.75rem;line-height:1.5;">Un autre montage, une question sur les tailles, besoin d'aide. Contactez-nous pour nous en faire part.</p>
+    <div class="contact-btns" style="margin-bottom:1.25rem;">
+      <a href="tel:+33695582935" class="contact-btn contact-btn-tel"><i class="ti ti-phone"></i> 06 95 58 29 35</a>
+      <a href="https://www.obviouscycles.com/contact/#ancragemail" target="_blank" class="contact-btn contact-btn-msg"><i class="ti ti-message"></i> Message</a>
+      <a href="https://www.obviouscycles.com/contact/#ancragerdv" target="_blank" class="contact-btn contact-btn-rdv"><i class="ti ti-calendar"></i> Prendre rdv</a>
+    </div>
+
+    <div style="border-top:1.5px solid #2a2a2a;margin:0 0 1.25rem;"></div>
+
+    <div class="contact-col-title" style="color:#f2f2f2;text-transform:none;font-size:18px;font-weight:500;letter-spacing:0;margin-bottom:.5rem;">Être rappelé</div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:.75rem;line-height:1.5;">Nous vous contacterons pour vous aider à finaliser votre vélo et répondre à vos questions.</p>
+    <div class="contact-form">
+      <input type="tel" id="cf-phone-d" placeholder="Téléphone" class="contact-input" />
+      <input type="email" id="cf-email-d" placeholder="E-mail" class="contact-input" />
+      <button class="contact-btn contact-btn-send" onclick="sendCallbackDrawer()"><i class="ti ti-send"></i> Envoyer</button>
+      <div id="cf-toast-d" class="cf-toast" style="display:none"><i class="ti ti-check"></i> Message envoyé !</div>
+      <div id="cf-error-d" class="cf-error" style="display:none">Merci de renseigner au moins un contact.</div>
+    </div>
   </div>
 </body>
 </html>
