@@ -1151,6 +1151,10 @@
       <label>Votre configuration</label>
       <textarea id="order-config-display" rows="5" readonly style="font-size:11px;color:var(--text2);background:var(--bg3)"></textarea>
     </div>
+    <div class="field" id="order-size-field" style="display:none">
+      <label>Dimensions choisies</label>
+      <textarea id="order-size-display" rows="4" readonly style="font-size:11px;color:var(--text2);background:var(--bg3)"></textarea>
+    </div>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeOrderModal()">Annuler</button>
       <button class="btn-send" onclick="sendOrder()"><i class="ti ti-send"></i> Envoyer</button>
@@ -1975,6 +1979,14 @@ function buildSizeText() {
 
 function openOrderModal() {
   document.getElementById('order-config-display').value = buildConfigText(selModel, selOpts);
+  const sizeText = buildSizeText();
+  const sizeField = document.getElementById('order-size-field');
+  if (sizeText !== '—') {
+    document.getElementById('order-size-display').value = sizeText;
+    sizeField.style.display = 'block';
+  } else {
+    sizeField.style.display = 'none';
+  }
   document.getElementById('order-modal').classList.add('open');
 }
 function openOrderModalFrom(id) {
@@ -2491,6 +2503,10 @@ function calcSize() {
     const t = matches[0];
     selSize.taille = t.taille;
     showSizeActionBtns();
+    selSize.taille = t.taille;
+    // Pré-remplir avec les valeurs par défaut de cette taille
+    const defs = DEFAULTS_BY_TAILLE[selModel] ? DEFAULTS_BY_TAILLE[selModel][t.taille] : {};
+    if (defs) Object.assign(selSize, Object.fromEntries(Object.entries(defs).map(([k,v]) => [k, String(v)])));
     main.innerHTML = 'Taille recommandée : <span style="color:#F5C400">' + t.taille + '</span>';
     let info = 'Stature ' + t.stature_min + '–' + t.stature_max + ' cm';
     if (selle) info += ' · Entrejambe ' + t.ej_min + '–' + t.ej_max + ' cm';
@@ -2514,6 +2530,9 @@ function chooseUsage(usage) {
   const chosen = usage === 'sport' ? sorted[0] : sorted[sorted.length-1];
   selSize.taille = chosen.taille;
   showSizeActionBtns();
+  selSize.taille = chosen.taille;
+  const defsC = DEFAULTS_BY_TAILLE[selModel] ? DEFAULTS_BY_TAILLE[selModel][chosen.taille] : {};
+  if (defsC) Object.assign(selSize, Object.fromEntries(Object.entries(defsC).map(([k,v]) => [k, String(v)])));
   document.getElementById('guide-result-main').innerHTML =
     'Taille recommandée : <span style="color:#F5C400">' + chosen.taille + '</span>' +
     ' <span style="font-size:13px;color:var(--text2)">(' + (usage==='sport'?'usage sportif':'usage confort') + ')</span>';
@@ -2654,6 +2673,17 @@ function showSizeActionBtns() {
 }
 
 function validateDims() {
+  // Lire les valeurs actuelles des selects dans la grille
+  ['dim-taille','dim-manivelle','dim-plateaux','dim-cassette','dim-cintre','dim-potence','dim-section','dim-debattement','dim-largeur-selle'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.value) {
+      const keyMap = {'dim-taille':'taille','dim-manivelle':'manivelle','dim-plateaux':'plateaux',
+        'dim-cassette':'cassette','dim-cintre':'cintre','dim-potence':'potence',
+        'dim-section':'section','dim-debattement':'debattement','dim-largeur-selle':'largeur_selle'};
+      selSize[keyMap[id]] = el.value;
+    }
+  });
+
   const summary = document.getElementById('dims-summary');
   const lines = [];
   if (selSize.taille)        lines.push('<strong>Taille :</strong> ' + selSize.taille);
