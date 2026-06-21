@@ -727,6 +727,8 @@
   }
 
   /* ── PROTO6 : PAGE TAILLE ──────────────────────────────── */
+  #ej-tooltip { display: none; }
+  #ej-tooltip.show { display: block; }
   .size-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
   @media (max-width: 767px) { .size-cards { grid-template-columns: 1fr; } }
   .size-card {
@@ -933,8 +935,15 @@
             <input type="number" class="size-input" id="guide-stature" placeholder="Ex : 175" min="140" max="210">
           </div>
           <div class="size-field">
-            <label>Hauteur de selle actuelle (mm) <span style="color:var(--text3)">optionnel</span></label>
-            <input type="number" class="size-input" id="guide-selle" placeholder="Ex : 740" min="500" max="1000">
+            <label>Entrejambe (mm)
+              <span style="color:var(--text3)">optionnel</span>
+              <span id="ej-info-btn" style="cursor:pointer;color:#F5C400;font-size:13px;margin-left:4px;" onclick="document.getElementById('ej-tooltip').classList.toggle('show')" title="Comment mesurer ?">ⓘ</span>
+            </label>
+            <div id="ej-tooltip" style="display:none;font-size:11px;color:var(--text2);background:var(--bg2);border:0.5px solid var(--border);padding:10px 12px;margin-bottom:8px;line-height:1.6;">
+              <strong style="color:var(--text1);">Comment mesurer votre entrejambe :</strong><br>
+              Debout, pieds nus, dos contre un mur, pieds écartés d'environ 20 cm. Placez un livre à plat entre vos jambes, bien calé contre le pubis. Mesurez la distance entre le sol et le dessus du livre. En mm.
+            </div>
+            <input type="number" class="size-input" id="guide-selle" placeholder="Ex : 820" min="600" max="1100">
           </div>
           <div style="display:flex;align-items:flex-end;">
             <button class="size-btn" onclick="calcSize()"><i class="ti ti-calculator"></i> Calculer</button>
@@ -2181,7 +2190,156 @@ function updateFloatingPrice() {
 // ─── OBSERVER : masquer fenêtre flottante quand prix total visible ─────────
 
 // ─── DONNÉES TAILLES CADRE ────────────────────────────────────────────────────
-const TAILLES_CADRE = {"route": [{"taille": "XXS", "stature_min": 155, "stature_max": 164, "selle_min": 620, "selle_max": 720}, {"taille": "XS", "stature_min": 163, "stature_max": 171, "selle_min": 650, "selle_max": 750}, {"taille": "S", "stature_min": 170, "stature_max": 177, "selle_min": 680, "selle_max": 780}, {"taille": "M", "stature_min": 176, "stature_max": 182, "selle_min": 710, "selle_max": 810}, {"taille": "L", "stature_min": 181, "stature_max": 187, "selle_min": 740, "selle_max": 840}, {"taille": "XL", "stature_min": 186, "stature_max": 194, "selle_min": 770, "selle_max": 870}], "gravel_racing": [{"taille": "XS", "stature_min": 160, "stature_max": 168, "selle_min": 645, "selle_max": 735}, {"taille": "S", "stature_min": 166, "stature_max": 174, "selle_min": 675, "selle_max": 765}, {"taille": "M", "stature_min": 172, "stature_max": 180, "selle_min": 705, "selle_max": 795}, {"taille": "L", "stature_min": 178, "stature_max": 186, "selle_min": 735, "selle_max": 825}, {"taille": "XL", "stature_min": 184, "stature_max": 194, "selle_min": 765, "selle_max": 855}], "gravel_bikepacking": [{"taille": "XS", "stature_min": 160, "stature_max": 168, "selle_min": 635, "selle_max": 725}, {"taille": "S", "stature_min": 166, "stature_max": 174, "selle_min": 665, "selle_max": 755}, {"taille": "M", "stature_min": 172, "stature_max": 180, "selle_min": 695, "selle_max": 785}, {"taille": "L", "stature_min": 178, "stature_max": 186, "selle_min": 725, "selle_max": 815}, {"taille": "XL", "stature_min": 184, "stature_max": 194, "selle_min": 755, "selle_max": 845}], "vtt_enduro": [{"taille": "S", "stature_min": 164, "stature_max": 172, "selle_min": 650, "selle_max": 758}, {"taille": "M", "stature_min": 170, "stature_max": 178, "selle_min": 690, "selle_max": 815}, {"taille": "L", "stature_min": 176, "stature_max": 184, "selle_min": 730, "selle_max": 855}, {"taille": "XL", "stature_min": 182, "stature_max": 192, "selle_min": 770, "selle_max": 895}]};
+const TAILLES_CADRE = {
+  "route": [
+    {
+      "taille": "XXS",
+      "stature_min": 155,
+      "stature_max": 164,
+      "ej_min": 739,
+      "ej_max": 784
+    },
+    {
+      "taille": "XS",
+      "stature_min": 163,
+      "stature_max": 171,
+      "ej_min": 773,
+      "ej_max": 818
+    },
+    {
+      "taille": "S",
+      "stature_min": 170,
+      "stature_max": 177,
+      "ej_min": 807,
+      "ej_max": 852
+    },
+    {
+      "taille": "M",
+      "stature_min": 176,
+      "stature_max": 182,
+      "ej_min": 841,
+      "ej_max": 886
+    },
+    {
+      "taille": "L",
+      "stature_min": 181,
+      "stature_max": 187,
+      "ej_min": 875,
+      "ej_max": 920
+    },
+    {
+      "taille": "XL",
+      "stature_min": 186,
+      "stature_max": 194,
+      "ej_min": 909,
+      "ej_max": 955
+    }
+  ],
+  "gravel_racing": [
+    {
+      "taille": "XS",
+      "stature_min": 160,
+      "stature_max": 168,
+      "ej_min": 763,
+      "ej_max": 809
+    },
+    {
+      "taille": "S",
+      "stature_min": 166,
+      "stature_max": 174,
+      "ej_min": 797,
+      "ej_max": 843
+    },
+    {
+      "taille": "M",
+      "stature_min": 172,
+      "stature_max": 180,
+      "ej_min": 831,
+      "ej_max": 877
+    },
+    {
+      "taille": "L",
+      "stature_min": 178,
+      "stature_max": 186,
+      "ej_min": 866,
+      "ej_max": 911
+    },
+    {
+      "taille": "XL",
+      "stature_min": 184,
+      "stature_max": 194,
+      "ej_min": 900,
+      "ej_max": 945
+    }
+  ],
+  "gravel_bikepacking": [
+    {
+      "taille": "XS",
+      "stature_min": 160,
+      "stature_max": 168,
+      "ej_min": 753,
+      "ej_max": 799
+    },
+    {
+      "taille": "S",
+      "stature_min": 166,
+      "stature_max": 174,
+      "ej_min": 788,
+      "ej_max": 833
+    },
+    {
+      "taille": "M",
+      "stature_min": 172,
+      "stature_max": 180,
+      "ej_min": 822,
+      "ej_max": 868
+    },
+    {
+      "taille": "L",
+      "stature_min": 178,
+      "stature_max": 186,
+      "ej_min": 856,
+      "ej_max": 902
+    },
+    {
+      "taille": "XL",
+      "stature_min": 184,
+      "stature_max": 194,
+      "ej_min": 890,
+      "ej_max": 936
+    }
+  ],
+  "vtt_enduro": [
+    {
+      "taille": "S",
+      "stature_min": 164,
+      "stature_max": 172,
+      "ej_min": 772,
+      "ej_max": 839
+    },
+    {
+      "taille": "M",
+      "stature_min": 170,
+      "stature_max": 178,
+      "ej_min": 832,
+      "ej_max": 890
+    },
+    {
+      "taille": "L",
+      "stature_min": 176,
+      "stature_max": 184,
+      "ej_min": 878,
+      "ej_max": 935
+    },
+    {
+      "taille": "XL",
+      "stature_min": 182,
+      "stature_max": 192,
+      "ej_min": 924,
+      "ej_max": 981
+    }
+  ]
+}
 
 // ─── ÉTAT TAILLE ──────────────────────────────────────────────────────────────
 let selSize = {};  // {taille, potence, cintre, manivelle, cassette, plateaux, largeur_selle, section, debattement}
@@ -2216,8 +2374,23 @@ function calcSize() {
   }
 
   const tailles = TAILLES_CADRE[selModel] || [];
-  const matches = tailles.filter(t => stature >= t.stature_min && stature <= t.stature_max);
-  const matchesSelle = selle ? tailles.filter(t => selle >= t.selle_min && selle <= t.selle_max) : [];
+  // Chercher par entrejambe en priorité, sinon par stature
+  let matches;
+  if (selle && selle > 0) {
+    // selle = entrejambe en mm
+    matches = tailles.filter(t => selle >= t.ej_min && selle <= t.ej_max);
+    if (matches.length === 0) {
+      // Pas de correspondance exacte — prendre la plus proche
+      const closest = tailles.reduce((a,b) => {
+        const da = Math.min(Math.abs(selle-a.ej_min), Math.abs(selle-a.ej_max));
+        const db = Math.min(Math.abs(selle-b.ej_min), Math.abs(selle-b.ej_max));
+        return da < db ? a : b;
+      });
+      matches = [closest];
+    }
+  } else {
+    matches = tailles.filter(t => stature >= t.stature_min && stature <= t.stature_max);
+  }
 
   result.classList.add('show');
   overlap.style.display = 'none';
@@ -2237,7 +2410,7 @@ function calcSize() {
     showSizeActionBtns();
     main.innerHTML = 'Taille recommandée : <span style="color:#F5C400">' + t.taille + '</span>';
     let info = 'Stature ' + t.stature_min + '–' + t.stature_max + ' cm';
-    if (selle) info += ' · Hauteur de selle ' + t.selle_min + '–' + t.selle_max + ' mm';
+    if (selle) info += ' · Entrejambe ' + Math.round(t.ej_min) + '–' + Math.round(t.ej_max) + ' mm';
     sub.textContent = info;
     return;
   }
