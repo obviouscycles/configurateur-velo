@@ -1,0 +1,2144 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/webp" href="https://www.obviouscycles.com/wp-content/uploads/2023/04/favicon-512-light.webp">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OBVIOUS-ON-DEMAND — Montage à la carte [PROTO7]</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-KGZDWLZ7JZ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date()); gtag('config', 'G-KGZDWLZ7JZ');
+</script>
+<style>
+/* ── RESET & VARIABLES ─────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #1c1c1c; --bg2: #111111; --bg3: #0a0a0a;
+  --text1: #f2f2f2; --text2: #aaaaaa; --text3: #666666;
+  --border: #2a2a2a; --border2: #444444;
+  --yellow: #F5C400; --yellow-dark: #1a1500;
+  --green: #2da44e; --red: #e24b4a;
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+body { font-family: var(--font); background: var(--bg3); color: var(--text1); min-height: 100vh; }
+
+/* ── HEADER ────────────────────────────────────────────────────────────────── */
+header {
+  background: #000; border-bottom: 0.5px solid #333;
+  padding: 0 2rem; display: flex; align-items: center;
+  justify-content: space-between; height: 56px;
+  position: sticky; top: 0; z-index: 10;
+}
+header .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; }
+header .logo span { font-size: 14px; font-weight: 600; letter-spacing: .04em; }
+.back-btn {
+  display: none; align-items: center; gap: 6px;
+  background: #111; border: 0.5px solid #333; color: #aaa;
+  padding: 6px 12px; font-size: 12px; cursor: pointer;
+  text-decoration: none; transition: color .15s;
+}
+.back-btn:hover { color: var(--yellow); border-color: var(--yellow); }
+@media (min-width: 768px) { .back-btn { display: flex; } }
+
+/* ── TAB BAR ───────────────────────────────────────────────────────────────── */
+.tab-bar {
+  display: flex; border-bottom: 0.5px solid #222;
+  background: #000; position: sticky; top: 56px; z-index: 9;
+}
+.tab {
+  padding: 12px 20px; font-size: 13px; font-weight: 500;
+  color: var(--text2); cursor: pointer; border-bottom: 2px solid transparent;
+  display: flex; align-items: center; gap: 6px; transition: color .15s;
+}
+.tab:hover { color: var(--text1); }
+.tab.active { color: var(--yellow); border-bottom-color: var(--yellow); }
+.count-badge {
+  background: var(--yellow); color: var(--yellow-dark);
+  font-size: 10px; font-weight: 700; padding: 1px 5px; border-radius: 99px;
+}
+
+/* ── MAIN LAYOUT ───────────────────────────────────────────────────────────── */
+.main { padding: 1.5rem 1rem 4rem; }
+
+@media (min-width: 768px) {
+  .main {
+    padding: 2rem 2rem 4rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 1.5rem;
+    align-items: start;
+  }
+  /* Ligne 1 : étapes 1+2 pleine largeur */
+  #view-config { grid-column: 1 / 3; grid-row: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 0 1.5rem; align-items: start; }
+  #step1-wrap  { grid-column: 1; }
+  #step2-wrap  { grid-column: 2; }
+  /* Ligne 2 : bottom-row pleine largeur (70/30) */
+  #bottom-row  { grid-column: 1 / 3; grid-row: 2; }
+  /* Mes configurations pleine largeur */
+  #view-saved  { grid-column: 1 / 3; grid-row: 1; }
+}
+
+/* ── VUE (onglets) ─────────────────────────────────────────────────────────── */
+.view { display: none; }
+.view.active { display: block; }
+@media (min-width: 768px) {
+  #view-config.active { display: grid; }
+  #view-saved.active  { display: block; }
+}
+
+/* ── BOTTOM-ROW (résumé + contact) ────────────────────────────────────────── */
+#bottom-row {
+  display: none;
+  flex-direction: row;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+#bottom-row.visible { display: flex; }
+#recap-col {
+  width: calc(70% - 0.75rem); min-width: 0;
+  background: var(--bg2); padding: 1.5rem; box-sizing: border-box;
+}
+#contact-col {
+  width: calc(30% - 0.75rem); min-width: 0;
+  background: transparent; border: 1.5px solid #111;
+  padding: 1.5rem; box-sizing: border-box;
+  position: sticky; top: 64px; align-self: flex-start;
+}
+
+@media (max-width: 767px) {
+  #bottom-row.visible { flex-direction: column; }
+  #recap-col  { width: 100%; margin-top: 1.5rem; }
+  #contact-col { width: 100%; margin-top: 1.5rem; position: static; }
+}
+
+/* ── ONGLET "VOTRE TAILLE" : remplace view-config par size-layout ─────────── */
+/* Sur desktop : recap(70%) | size-col(30%) empilé verticalement */
+#size-layout {
+  display: none;
+  flex-direction: row;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+#size-layout.visible { display: flex; }
+#size-recap-col {
+  width: calc(70% - 0.75rem); min-width: 0;
+  background: var(--bg2); padding: 1.5rem; box-sizing: border-box;
+}
+#size-col {
+  width: calc(30% - 0.75rem); min-width: 0;
+  display: flex; flex-direction: column; gap: 1.5rem;
+}
+#size-panel-col {
+  background: var(--bg2); padding: 1.5rem;
+}
+#size-contact-col {
+  background: transparent; border: 1.5px solid #111; padding: 1.5rem;
+}
+
+@media (max-width: 767px) {
+  #size-layout.visible { flex-direction: column; }
+  #size-col        { width: 100%; order: 1; }
+  #size-recap-col  { width: 100%; order: 2; margin-top: 1.5rem; }
+  #size-contact-col { display: none; } /* remplacé par FAB */
+}
+
+/* ── STEP LABELS ───────────────────────────────────────────────────────────── */
+.step-label { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 4px; }
+.section-title { font-size: 20px; font-weight: 500; letter-spacing: -.01em; margin-bottom: 1rem; }
+
+/* ── CADRE ÉTAPE ───────────────────────────────────────────────────────────── */
+.step-frame { border: 1.5px solid #111; padding: 1.5rem; }
+.step-frame-dark { background: var(--bg2); padding: 1.5rem; }
+
+/* ── MODÈLES ───────────────────────────────────────────────────────────────── */
+.model-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 1.5rem; }
+.model-grid.single { grid-template-columns: 1fr; }
+.model-card {
+  border: 0.5px solid var(--border); cursor: pointer;
+  transition: border-color .15s, background .15s; overflow: hidden;
+}
+.model-card:hover { border-color: #555; }
+.model-card.selected { border: 1.5px solid var(--yellow); background: #1a1500; }
+.mc-photo { width: 100%; aspect-ratio: 655/350; object-fit: cover; background: #111; display: block; }
+.mc-body  { padding: 10px 12px; }
+.mc-badge { font-size: 9px; color: #888; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 3px; }
+.mc-name  { font-size: 13px; font-weight: 500; margin-bottom: 2px; }
+.mc-price { font-size: 12px; color: var(--text2); }
+
+/* ── PRÉSETS ───────────────────────────────────────────────────────────────── */
+.preset-bar { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1rem; }
+.preset-btn {
+  padding: 4px 10px; font-size: 11px; border: 0.5px solid #333;
+  background: var(--bg2); color: var(--text2); cursor: pointer; transition: all .15s;
+}
+.preset-btn:hover { border-color: #555; color: var(--text1); }
+.preset-btn.active { background: var(--yellow); color: var(--yellow-dark); border-color: var(--yellow); font-weight: 600; }
+
+/* ── POSTES / OPTIONS ──────────────────────────────────────────────────────── */
+.post-hdr {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 0; border-bottom: 0.5px solid var(--border);
+  cursor: pointer; user-select: none;
+}
+.post-hdr:hover { background: #1a1a1a; padding-left: 8px; margin: 0 -8px; }
+.ph-icon  { font-size: 16px; color: var(--yellow); width: 20px; text-align: center; }
+.ph-name  { flex: 1; font-size: 13px; font-weight: 500; }
+.ph-sel   { font-size: 11px; color: var(--text2); max-width: 120px; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ph-arr   { font-size: 14px; color: #555; transition: transform .2s; }
+.ph-arr.open { transform: rotate(180deg); }
+.post-body { display: none; padding: 12px 0 4px; }
+.post-body.open { display: block; }
+
+/* Grille photos */
+.opt-photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; margin-bottom: 10px; }
+.opt-photo-card {
+  border: 0.5px solid var(--border); cursor: pointer;
+  transition: border-color .15s, background .15s; overflow: hidden;
+}
+.opt-photo-card:hover  { border-color: #555; }
+.opt-photo-card.sel    { border: 1.5px solid var(--yellow); background: #1a1500; }
+.opt-photo-card.locked { opacity: .5; cursor: default; }
+.opt-photo-card.incompatible { opacity: .3; cursor: not-allowed; }
+.opc-img   { width: 100%; aspect-ratio: 1; object-fit: contain; background: #111; padding: 6px; }
+.opc-body  { padding: 6px 8px; }
+.opc-name  { font-size: 10px; font-weight: 500; line-height: 1.3; margin-bottom: 3px; }
+.opc-price { font-size: 10px; }
+.opc-price.pos  { color: var(--yellow); }
+.opc-price.neg  { color: var(--green); }
+.opc-price.zero { color: #555; }
+.opc-price.incl { color: #555; }
+
+/* Liste texte */
+.opt-list { display: flex; flex-direction: column; gap: 2px; }
+.opt-list-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px; cursor: pointer; border: 0.5px solid transparent;
+  transition: background .1s;
+}
+.opt-list-item:hover   { background: #1a1a1a; }
+.opt-list-item.sel     { background: #1a1500; border-color: var(--yellow); }
+.opt-list-item.locked  { opacity: .5; cursor: default; }
+.opt-list-item.incompatible { opacity: .3; cursor: not-allowed; }
+.oli-name  { flex: 1; font-size: 12px; font-weight: 500; }
+.oli-desc  { font-size: 10px; color: var(--text2); }
+.oli-price { font-size: 11px; min-width: 50px; text-align: right; }
+.oli-price.pos  { color: var(--yellow); }
+.oli-price.neg  { color: var(--green); }
+.oli-price.zero { color: #555; }
+.oli-price.incl { color: #555; }
+
+/* Vue toggle */
+.view-toggle { display: flex; gap: 4px; margin-bottom: 10px; }
+.vt-btn { padding: 4px 10px; font-size: 11px; border: 0.5px solid #333; background: var(--bg2); color: var(--text2); cursor: pointer; }
+.vt-btn.active { background: #222; color: var(--text1); border-color: #555; }
+
+/* ── RÉCAPITULATIF ─────────────────────────────────────────────────────────── */
+.recap-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; margin-bottom: 1.5rem; }
+.recap-card  { background: #1e1e1e; border: 0.5px solid #333; padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; }
+.recap-card-hdr  { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: .07em; display: flex; align-items: center; gap: 6px; }
+.recap-card-name { font-size: 13px; font-weight: 500; line-height: 1.3; }
+.recap-card-price { font-size: 12px; margin-top: 2px; }
+.recap-card-price.pos  { color: var(--yellow); }
+.recap-card-price.neg  { color: var(--green); }
+.recap-card-price.zero { color: #555; }
+.recap-card-price.incl { color: #555; }
+.recap-total-block { border-top: 0.5px solid #2a2a2a; padding-top: 1rem; display: flex; gap: 12px; margin-bottom: 1rem; }
+.recap-total-card { flex: 1; text-align: center; padding: 1rem; background: #000; border: 0.5px solid #333; }
+.recap-total-label { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: #666; margin-bottom: 6px; }
+.recap-total-val   { font-size: 28px; font-weight: 500; letter-spacing: -.02em; }
+.recap-total-val.price { color: var(--yellow); }
+
+/* ── BOUTONS ───────────────────────────────────────────────────────────────── */
+.btn-row { display: flex; flex-direction: column; gap: 8px; margin-top: 1rem; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 10px 16px; font-size: 13px; font-weight: 500; cursor: pointer;
+  border: 0.5px solid #333; background: #1a1a1a; color: var(--text1);
+  transition: opacity .15s; width: 100%;
+}
+.btn:disabled { opacity: .35; cursor: not-allowed; }
+.btn:not(:disabled):hover { opacity: .8; }
+.btn.primary  { background: var(--yellow); color: var(--yellow-dark); border-color: var(--yellow); }
+.btn.success  { background: #1a2e1a; color: var(--green); border-color: #2a4a2a; }
+
+/* Save form */
+.save-form { display: none; margin-top: 8px; padding: 12px; background: #111; border: 0.5px solid #333; }
+.save-form.open { display: block; }
+.save-label { font-size: 12px; color: var(--text2); margin-bottom: 8px; }
+.save-input-row { display: flex; gap: 8px; }
+.save-input-row input {
+  flex: 1; background: var(--bg3); border: 0.5px solid #444;
+  color: var(--text1); padding: 7px 10px; font-size: 13px;
+}
+.save-input-row input:focus { outline: none; border-color: var(--yellow); }
+.save-input-row button {
+  background: var(--yellow); color: var(--yellow-dark); border: none;
+  padding: 7px 14px; font-size: 12px; font-weight: 600; cursor: pointer;
+}
+.toast { font-size: 12px; color: var(--green); margin-top: 8px; display: none; }
+
+/* ── CONTACT ───────────────────────────────────────────────────────────────── */
+.contact-btns { display: flex; flex-direction: column; gap: 6px; margin-bottom: 1rem; }
+.contact-btn {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 8px 14px; font-size: 13px; font-weight: 500;
+  text-decoration: none; cursor: pointer; border: none;
+  width: 100%; transition: opacity .15s;
+}
+.contact-btn:hover { opacity: .8; }
+.cb-tel { background: #1a1a1a; color: var(--yellow); border: 0.5px solid #333; }
+.cb-msg { background: var(--yellow); color: var(--yellow-dark); }
+.cb-rdv { background: #1a1a1a; color: #fff; border: 0.5px solid #555; }
+.cb-send { background: var(--yellow); color: var(--yellow-dark); }
+.contact-sep { border-top: 1.5px solid #2a2a2a; margin: 1rem 0; }
+.contact-input {
+  width: 100%; background: var(--bg3); border: 0.5px solid #444;
+  color: var(--text1); padding: 7px 10px; font-size: 13px; margin-bottom: 6px;
+}
+.contact-input:focus { outline: none; border-color: var(--yellow); }
+.cf-toast { font-size: 12px; color: var(--green); margin-top: 6px; }
+.cf-error { font-size: 12px; color: var(--red); margin-top: 6px; }
+.contact-title { font-size: 18px; font-weight: 500; margin-bottom: 4px; color: var(--text1); }
+.contact-desc  { font-size: 12px; color: var(--text2); margin-bottom: .75rem; line-height: 1.5; }
+
+/* ── MODAL DEVIS ───────────────────────────────────────────────────────────── */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,.7); z-index: 100;
+  align-items: center; justify-content: center; padding: 1rem;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: #111; border: 0.5px solid #333; padding: 2rem;
+  width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto;
+}
+.modal h2 { font-size: 18px; font-weight: 600; margin-bottom: 1.5rem; }
+.field { margin-bottom: 1rem; }
+.field label { display: block; font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
+.field input, .field textarea {
+  width: 100%; background: #1a1a1a; border: 0.5px solid #444;
+  color: var(--text1); padding: 8px 10px; font-size: 13px; font-family: var(--font);
+}
+.field input:focus, .field textarea:focus { outline: none; border-color: var(--yellow); }
+.modal-actions { display: flex; gap: 8px; margin-top: 1.5rem; }
+.btn-cancel { flex: 1; padding: 10px; background: #1a1a1a; border: 0.5px solid #333; color: var(--text2); cursor: pointer; font-size: 13px; }
+.btn-send   { flex: 2; padding: 10px; background: var(--yellow); border: none; color: var(--yellow-dark); font-size: 13px; font-weight: 600; cursor: pointer; }
+
+/* ── MES CONFIGURATIONS ────────────────────────────────────────────────────── */
+.sc-card  { background: #111; border: 0.5px solid #333; padding: 1.25rem; margin-bottom: 10px; }
+.sc-head  { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+.sc-name  { font-size: 14px; font-weight: 600; }
+.sc-meta  { font-size: 11px; color: var(--text2); }
+.sc-price { font-size: 16px; font-weight: 600; color: var(--yellow); }
+.sc-detail { font-size: 11px; color: var(--text2); line-height: 1.6; margin-bottom: 10px; }
+.sc-size  { font-size: 11px; color: #aaa; line-height: 1.6; margin-bottom: 10px; padding: 8px; background: #1a1500; border: 0.5px solid #333; }
+.sc-btn   { display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; font-size: 11px; cursor: pointer; border: 0.5px solid #333; background: #1a1a1a; color: var(--text2); margin-right: 6px; }
+.sc-btn.blue { background: var(--yellow); color: var(--yellow-dark); border-color: var(--yellow); }
+
+/* ── PAGE TAILLE ───────────────────────────────────────────────────────────── */
+.size-choices { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+@media (max-width: 480px) { .size-choices { grid-template-columns: 1fr; } }
+.size-choice {
+  background: var(--bg2); border: 0.5px solid var(--border);
+  padding: 1.25rem; cursor: pointer; transition: border-color .15s, background .15s;
+}
+.size-choice:hover { border-color: #555; }
+.size-choice.active { border: 1.5px solid var(--yellow); background: var(--yellow-dark); }
+.size-choice.active .sc-choice-title { color: var(--yellow); }
+.sc-choice-icon  { font-size: 26px; color: var(--yellow); margin-bottom: .6rem; }
+.sc-choice-title { font-size: 15px; font-weight: 500; margin-bottom: .3rem; }
+.sc-choice-desc  { font-size: 12px; color: var(--text2); line-height: 1.5; }
+
+.size-panel { display: none; }
+.size-panel.open { display: block; }
+.size-note { font-size: 12px; color: var(--text3); font-style: italic; line-height: 1.5; margin-bottom: 1.25rem; }
+
+.size-form-row { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; align-items: flex-end; }
+.size-field { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 140px; }
+.size-field label { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: .06em; }
+.size-field .lbl-opt { color: var(--text3); font-size: 10px; margin-left: 4px; }
+.size-field .lbl-info { color: var(--yellow); cursor: pointer; font-size: 13px; margin-left: 4px; }
+.size-tooltip {
+  display: none; font-size: 11px; color: var(--text2); background: var(--bg2);
+  border: 0.5px solid var(--border); padding: 10px 12px; margin-bottom: 8px; line-height: 1.6;
+}
+.size-tooltip.open { display: block; }
+.size-input {
+  background: var(--bg2); border: 0.5px solid var(--border2);
+  color: var(--text1); padding: 8px 10px; font-size: 14px;
+  width: 100%; box-sizing: border-box;
+}
+.size-input:focus { outline: none; border-color: var(--yellow); }
+.size-btn {
+  background: var(--yellow); color: var(--yellow-dark); border: none;
+  padding: 10px 20px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap;
+}
+
+.size-result { display: none; margin-top: 1rem; padding: 1.25rem; background: #111; border: 0.5px solid #333; }
+.size-result.show { display: block; }
+.size-result-main { font-size: 20px; font-weight: 600; color: var(--yellow); margin-bottom: 4px; }
+.size-result-sub  { font-size: 13px; color: #c8c8c8; line-height: 1.6; }
+.size-overlap { margin-top: 1rem; padding: 1rem; background: #1a1200; border: 0.5px solid var(--yellow); }
+.size-overlap-title { font-size: 12px; font-weight: 600; color: var(--yellow); text-transform: uppercase; letter-spacing: .06em; margin-bottom: .75rem; }
+.size-overlap-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+.size-overlap-btn {
+  flex: 1; min-width: 120px; padding: 10px; text-align: center; cursor: pointer;
+  border: 0.5px solid #555; font-size: 13px; color: var(--text1); background: var(--bg2);
+}
+.size-overlap-btn:hover, .size-overlap-btn.sel { background: var(--yellow); color: var(--yellow-dark); border-color: var(--yellow); font-weight: 600; }
+
+.dims-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1rem; }
+.dim-field { display: flex; flex-direction: column; gap: 4px; }
+.dim-field label { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: .06em; }
+.dim-select {
+  background: var(--bg2); border: 0.5px solid var(--border2); color: var(--text1);
+  padding: 8px 10px; font-size: 13px; width: 100%; cursor: pointer;
+}
+.dim-single { font-size: 14px; color: var(--text3); padding: 8px 10px; background: var(--bg2); border: 0.5px solid var(--border); }
+.dim-note { font-size: 11px; color: var(--text3); margin-top: 2px; font-style: italic; }
+.dims-summary { display: none; margin-top: 1rem; padding: 1rem 1.25rem; background: #1a1500; border: 0.5px solid var(--yellow); font-size: 13px; color: #f2f2f2; line-height: 1.8; }
+.dims-summary.show { display: block; }
+.dims-summary strong { color: var(--yellow); font-weight: 600; }
+.validate-btn {
+  margin-top: 1rem; background: var(--yellow); color: var(--yellow-dark); border: none;
+  padding: 10px 24px; font-size: 13px; font-weight: 600; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+
+/* Boutons onglet taille dans recap */
+#size-btns-base   { display: none; }
+#size-btns-action { display: none; }
+
+/* ── PRIX FLOTTANT ─────────────────────────────────────────────────────────── */
+#floating-price {
+  position: fixed; z-index: 999; bottom: 0;
+  transition: opacity .3s; cursor: pointer;
+  display: none;
+}
+#floating-price.visible { display: block; }
+#floating-price.hidden  { opacity: 0; pointer-events: none; }
+@media (max-width: 767px) {
+  #floating-price { left: 0; right: 0; padding: 10px 16px; background: #000; border-top: 0.5px solid #333; text-align: center; }
+}
+@media (min-width: 768px) {
+  #floating-price { left: 50%; transform: translateX(-50%); padding: 4px 2rem; background: #000; border: 0.5px solid #333; white-space: nowrap; }
+}
+.fp-label { font-size: 9px; text-transform: uppercase; letter-spacing: .1em; color: #666; margin-bottom: 1px; display: block; }
+.fp-price { font-size: 17px; font-weight: 500; color: var(--yellow); letter-spacing: -.02em; }
+
+/* ── FAB MOBILE ────────────────────────────────────────────────────────────── */
+#fab-contact {
+  display: none; position: fixed; bottom: 20px; left: 12px;
+  height: 44px; border-radius: 22px; background: var(--yellow); border: none;
+  color: var(--yellow-dark); font-size: 14px; font-weight: 600; cursor: pointer;
+  z-index: 1000; align-items: center; justify-content: center;
+  gap: 6px; padding: 0 14px; box-shadow: 0 3px 16px rgba(0,0,0,.5);
+}
+@media (max-width: 767px) { #fab-contact { display: flex; } }
+
+/* Drawer */
+#drawer-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 1000; }
+#drawer-overlay.open { display: block; }
+#contact-drawer {
+  display: none; position: fixed; bottom: 0; left: 0; right: 0;
+  background: #111; border-top: 1.5px solid #333;
+  padding: 1.25rem 1.5rem 2rem; z-index: 1001;
+  max-height: 80vh; overflow-y: auto;
+  transform: translateY(100%); transition: transform .3s ease;
+}
+#contact-drawer.open { display: block; transform: translateY(0); }
+.drawer-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; }
+.drawer-close  { background: none; border: none; color: #888; font-size: 20px; cursor: pointer; }
+
+/* ── MISC ──────────────────────────────────────────────────────────────────── */
+.sep { border-top: 0.5px solid #2a2a2a; margin: 1rem 0; }
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ──────────────────────────────────────────────────────────────── -->
+<header>
+  <a class="logo back-link" href="https://www.obviouscycles.com/velos-titane/">
+    <img src="https://www.obviouscycles.com/wp-content/uploads/2023/04/favicon-512.png" alt="Obvious" style="height:32px;width:32px;object-fit:contain;">
+    <span>OBVIOUS-ON-DEMAND</span>
+  </a>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <div style="font-size:12px;color:#fff;opacity:.7">Montage à la carte</div>
+    <span style="font-size:10px;font-weight:500;background:#F5C400;color:#1a1a00;padding:2px 8px;letter-spacing:.06em;">PROTO7</span>
+  </div>
+</header>
+
+<!-- ── MAIN ────────────────────────────────────────────────────────────────── -->
+<main class="main">
+
+  <!-- Tab bar -->
+  <div class="tab-bar" id="tab-bar">
+    <div class="tab active" id="tab-config" onclick="switchTab('config')">
+      <i class="ti ti-settings"></i> Configurer
+    </div>
+    <div class="tab" id="tab-size" onclick="switchTab('size')">
+      <i class="ti ti-ruler"></i> Votre taille
+    </div>
+    <div class="tab" id="tab-saved" onclick="switchTab('saved')">
+      <i class="ti ti-bookmark"></i> Mes configurations
+      <span class="count-badge" id="saved-count">0</span>
+    </div>
+  </div>
+
+  <!-- ── VUE : CONFIGURER ──────────────────────────────────────────────────── -->
+  <div class="view active" id="view-config">
+
+    <!-- Étape 1 -->
+    <div id="step1-wrap">
+      <div class="step-frame-dark">
+        <div class="step-label">Étape 1 sur 2</div>
+        <p class="section-title" style="color:#F5C400;">Choisir votre modèle</p>
+        <div class="model-grid" id="model-grid"></div>
+        <div class="preset-bar" id="preset-bar" style="display:none"></div>
+      </div>
+    </div>
+
+    <!-- Étape 2 -->
+    <div id="step2-wrap">
+      <div class="step-frame" id="step2-frame" style="display:none">
+        <div class="step-label" style="color:#888;">Étape 2 sur 2</div>
+        <p class="section-title" style="color:#111;">Configurer vos composants</p>
+        <div id="posts-list"></div>
+      </div>
+    </div>
+
+  </div><!-- /view-config -->
+
+  <!-- ── VUE : VOTRE TAILLE ────────────────────────────────────────────────── -->
+  <div class="view" id="view-size">
+    <!-- layout géré via #size-layout hors des vues -->
+  </div>
+
+  <!-- ── VUE : MES CONFIGURATIONS ─────────────────────────────────────────── -->
+  <div class="view" id="view-saved">
+    <div class="step-frame-dark">
+      <div class="step-label">Mes configurations</div>
+      <p class="section-title" style="color:#f2f2f2;margin-bottom:1.5rem;">Configurations sauvegardées</p>
+      <div id="saved-list"></div>
+    </div>
+  </div>
+
+  <!-- ── BOTTOM ROW (résumé + contact) ────────────────────────────────────── -->
+  <div id="bottom-row">
+
+    <!-- Résumé -->
+    <div id="recap-col">
+      <div class="step-label">En résumé</div>
+      <p class="section-title" style="color:#f2f2f2;margin-bottom:1rem;">Votre configuration</p>
+      <div id="recap-box"></div>
+
+      <!-- Formulaire sauvegarde (accessible depuis tous onglets) -->
+      <div class="save-form" id="save-form">
+        <div class="save-label">Donnez un nom à cette configuration :</div>
+        <div class="save-input-row">
+          <input type="text" id="save-name-input" placeholder="Ex : Mon gravel bikepacking" maxlength="60">
+          <button onclick="saveConfig()">Sauvegarder</button>
+        </div>
+        <div class="toast" id="save-toast"><i class="ti ti-check"></i> Configuration sauvegardée !</div>
+      </div>
+
+      <!-- Boutons onglet 1 -->
+      <div class="btn-row" id="btns-config">
+        <button class="btn primary" id="btn-size" onclick="switchTab('size')" disabled>
+          <i class="ti ti-ruler"></i> Choisir votre taille
+        </button>
+        <button class="btn success" id="btn-save" onclick="toggleSaveForm()" disabled>
+          <i class="ti ti-bookmark"></i> Sauvegarder cette configuration
+        </button>
+        <button class="btn" id="btn-reset" onclick="resetConfig()" disabled>
+          <i class="ti ti-refresh"></i> Recommencer
+        </button>
+      </div>
+
+      <!-- Boutons onglet 2 : permanents (avant taille) -->
+      <div class="btn-row" id="size-btns-base">
+        <button class="btn success" onclick="toggleSaveForm()">
+          <i class="ti ti-bookmark"></i> Sauvegarder cette configuration
+        </button>
+        <button class="btn" onclick="switchTab('config')">
+          <i class="ti ti-arrow-left"></i> Revenir à la configuration
+        </button>
+      </div>
+
+      <!-- Boutons onglet 2 : après taille trouvée -->
+      <div class="btn-row" id="size-btns-action">
+        <button class="btn primary" onclick="openOrderModal()">
+          <i class="ti ti-send"></i> Demander votre devis
+        </button>
+        <button class="btn success" onclick="toggleSaveForm()">
+          <i class="ti ti-bookmark"></i> Sauvegarder cette configuration
+        </button>
+        <button class="btn" onclick="switchTab('config')">
+          <i class="ti ti-arrow-left"></i> Revenir à la configuration
+        </button>
+      </div>
+    </div>
+
+    <!-- Contact -->
+    <div id="contact-col">
+      <div class="step-label" style="color:#888;">Aide - Contact</div>
+      <div class="contact-title">Contacter Obvious</div>
+      <p class="contact-desc">Un autre montage, une question sur les tailles, besoin d'aide. Contactez-nous pour nous en faire part.</p>
+      <div class="contact-btns">
+        <a href="tel:+33695582935" class="contact-btn cb-tel"><i class="ti ti-phone"></i> 06 95 58 29 35</a>
+        <a href="https://www.obviouscycles.com/contact/#ancragemail" target="_blank" class="contact-btn cb-msg"><i class="ti ti-message"></i> Message</a>
+        <a href="https://www.obviouscycles.com/contact/#ancragerdv" target="_blank" class="contact-btn cb-rdv"><i class="ti ti-calendar"></i> Prendre rdv</a>
+      </div>
+      <div class="sep"></div>
+      <div class="contact-title">Être rappelé</div>
+      <p class="contact-desc">Nous vous contacterons pour vous aider à finaliser votre vélo et répondre à vos questions.</p>
+      <input type="tel" id="cf-phone" placeholder="Téléphone" class="contact-input">
+      <input type="email" id="cf-email" placeholder="E-mail" class="contact-input">
+      <button class="contact-btn cb-send" onclick="sendCallback()"><i class="ti ti-send"></i> Envoyer</button>
+      <div id="cf-toast" class="cf-toast" style="display:none"><i class="ti ti-check"></i> Message envoyé !</div>
+      <div id="cf-error" class="cf-error" style="display:none"></div>
+    </div>
+
+  </div><!-- /bottom-row -->
+
+  <!-- ── SIZE LAYOUT (onglet Votre taille) ────────────────────────────────── -->
+  <div id="size-layout">
+
+    <!-- Récap miroir (70%) -->
+    <div id="size-recap-col">
+      <div class="step-label">En résumé</div>
+      <p class="section-title" style="color:#f2f2f2;margin-bottom:1rem;">Votre configuration</p>
+      <div id="size-recap-box"></div>
+      <!-- même save-form partagé -->
+    </div>
+
+    <!-- Colonne droite (30%) -->
+    <div id="size-col">
+
+      <!-- Panel taille -->
+      <div id="size-panel-col">
+        <div class="step-label" style="color:#888;">Votre taille</div>
+        <p class="section-title" style="color:#f2f2f2;margin-bottom:1.5rem;">Dimensions de votre vélo</p>
+
+        <div class="size-choices">
+          <div class="size-choice" id="choice-guide" onclick="toggleSizeMode('guide')">
+            <div class="sc-choice-icon"><i class="ti ti-user-check"></i></div>
+            <div class="sc-choice-title">Laissez-vous guider</div>
+            <div class="sc-choice-desc">Indiquez votre taille et entrejambe — on détermine vos dimensions idéales.</div>
+          </div>
+          <div class="size-choice" id="choice-manual" onclick="toggleSizeMode('manual')">
+            <div class="sc-choice-icon"><i class="ti ti-ruler-measure"></i></div>
+            <div class="sc-choice-title">Je connais mes dimensions</div>
+            <div class="sc-choice-desc">Choisissez directement taille, potence, cintre, manivelle...</div>
+          </div>
+        </div>
+
+        <p class="size-note">Vous n'avez pas toutes les informations ? Nous vous recontacterons de toute façon pour affiner et valider vos cotes.</p>
+
+        <!-- Panel guidé -->
+        <div class="size-panel" id="panel-guide">
+          <div class="size-form-row">
+            <div class="size-field">
+              <label>Votre taille (cm)</label>
+              <input type="number" class="size-input" id="guide-stature" placeholder="Ex : 175" min="140" max="210">
+            </div>
+            <div class="size-field">
+              <label>
+                Entrejambe (cm)
+                <span class="lbl-opt">optionnel</span>
+                <span class="lbl-info" onclick="toggleTooltip('tt-ej')">ⓘ</span>
+              </label>
+              <div class="size-tooltip" id="tt-ej">
+                <strong>Comment mesurer :</strong><br>
+                Debout, pieds nus, dos et talons contre un mur, pieds écartés d'environ 20 cm. Placez un livre entre vos jambes avec une tranche bien calée contre le mur. Remontez-le jusqu'à sentir une pression comme avec votre selle. Faites-vous aider pour mesurer la distance entre le sol et le dessus du livre.
+              </div>
+              <input type="number" class="size-input" id="guide-ej" placeholder="Ex : 82" min="60" max="110" step="0.5">
+            </div>
+            <div class="size-field">
+              <label>
+                Largeur d'épaules (cm)
+                <span class="lbl-opt">optionnel</span>
+                <span class="lbl-info" onclick="toggleTooltip('tt-acro')">ⓘ</span>
+              </label>
+              <div class="size-tooltip" id="tt-acro">
+                <strong>Comment mesurer :</strong><br>
+                Debout, bras le long du corps. Faites-vous aider pour mesurer la distance entre les deux pointes osseuses de vos épaules les plus éloignées.
+              </div>
+              <input type="number" class="size-input" id="guide-acro" placeholder="Ex : 40" min="25" max="60" step="0.5">
+            </div>
+            <div style="display:flex;align-items:flex-end;">
+              <button class="size-btn" onclick="calcSize()"><i class="ti ti-calculator"></i> Calculer</button>
+            </div>
+          </div>
+          <div class="size-result" id="guide-result">
+            <div class="size-result-main" id="guide-result-main"></div>
+            <div class="size-result-sub" id="guide-result-sub"></div>
+            <div class="size-overlap" id="guide-overlap" style="display:none">
+              <div class="size-overlap-title"><i class="ti ti-git-fork"></i> Votre stature est à cheval sur deux tailles — quel est votre usage ?</div>
+              <div class="size-overlap-btns">
+                <div class="size-overlap-btn" id="btn-sport" onclick="chooseUsage('sport')">
+                  <strong>Sportif / Racing</strong><br>
+                  <span style="font-size:11px;opacity:.7">Petite taille, position aéro, potence plus longue</span>
+                </div>
+                <div class="size-overlap-btn" id="btn-confort" onclick="chooseUsage('confort')">
+                  <strong>Confort / Randonnée</strong><br>
+                  <span style="font-size:11px;opacity:.7">Grande taille, position droite, potence plus courte</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel dimensions manuelles -->
+        <div class="size-panel" id="panel-manual">
+          <div class="dims-grid" id="dims-grid"></div>
+          <button class="validate-btn" onclick="validateDims()"><i class="ti ti-check"></i> Valider ces dimensions</button>
+          <div class="dims-summary" id="dims-summary"></div>
+        </div>
+
+      </div><!-- /size-panel-col -->
+
+      <!-- Contact sticky (desktop seulement) -->
+      <div id="size-contact-col">
+        <div class="step-label" style="color:#888;">Aide - Contact</div>
+        <div class="contact-title">Contacter Obvious</div>
+        <p class="contact-desc">Un autre montage, une question sur les tailles, besoin d'aide. Contactez-nous pour nous en faire part.</p>
+        <div class="contact-btns">
+          <a href="tel:+33695582935" class="contact-btn cb-tel"><i class="ti ti-phone"></i> 06 95 58 29 35</a>
+          <a href="https://www.obviouscycles.com/contact/#ancragemail" target="_blank" class="contact-btn cb-msg"><i class="ti ti-message"></i> Message</a>
+          <a href="https://www.obviouscycles.com/contact/#ancragerdv" target="_blank" class="contact-btn cb-rdv"><i class="ti ti-calendar"></i> Prendre rdv</a>
+        </div>
+        <div class="sep"></div>
+        <div class="contact-title">Être rappelé</div>
+        <p class="contact-desc">Nous vous contacterons pour vous aider à finaliser votre vélo et répondre à vos questions.</p>
+        <input type="tel" id="cf-phone-s" placeholder="Téléphone" class="contact-input">
+        <input type="email" id="cf-email-s" placeholder="E-mail" class="contact-input">
+        <button class="contact-btn cb-send" onclick="sendCallbackSize()"><i class="ti ti-send"></i> Envoyer</button>
+        <div id="cf-toast-s" class="cf-toast" style="display:none"><i class="ti ti-check"></i> Message envoyé !</div>
+        <div id="cf-error-s" class="cf-error" style="display:none"></div>
+      </div>
+
+    </div><!-- /size-col -->
+
+  </div><!-- /size-layout -->
+
+</main>
+
+<!-- ── MODAL DEVIS ──────────────────────────────────────────────────────────── -->
+<div class="modal-overlay" id="order-modal">
+  <div class="modal">
+    <h2><i class="ti ti-send"></i> Demander mon devis</h2>
+    <div class="field"><label>Votre nom et prénom *</label><input type="text" id="order-name" placeholder=""></div>
+    <div class="field"><label>Votre email</label><input type="email" id="order-email" placeholder=""></div>
+    <div class="field"><label>Votre n° de téléphone</label><input type="tel" id="order-phone" placeholder=""></div>
+    <div class="field"><label>Message (optionnel)</label><textarea id="order-msg" rows="3" placeholder="Questions, précisions..."></textarea></div>
+    <div class="field"><label>Votre configuration</label><textarea id="order-config" rows="5" readonly style="font-size:11px;color:#888;background:#0a0a0a"></textarea></div>
+    <div class="field" id="order-size-field" style="display:none"><label>Dimensions choisies</label><textarea id="order-size" rows="4" readonly style="font-size:11px;color:#888;background:#0a0a0a"></textarea></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeOrderModal()">Annuler</button>
+      <button class="btn-send" onclick="sendOrder()"><i class="ti ti-send"></i> Envoyer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── FAB + DRAWER ─────────────────────────────────────────────────────────── -->
+<div id="fab-contact" onclick="openDrawer()">
+  <i class="ti ti-headset" style="font-size:17px;"></i>
+  <span>Aide - Contact</span>
+</div>
+<div id="drawer-overlay" onclick="closeDrawer()"></div>
+<div id="contact-drawer">
+  <div class="drawer-header">
+    <div class="step-label" style="color:#888;">Aide - Contact</div>
+    <button class="drawer-close" onclick="closeDrawer()"><i class="ti ti-x"></i></button>
+  </div>
+  <div class="contact-title">Contacter Obvious</div>
+  <p class="contact-desc">Un autre montage, une question sur les tailles, besoin d'aide. Contactez-nous pour nous en faire part.</p>
+  <div class="contact-btns">
+    <a href="tel:+33695582935" class="contact-btn cb-tel"><i class="ti ti-phone"></i> 06 95 58 29 35</a>
+    <a href="https://www.obviouscycles.com/contact/#ancragemail" target="_blank" class="contact-btn cb-msg"><i class="ti ti-message"></i> Message</a>
+    <a href="https://www.obviouscycles.com/contact/#ancragerdv" target="_blank" class="contact-btn cb-rdv"><i class="ti ti-calendar"></i> Prendre rdv</a>
+  </div>
+  <div class="sep"></div>
+  <div class="contact-title">Être rappelé</div>
+  <p class="contact-desc">Nous vous contacterons pour vous aider à finaliser votre vélo et répondre à vos questions.</p>
+  <input type="tel" id="cf-phone-d" placeholder="Téléphone" class="contact-input">
+  <input type="email" id="cf-email-d" placeholder="E-mail" class="contact-input">
+  <button class="contact-btn cb-send" onclick="sendCallbackDrawer()"><i class="ti ti-send"></i> Envoyer</button>
+  <div id="cf-toast-d" class="cf-toast" style="display:none"><i class="ti ti-check"></i> Message envoyé !</div>
+  <div id="cf-error-d" class="cf-error" style="display:none"></div>
+</div>
+
+<!-- ── PRIX FLOTTANT ────────────────────────────────────────────────────────── -->
+<div id="floating-price" onclick="scrollToRecap()">
+  <span class="fp-label">Prix total</span>
+  <div class="fp-price" id="fp-price">—</div>
+</div>
+
+<!-- ── BOUTON RETOUR ────────────────────────────────────────────────────────── -->
+<a class="back-btn back-link" href="https://www.obviouscycles.com/velos-titane/" style="position:fixed;bottom:20px;right:16px;z-index:50;">
+  <i class="ti ti-arrow-left"></i> Retour au site
+</a>
+
+<script>
+// ══ DONNÉES ════════════════════════════════════════════════════════════════════
+const MODELS = [
+  { id: 'route',              name: 'ON/',        badge: 'Route',          desc: 'Cadre titane, fourche carbone, sportif et polyvalent. Transmission électronique.',                                  basePrice: 5490, assembly: 300, photo: 'https://www.obviouscycles.com/wp-content/uploads/2025/05/on-da-1-mifi-655x460.jpg?m=1747931996' },
+  { id: 'gravel_racing',      name: 'ON/OFF',     badge: 'Gravel Racing',  desc: 'Cadre titane, géométrie sport, fourche carbone, intégration complète',                 basePrice: 4450, assembly: 300, photo: 'https://www.obviouscycles.com/wp-content/uploads/2024/03/onoff-2024-6-655x427.webp?m=1711027780' },
+  { id: 'gravel_bikepacking', name: 'OUT/QUEST',  badge: 'Gravel Aventure',desc: "Cadre titane, géométrie confort / longue distance, nombreux points d'accroche",         basePrice: 4390, assembly: 300, photo: 'https://www.obviouscycles.com/wp-content/uploads/2024/11/outquest-1-655x450.webp?m=1730756293' },
+  { id: 'vtt_enduro',         name: '/OFF',        badge: 'Enduro HT',      desc: 'Cadre titane semi-rigide, géométrie enduro, fourche 140/150 mm, boost 148 mm',          basePrice: 5090, assembly: 300, photo: 'https://www.obviouscycles.com/wp-content/uploads/2024/12/off-x0-1-1-655x404.webp?m=1733503243' },
+];
+
+const ALL_OPTIONS = {
+  fourche: [
+    { id: 'fourche_rd_car_00', name: 'Fourche ON/', desc: 'Fourche carbone pivot conique', price: 0, weight: 0, lockedFor: ['route'], compat: [{mid:'route',rec:false}], incompat: [], image: 'assets/fourche/fourche_rd_car_00.png' },
+    { id: 'fourche_gr_car_00', name: 'Fourche gravel, sans inserts', desc: 'Fourche gravel carbone sans inserts, pivot conique, pneu max 50 mm', price: 0, weight: 0, lockedFor: ['gravel_racing'], compat: [{mid:'gravel_racing',rec:true},{mid:'gravel_bikepacking',rec:false}], incompat: [], image: 'assets/fourche/fourche_gr_car_00.png' },
+    { id: 'fourche_gr_car_ins', name: 'Fourche gravel, avec inserts', desc: 'Fourche gravel carbone avec inserts, pivot conique, pneu max 50 mm', price: 0, weight: 0, lockedFor: ['gravel_bikepacking'], compat: [{mid:'gravel_bikepacking',rec:true},{mid:'gravel_racing',rec:false}], incompat: [], image: 'assets/fourche/fourche_gr_car_ins.png' },
+    { id: 'fourche_vtt_fox_fac_36_150', name: 'Fox Factory 36 150 mm', desc: 'Suspendue Fox Factory Kashima Grip2', price: 600, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false}], incompat: [], dims: {"debattement": [140, 150]}, image: 'assets/fourche/fourche_vtt_fox_fac_36_150.png' },
+    { id: 'fourche_vtt_rs_lyr_ult_150', name: 'Rockshox Lytrik Ultimate 150 mm', desc: 'Suspendue Rockshox Lyrik Ultimate', price: 350, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false}], incompat: [], dims: {"debattement": [140, 150]}, image: 'assets/fourche/fourche_vtt_rs_lyr_ult_150.png' },
+    { id: 'fourche_vtt_rs_lyr_sel_150', name: 'Rockshox Lytrik Select 150 mm', desc: 'Suspendue Rockshox Lyrik Select', price: 0, weight: 0, lockedFor: ['vtt_enduro'], compat: [{mid:'vtt_enduro',rec:false}], incompat: [], dims: {"debattement": [140, 150]}, image: 'assets/fourche/fourche_vtt_rs_lyr_sel_150.png' },
+  ],
+  roues: [
+    { id: 'roue_gr_ob_35', name: 'Obvious GR35-S', desc: 'Carbone hyper polyvalente, moyeu DT350, rayons profilés', price: 765, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [], image: 'assets/roues/roue_gr_ob_35.png' },
+    { id: 'roue_gr_fu_soa', name: 'Fulcrum Soniq ALX', desc: 'Aluminium, la meilleure solution all-road et gravel aluminium', price: 0, weight: 0, lockedFor: ['gravel_bikepacking','gravel_racing'], compat: [{mid:'gravel_bikepacking',rec:false},{mid:'gravel_racing',rec:false}], incompat: [], image: 'assets/roues/roue_gr_fu_soa.png' },
+    { id: 'roue_gr_dt_g16', name: 'DT Swiss GR1600 Spline', desc: 'Roue aluminium, largeur interne 24 mm pour pneus jusqu\'à 52 mm', price: 75, weight: 0, lockedFor: [], compat: [{mid:'gravel_bikepacking',rec:true},{mid:'gravel_racing',rec:false}], incompat: [], image: 'assets/roues/roue_gr_dt_g16.png' },
+    { id: 'roue_gr_fu_sgr', name: 'Fulcrum Sharq GR', desc: 'Roue compétition gravel, largeur interne 30 mm', price: 1400, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [], image: 'assets/roues/roue_gr_fu_sgr.png' },
+    { id: 'roue_rd_dt_p16', name: 'DT Swiss PR1600 Spline', desc: 'Roues aluminium, équilibre entre légèreté et confort', price: 0, weight: 0, lockedFor: ['route'], compat: [{mid:'route',rec:false}], incompat: [], image: 'assets/roues/roue_rd_dt_p16.png' },
+    { id: 'roue_rd_ob_35', name: 'Obvious RD-35-R', desc: 'Carbone compétition hyper polyvalente, moyeu DT350, rayons profilés, marquage laser', price: 750, weight: 0, lockedFor: [], compat: [{mid:'route',rec:true}], incompat: [], image: 'assets/roues/roue_rd_ob_35.png' },
+    { id: 'roue_rd_fu_w57', name: 'Fulcrum Wind 57', desc: 'Carbone profil haut', price: 810, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: [], image: 'assets/roues/roue_rd_fu_w57.png' },
+    { id: 'roue_vtt_fu_rm5', name: 'Fulcrum Red Metal 5', desc: 'Roue Enduro aluminium, à toute épreuve', price: 0, weight: 0, lockedFor: ['vtt_enduro'], compat: [{mid:'vtt_enduro',rec:false}], incompat: [], image: 'assets/roues/roue_vtt_fu_rm5.png' },
+    { id: 'roue_vtt_dt_e17', name: 'DT Swiss EX1700 Classic', desc: 'Aluminium et savoir-faire : durabilité et agilité', price: 330, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false}], incompat: [], image: 'assets/roues/roue_vtt_dt_e17.png' },
+    { id: 'roue_vtt_ob_30', name: 'Obvious MT30-S', desc: 'Roue Enduro Carbone, ultralégère et indestructible', price: 920, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false}], incompat: [], image: 'assets/roues/roue_vtt_ob_30.png' },
+    { id: 'roue_vtt_hp_f30', name: 'Hope Fortus 30W', desc: 'La roue aluminium de référence en enduro', price: 255, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false}], incompat: [], image: 'assets/roues/roue_vtt_hp_f30.png' },
+  ],
+  pneus: [
+    { id: 'pneu_gr_sc_r', name: 'Schwalbe G-One R Pro transparent', desc: 'Pneu gravel polyvalent', price: 0, weight: 0, lockedFor: ['gravel_bikepacking','gravel_racing'], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [], dims: {"section": [40, 45, 50]}, image: 'assets/pneus/pneu_gr_sc_r.png' },
+    { id: 'pneu_gr_sc_rx', name: 'Schwalbe G-One RX Pro noir', desc: 'Le meilleur grip pour le gravel', price: 0, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [], dims: {"section": [40, 45, 50]}, image: 'assets/pneus/pneu_gr_sc_rx.png' },
+    { id: 'pneu_gr_sc_sp', name: 'Schwalbe G-One Speed noir', desc: 'Pneu gravel pour les terrains les plus roulants', price: -5, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [], dims: {"section": [35]}, image: 'assets/pneus/pneu_gr_sc_sp.png' },
+    { id: 'pneu_rd_co_gp', name: 'Continental GP5000 S TR transparent', desc: 'Le meilleur pneu route du moment', price: 0, weight: 0, lockedFor: ['route'], compat: [{mid:'route',rec:false}], incompat: [], dims: {"section": [28, 30, 32]}, image: 'assets/pneus/pneu_rd_co_gp.png' },
+    { id: 'pneu_vtt_sc_gra', name: 'Schwalbe Magic Mary Gravity', desc: 'Le pneu le plus agressif pour les enduristes', price: 0, weight: 0, lockedFor: ['vtt_enduro'], compat: [{mid:'vtt_enduro',rec:false}], incompat: [], image: 'assets/pneus/pneu_vtt_sc_gra.png' },
+  ],
+  transmission: [
+    { id: 'trans_gr_sh_821', name: 'SHIMANO GRX 820 1x12V', desc: '1x12v, à câble, haut de gamme Shimano', price: 275, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:true}], incompat: [], dims: {"manivelle": [160, 165, 170, 172.5, 175], "plateaux": ["40", "42"], "cassette": ["10x45", "10x51"]}, image: 'assets/transmission/trans_gr_sh_821.png' },
+    { id: 'trans_gr_sh_822', name: 'SHIMANO GRX 820 2x12V', desc: '2x12v, à câble, haut de gamme Shimano', price: 335, weight: 0, lockedFor: [], compat: [{mid:'gravel_bikepacking',rec:false}], incompat: [], dims: {"manivelle": [160, 165, 170, 172.5, 175], "plateaux": ["48x31"], "cassette": ["11x34", "11x36"]}, image: 'assets/transmission/trans_gr_sh_822.png' },
+    { id: 'trans_gr_sh_611', name: 'SHIMANO GRX 820/610 1x12V', desc: '1x12v, à câble, le 12 vitesses accessible', price: 0, weight: 0, lockedFor: ['gravel_bikepacking','gravel_racing'], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [], dims: {"manivelle": [165, 170, 172.5, 175], "plateaux": ["38", "40"], "cassette": ["10x45", "10x51"]}, image: 'assets/transmission/trans_gr_sh_611.png' },
+    { id: 'trans_gr_sh_cud', name: 'SHIMANO CUES U6040 DROP 1x11v', desc: 'Hyper polyvalent 11 vitesses', price: -155, weight: 0, lockedFor: [], compat: [{mid:'gravel_bikepacking',rec:false},{mid:'gravel_racing',rec:false}], incompat: [], dims: {"manivelle": [170, 172.5, 175], "plateaux": ["40", "42"], "cassette": ["11x50"]}, image: 'assets/transmission/trans_gr_sh_cud.png' },
+    { id: 'trans_gr_sh_cuf', name: 'SHIMANO CUES U6040 FLAT 1x11v', desc: 'Hyper polyvalent 11 vitesses pour cintre plat', price: -155, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: ['pilotage_rd_ala','pilotage_rd_suz_car','pilotage_rd_suz_alu','pilotage_gr_suz_car','pilotage_gr_suz_alu','pilotage_gr_ger_alu','pilotage_gr_drp_alu','pilotage_gr_gerz_alu'], dims: {"manivelle": [170, 172.5, 175], "plateaux": ["40", "42"], "cassette": ["11x50"]}, image: 'assets/transmission/trans_gr_sh_cuf.png' },
+    { id: 'trans_gr_sr_ri', name: 'SRAM RIVAL AXS XPLR 1x13v', desc: '1x13v sans fil, la solution robuste de SRAM', price: 420, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [], dims: {"manivelle": [160, 165, 170, 172.5, 175], "plateaux": ["38", "40", "42", "44", "46"], "cassette": ["10x46"]}, image: 'assets/transmission/trans_gr_sr_ri.png' },
+    { id: 'trans_gr_sr_fo', name: 'SRAM FORCE AXS XPLR 1x13v', desc: '1x13v sans fil, le bon compromis SRAM', price: 820, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:true},{mid:'gravel_bikepacking',rec:false}], incompat: [], dims: {"manivelle": [160, 165, 170, 172.5, 175], "plateaux": ["42", "44", "46", "48", "50"], "cassette": ["10x46"]}, image: 'assets/transmission/trans_gr_sr_fo.png' },
+    { id: 'trans_gr_sr_re', name: 'SRAM RED AXS XPLR 1x13v', desc: '1x13v sans fil, hyper performant', price: 2300, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [], dims: {"manivelle": [160, 165, 167.5, 170, 172.5, 175], "plateaux": ["40", "42", "44", "46", "50"], "cassette": ["10x46"]}, image: 'assets/transmission/trans_gr_sr_re.png' },
+    { id: 'trans_gr_ca_ek', name: 'CAMPAGNOLO EKAR 1x13v', desc: '1x13v à câble du constructeur italien', price: 770, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [], dims: {"manivelle": [165, 170, 172.5, 175], "plateaux": ["36", "38", "40", "42"], "cassette": ["10x48"]}, image: 'assets/transmission/trans_gr_ca_ek.png' },
+    { id: 'trans_gr_ca_re', name: 'CAMPAGNOLO RECORD X 1x13v', desc: '1x13v sans fil du constructeur italien', price: 1300, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [], dims: {"manivelle": [165, 170, 172.5], "plateaux": ["38", "40", "42", "44", "46", "48", "50", "52"], "cassette": ["10x48"]}, image: 'assets/transmission/trans_gr_ca_re.png' },
+    { id: 'trans_rd_sh_105', name: 'SHIMANO 105 Di2 2x12v', desc: '2x12v, accessibilité et performance', price: 0, weight: 0, lockedFor: ['route'], compat: [{mid:'route',rec:false}], incompat: [], dims: {"manivelle": [160, 165, 170, 172.5, 175], "plateaux": ["50x34", "52x36"], "cassette": ["11x34", "11x36"]}, image: 'assets/transmission/trans_rd_sh_105.png' },
+    { id: 'trans_rd_sh_ul', name: 'SHIMANO ULTEGRA R8100 Di2 2x12v', desc: '2x12v, le meilleur du Di2 Shimano', price: 550, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: [], dims: {"manivelle": [160, 165, 170, 172.5, 175], "plateaux": ["50x34", "52x36"], "cassette": ["11x30", "11x34"]}, image: 'assets/transmission/trans_rd_sh_ul.png' },
+    { id: 'trans_rd_sh_da', name: 'SHIMANO DURA ACE R9200 Di2 2x12v', desc: '2x12v, le choix des pros', price: 2065, weight: 0, lockedFor: [], compat: [{mid:'route',rec:true}], incompat: [], dims: {"manivelle": [165, 167.5, 170, 172.5, 175, 177.5], "plateaux": ["50x34", "52x36", "54x40"], "cassette": ["11x30", "11x34"]}, image: 'assets/transmission/trans_rd_sh_da.png' },
+    { id: 'trans_rd_sr_ri', name: 'SRAM RIVAL AXS 2x12v', desc: '2x12v, accessibilité et performance', price: -200, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: [], dims: {"manivelle": [160, 165, 170, 172.5, 175], "plateaux": ["46x33", "48x35"], "cassette": ["10x30", "10x36"]}, image: 'assets/transmission/trans_rd_sr_ri.png' },
+    { id: 'trans_rd_sr_fo', name: 'SRAM FORCE AXS 2x12v', desc: '2x12v, le meilleur AXS', price: 230, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: [], dims: {"manivelle": [160, 165, 170, 172.5, 175], "plateaux": ["46x33", "48x35", "50x37"], "cassette": ["10x30", "10x33"]}, image: 'assets/transmission/trans_rd_sr_fo.png' },
+    { id: 'trans_rd_sr_re', name: 'SRAM RED AXS 2x12v', desc: '2x12v, le choix des pros', price: 1700, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: [], dims: {"manivelle": [150, 155, 160, 165, 167.5, 170, 172.5, 175], "plateaux": ["46x33", "48x35", "50x37"], "cassette": ["10x30", "10x33"]}, image: 'assets/transmission/trans_rd_sr_re.png' },
+    { id: 'trans_rd_ca_re', name: 'CAMPAGNOLO RECORD ALL-ROAD 2x13v', desc: '2x13v, sans fil', price: 990, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: [], dims: {"manivelle": [165, 170, 172.5], "plateaux": ["45x29", "48x32", "50x34", "52x36", "53x39", "54x39", "55x39"], "cassette": ["10x33", "11x36"]}, image: 'assets/transmission/trans_rd_ca_re.png' },
+    { id: 'trans_rd_ca_sre', name: 'CAMPAGNOLO SUPER RECORD 2x13v', desc: '2x13v, boîtier céramique. Orfèvrerie italienne', price: 2590, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: [], dims: {"manivelle": [165, 170, 172.5, 175], "plateaux": ["45x29", "48x32", "50x34", "52x36", "53x39", "54x39", "55x39"], "cassette": ["10x29", "10x33", "11x32", "11x36"]}, image: 'assets/transmission/trans_rd_ca_sre.png' },
+    { id: 'trans_vtt_sh_m6', name: 'SHIMANO DEORE M6100', desc: 'Le choix accessible', price: 105, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], dims: {"manivelle": [165, 170, 175], "plateaux": ["30", "32"], "cassette": ["10x51"]}, image: 'assets/transmission/trans_vtt_sh_m6.png' },
+    { id: 'trans_vtt_sh_slx', name: 'SHIMANO SLX', desc: 'Performance et accessibilité', price: 225, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], dims: {"manivelle": [165, 170, 175], "plateaux": ["30", "32"], "cassette": ["10x51"]}, image: 'assets/transmission/trans_vtt_sh_slx.png' },
+    { id: 'trans_vtt_sh_xt', name: 'SHIMANO XT M8100', desc: 'Performance et polyvalence', price: 300, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], dims: {"manivelle": [165, 170, 172.5, 175], "plateaux": ["30", "32"], "cassette": ["10x51"]}, image: 'assets/transmission/trans_vtt_sh_xt.png' },
+    { id: 'trans_vtt_sh_xte', name: 'SHIMANO XT 8200 Di2', desc: 'Shimano XT, sans fil', price: 1210, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], dims: {"manivelle": [165, 170, 172.5, 175], "plateaux": ["30", "32"], "cassette": ["10x51"]}, image: 'assets/transmission/trans_vtt_sh_xte.png' },
+    { id: 'trans_vtt_sh_xtr', name: 'SHIMANO XTR M9100', desc: 'La solution compétition de Shimano', price: 1020, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], dims: {"manivelle": [165, 170, 175], "plateaux": ["32", "34"], "cassette": ["10x51"]}, image: 'assets/transmission/trans_vtt_sh_xtr.png' },
+    { id: 'trans_vtt_sh_xtre', name: 'SHIMANO XTR M9200 Di2', desc: 'Shimano XTR, sans fil', price: 1950, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], dims: {"manivelle": [165, 170, 172.5, 175], "plateaux": ["30", "32", "34"], "cassette": ["10x51"]}, image: 'assets/transmission/trans_vtt_sh_xtre.png' },
+    { id: 'trans_vtt_sr_e70', name: 'SRAM EAGLE 70', desc: 'Le choix accessible', price: 0, weight: 0, lockedFor: ['vtt_enduro'], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], dims: {"manivelle": [155, 160, 165, 170, 175], "plateaux": ["30", "32"], "cassette": ["10x52"]}, image: 'assets/transmission/trans_vtt_sr_e70.png' },
+    { id: 'trans_vtt_sr_gx', name: 'SRAM GX EAGLE', desc: 'Le VTT accessible en montage T-Type', price: 640, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], dims: {"manivelle": [155, 160, 165, 170, 175], "plateaux": ["28", "30", "32", "34"], "cassette": ["10x52"]}, image: 'assets/transmission/trans_vtt_sr_gx.png' },
+    { id: 'trans_vtt_sr_x0', name: 'SRAM XO EAGLE', desc: 'Performance et polyvalence en T-Type', price: 1110, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:true},{mid:'vtt_xc',rec:false}], incompat: [], dims: {"manivelle": [165, 170, 175], "plateaux": ["28", "30", "32", "34"], "cassette": ["10x52"]}, image: 'assets/transmission/trans_vtt_sr_x0.png' },
+    { id: 'trans_vtt_sr_xxs', name: 'SRAM XX SL EAGLE', desc: 'La solution compétition de SRAM', price: 1720, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], dims: {"manivelle": [165, 170, 175], "plateaux": ["34"], "cassette": ["10x52"]}, image: 'assets/transmission/trans_vtt_sr_xxs.png' },
+  ],
+  power: [
+    { id: 'pwr_all', name: 'Sans mesure de puissance', desc: '', price: 0, weight: 0, lockedFor: ['gravel_racing','gravel_bikepacking','vtt_enduro','route'], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false},{mid:'vtt_enduro',rec:false},{mid:'route',rec:false}], incompat: [], image: 'assets/no_option.png' },
+    { id: 'pwr_gr_sr_ri', name: 'SRAM Rival XPLR AXS', desc: 'Capteur dans l\'axe de pédalier (mono-jambe)', price: 180, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre','trans_vtt_sr_e70','trans_vtt_sr_gx','trans_vtt_sr_x0','trans_vtt_sr_xxs'], image: 'assets/power/pwr_gr_sr_ri.png' },
+    { id: 'pwr_gr_sr_fo', name: 'SRAM Force XPLR AXS', desc: 'Capteur dans l\'axe de pédalier (mono-jambe)', price: 205, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre','trans_vtt_sr_e70','trans_vtt_sr_gx','trans_vtt_sr_x0','trans_vtt_sr_xxs'], image: 'assets/power/pwr_gr_sr_fo.png' },
+    { id: 'pwr_gr_sr_re', name: 'SRAM Red XPLR AXS', desc: 'Capteur Quarq dans l\'étoile du pédalier', price: 500, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre','trans_vtt_sr_e70','trans_vtt_sr_gx','trans_vtt_sr_x0','trans_vtt_sr_xxs'], image: 'assets/power/pwr_gr_sr_re.png' },
+    { id: 'pwr_gr_ca_re', name: 'Campagnolo Record 1x13', desc: 'Capteur sur chaque manivelle', price: 550, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre','trans_vtt_sr_e70','trans_vtt_sr_gx','trans_vtt_sr_x0','trans_vtt_sr_xxs'], image: 'assets/power/pwr_gr_ca_re.png' },
+    { id: 'pwr_rd_sr_ri', name: 'SRAM Rival AXS 2x12', desc: 'Capteur dans l\'axe de pédalier (mono-jambe)', price: 200, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre','trans_vtt_sr_e70','trans_vtt_sr_gx','trans_vtt_sr_x0','trans_vtt_sr_xxs'], image: 'assets/power/pwr_rd_sr_ri.png' },
+    { id: 'pwr_rd_sr_fo', name: 'SRAM Force AXS 2x12', desc: 'Capteur Quarq dans l\'étoile du pédalier', price: 360, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre','trans_vtt_sr_e70','trans_vtt_sr_gx','trans_vtt_sr_x0','trans_vtt_sr_xxs'], image: 'assets/power/pwr_rd_sr_fo.png' },
+    { id: 'pwr_rd_sr_re', name: 'SRAM Red AXS 2x12', desc: 'Capteur Quarq dans l\'étoile du pédalier', price: 540, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_ca_re','trans_rd_ca_sre','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre','trans_vtt_sr_e70','trans_vtt_sr_gx','trans_vtt_sr_x0','trans_vtt_sr_xxs'], image: 'assets/power/pwr_rd_sr_re.png' },
+    { id: 'pwr_rd_sh_ul', name: 'Shimano Ultegra R8100-P', desc: 'Capteur intégré dans les manivelles du pédalier', price: 540, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre','trans_vtt_sr_e70','trans_vtt_sr_gx','trans_vtt_sr_x0','trans_vtt_sr_xxs'], image: 'assets/power/pwr_rd_sh_ul.png' },
+    { id: 'pwr_rd_sh_da', name: 'Shimano Dura-Ace R9200-P', desc: 'Capteur intégré dans les manivelles du pédalier', price: 580, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre','trans_vtt_sr_e70','trans_vtt_sr_gx','trans_vtt_sr_x0','trans_vtt_sr_xxs'], image: 'assets/power/pwr_rd_sh_da.png' },
+    { id: 'pwr_rd_ca_re', name: 'Campagnolo Record 2x13', desc: 'Capteur sur chaque manivelle', price: 1050, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_sre','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre','trans_vtt_sr_e70','trans_vtt_sr_gx','trans_vtt_sr_x0','trans_vtt_sr_xxs'], image: 'assets/power/pwr_rd_ca_re.png' },
+    { id: 'pwr_rd_ca_sre', name: 'Campagnolo Super Record 2x13', desc: 'Capteur sur chaque manivelle', price: 1050, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre','trans_vtt_sr_e70','trans_vtt_sr_gx','trans_vtt_sr_x0','trans_vtt_sr_xxs'], image: 'assets/power/pwr_rd_ca_sre.png' },
+    { id: 'pwr_vtt_sr_x0', name: 'SRAM X0 Eagle AXS', desc: 'Capteur Quarq dans l\'étoile du pédalier', price: 190, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre','trans_vtt_sr_e70','trans_vtt_sr_gx','trans_vtt_sr_xxs'], image: 'assets/power/pwr_vtt_sr_x0.png' },
+    { id: 'pwr_vtt_sr_xxs', name: 'SRAM XX SL Eagle AXS', desc: 'Capteur Quarq dans l\'étoile du pédalier', price: 420, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre','trans_vtt_sh_m6','trans_vtt_sh_slx','trans_vtt_sh_xt','trans_vtt_sh_xte','trans_vtt_sh_xtr','trans_vtt_sh_xtre','trans_vtt_sr_e70','trans_vtt_sr_gx','trans_vtt_sr_x0'], image: 'assets/power/pwr_vtt_sr_xxs.png' },
+  ],
+  frein: [
+    { id: 'frein_all', name: 'Freins inclus avec la transmission', desc: '', price: 0, weight: 0, lockedFor: ['gravel_bikepacking','gravel_racing','route','vtt_enduro','vtt_xc'], compat: [{mid:'route',rec:false},{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false},{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], image: 'assets/no_option.png' },
+    { id: 'frein_vtt_hp_tr4', name: 'Freins Hope EVO TR4', desc: '4 pistons. Référence du frein trail', price: 410, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false}], incompat: ['trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_611','trans_gr_sh_cud','trans_gr_sh_cuf','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re','trans_rd_sh_105','trans_rd_sh_ul','trans_rd_sh_da','trans_rd_sr_ri','trans_rd_sr_fo','trans_rd_sr_re','trans_rd_ca_re','trans_rd_ca_sre'], image: 'assets/frein/frein_vtt_hp_tr4.png' },
+    { id: 'frein_vtt_sr_db8', name: 'Freins SRAM DB8', desc: '4 pistons, simple et robuste', price: 0, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], image: 'assets/frein/frein_vtt_sr_db8.png' },
+    { id: 'frein_vtt_sr_mvs', name: 'Freins SRAM Maven Silver', desc: 'Le frein des disciplines Gravity', price: 230, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false}], incompat: [], image: 'assets/frein/frein_vtt_sr_mvs.png' },
+    { id: 'frein_vtt_sr_mvu', name: 'Freins SRAM Maven Ultimate', desc: 'Le frein de descente haut de gamme', price: 280, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false}], incompat: [], image: 'assets/frein/frein_vtt_sr_mvu.png' },
+  ],
+  pilotage: [
+    { id: 'pilotage_rd_ala', name: 'Combo Deda Alanera DCR', desc: 'Ensemble combiné carbone', price: 395, weight: 0, lockedFor: [], compat: [{mid:'route',rec:true}], incompat: [], dims: {"cintre": [380, 400, 420, 440], "potence": [80, 90, 100, 110, 120, 130]}, image: 'assets/pilotage/pilotage_rd_ala.png' },
+    { id: 'pilotage_rd_suz_car', name: 'Cintre Deda SuperZero RS Carbon / Potence Deda SuperBox', desc: 'Cintre route carbone profilé', price: 160, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: [], dims: {"cintre": [400, 420, 440, 460], "potence": [60, 70, 80, 90, 100, 110, 120, 130, 140]}, image: 'assets/pilotage/pilotage_rd_suz_car.png' },
+    { id: 'pilotage_rd_suz_alu', name: 'Cintre Deda SuperZero RS Alu / Potence Deda SuperBox', desc: 'Cintre route aluminium profilé', price: 0, weight: 0, lockedFor: ['route'], compat: [{mid:'route',rec:false}], incompat: [], dims: {"cintre": [360, 380, 400, 420, 440], "potence": [60, 70, 80, 90, 100, 110, 120, 130, 140]}, image: 'assets/pilotage/pilotage_rd_suz_alu.png' },
+    { id: 'pilotage_gr_suz_car', name: 'Cintre Deda SuperZero Carbon / Potence Deda SuperBox', desc: 'Cintre gravel carbone, profilé, flare 8°', price: 150, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false}], incompat: [], dims: {"cintre": [420, 440, 460], "potence": [60, 70, 80, 90, 100, 110, 120, 130, 140]}, image: 'assets/pilotage/pilotage_gr_suz_car.png' },
+    { id: 'pilotage_gr_suz_alu', name: 'Cintre Deda SuperZero Alu / Potence Deda SuperBox', desc: 'Cintre gravel aluminium, profilé, flare 8°', price: 0, weight: 0, lockedFor: ['gravel_racing'], compat: [{mid:'gravel_racing',rec:true}], incompat: [], dims: {"cintre": [400, 420, 440, 460], "potence": [60, 70, 80, 90, 100, 110, 120, 130, 140]}, image: 'assets/pilotage/pilotage_gr_suz_alu.png' },
+    { id: 'pilotage_gr_gerz_alu', name: 'Cintre Deda Gera Alu / Potence Deda Superbox', desc: 'Cintre gravel aluminium, multiposition, flare 12°', price: -25, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false}], incompat: [], dims: {"cintre": [420, 440, 460], "potence": [60, 70, 80, 90, 100, 110, 120, 130, 140]}, image: 'assets/pilotage/pilotage_gr_gerz_alu.png' },
+    { id: 'pilotage_gr_ger_alu', name: 'Cintre Deda Gera Alu / Potence Deda Zero100', desc: 'Cintre gravel aluminium, multiposition, flare 12°', price: 95, weight: 0, lockedFor: [], compat: [{mid:'gravel_bikepacking',rec:true}], incompat: [], dims: {"cintre": [420, 440, 460], "potence": [80, 90, 100, 110, 120, 130, 140]}, image: 'assets/pilotage/pilotage_gr_ger_alu.png' },
+    { id: 'pilotage_gr_drp_alu', name: 'Cintre gravel Randonneur Ergotec', desc: 'Cintre gravel aluminium, flare 12°', price: 0, weight: 0, lockedFor: ['gravel_bikepacking'], compat: [{mid:'gravel_bikepacking',rec:false}], incompat: [], dims: {"cintre": [440, 460], "potence": [50, 60, 70, 80, 90, 100, 110]}, image: 'assets/pilotage/pilotage_gr_drp_alu.png' },
+    { id: 'pilotage_gr_flat_ext', name: 'Cintre gravel plat Deda Mud Peak', desc: 'Cintre plat pour plus de confort', price: -20, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: ['trans_gr_sh_611','trans_gr_sh_821','trans_gr_sh_822','trans_gr_sh_cud','trans_gr_sr_ri','trans_gr_sr_fo','trans_gr_sr_re','trans_gr_ca_ek','trans_gr_ca_re'], dims: {"cintre": [780], "potence": [50, 60, 70, 80, 90, 100, 110]}, image: 'assets/pilotage/pilotage_gr_flat_ext.png' },
+    { id: 'pilotage_vtt_end', name: 'Cintre et potence Truvativ Descendant', desc: 'Potence 50 mm, Ø35 mm / Cintre 780 mm, 25 mm rise', price: 0, weight: 0, lockedFor: ['vtt_enduro'], compat: [{mid:'vtt_enduro',rec:false}], incompat: [], dims: {"cintre": [760], "potence": [50]}, image: 'assets/pilotage/pilotage_vtt_end.png' },
+  ],
+  selle: [
+    { id: 'selle_rd_ant_r5', name: 'Fizik Antares R5', desc: 'Course route et VTT', price: 0, weight: 0, lockedFor: ['route'], compat: [{mid:'route',rec:false},{mid:'gravel_racing',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], dims: {"largeur_selle": [140, 150]}, image: 'assets/selle/selle_rd_ant_r5.png' },
+    { id: 'selle_rd_ant_r3', name: 'Fizik Antares R3', desc: 'Course route et VTT, rail titane', price: 60, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false},{mid:'gravel_racing',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], dims: {"largeur_selle": [140, 150]}, image: 'assets/selle/selle_rd_ant_r3.png' },
+    { id: 'selle_rd_ant_r1', name: 'Fizik Antares R1', desc: 'Course route et VTT, rail carbone', price: 90, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false},{mid:'gravel_racing',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], dims: {"largeur_selle": [140, 150]}, image: 'assets/selle/selle_rd_ant_r1.png' },
+    { id: 'selle_gr_ali_r5', name: 'Fizik Aliante R5', desc: 'Route et gravel', price: 0, weight: 0, lockedFor: ['gravel_racing'], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false},{mid:'route',rec:false}], incompat: [], dims: {"largeur_selle": [145, 155]}, image: 'assets/selle/selle_gr_ali_r5.png' },
+    { id: 'selle_gr_ali_r3', name: 'Fizik Aliante R3', desc: 'Route et gravel, rail titane', price: 60, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false},{mid:'route',rec:false}], incompat: [], dims: {"largeur_selle": [145, 155]}, image: 'assets/selle/selle_gr_ali_r3.png' },
+    { id: 'selle_rd_arg_r3', name: 'Fizik Vento Argo R3', desc: 'Course route et gravel, selle courte, rail titane', price: 60, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false},{mid:'gravel_racing',rec:false}], incompat: [], dims: {"largeur_selle": [140, 150]}, image: 'assets/selle/selle_rd_arg_r3.png' },
+    { id: 'selle_rd_arg_r1', name: 'Fizik Vento Argo R1 Light', desc: 'Course route et gravel, selle courte, rail carbone', price: 90, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false},{mid:'gravel_racing',rec:false}], incompat: [], dims: {"largeur_selle": [140, 150]}, image: 'assets/selle/selle_rd_arg_r1.png' },
+    { id: 'selle_rd_arg_r00', name: 'Fizik Vento Argo R00', desc: 'Course route et gravel, selle courte, rail et coque carbone', price: 175, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false},{mid:'gravel_racing',rec:false}], incompat: [], dims: {"largeur_selle": [140, 150]}, image: 'assets/selle/selle_rd_arg_r00.png' },
+    { id: 'selle_gr_arg_x5', name: 'Fizik Terra Argo X5', desc: 'Gravel, selle courte', price: 0, weight: 0, lockedFor: ['gravel_bikepacking'], compat: [{mid:'gravel_bikepacking',rec:false},{mid:'gravel_racing',rec:false}], incompat: [], dims: {"largeur_selle": [150, 160]}, image: 'assets/selle/selle_gr_arg_x5.png' },
+    { id: 'selle_gr_arg_x3', name: 'Fizik Terra Argo X3', desc: 'Gravel, selle courte, rail titane', price: 50, weight: 0, lockedFor: [], compat: [{mid:'gravel_bikepacking',rec:false},{mid:'gravel_racing',rec:false}], incompat: [], dims: {"largeur_selle": [150, 160]}, image: 'assets/selle/selle_gr_arg_x3.png' },
+    { id: 'selle_rd_ari_r3', name: 'Fizik Arione R3', desc: 'Course route, rail titane', price: 60, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], dims: {"largeur_selle": [135, 145]}, image: 'assets/selle/selle_rd_ari_r3.png' },
+    { id: 'selle_rd_ari_r00', name: 'Fizik Arione R1 Adaptive', desc: 'Course route, impression 3D et rail carbone', price: 175, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], dims: {"largeur_selle": [135, 145]}, image: 'assets/selle/selle_rd_ari_r00.png' },
+    { id: 'selle_vtt_alpt_x5', name: 'Fizik Alpaca Terra X5', desc: 'VTT, rail alliage léger, coupe anatomique', price: 0, weight: 0, lockedFor: ['vtt_enduro'], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], dims: {"largeur_selle": [145]}, image: 'assets/selle/selle_vtt_alpt_x5.png' },
+    { id: 'selle_br_b17_ho', name: 'Brooks B17 honey', desc: 'Cuir, touring', price: 55, weight: 0, lockedFor: [], compat: [{mid:'gravel_bikepacking',rec:false}], incompat: [], image: 'assets/selle/selle_br_b17_ho.png' },
+    { id: 'selle_ber_asp_bk', name: 'Berthoud Aravis ouverte noir', desc: 'Cuir, fabrication française, longue distance + couvre selle', price: 250, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false},{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [], image: 'assets/selle/selle_ber_asp_bk.png' },
+    { id: 'selle_bek_lup', name: 'Selle Berk Lupina Short noir', desc: '99 gr, full carbone, revêtement cuir synthétique', price: 240, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], dims: {"largeur_selle": [132, 144, 150]}, image: 'assets/selle/selle_bek_lup.png' },
+  ],
+  tige: [
+    { id: 'tige_rd_ob_car', name: 'Tige de selle Obvious carbone CS25', desc: 'Diamètre 27,2 mm, recul 25 mm. Compatible rail rond ou oval', price: 0, weight: 0, lockedFor: ['gravel_bikepacking','gravel_racing','route'], compat: [{mid:'route',rec:true},{mid:'gravel_racing',rec:true},{mid:'gravel_bikepacking',rec:false}], incompat: [], image: 'assets/tige/tige_rd_ob_car.png' },
+    { id: 'tige_rd_de_z1',  name: 'Tige de selle Deda Zero1 aluminium', desc: 'Diamètre 27,2 mm, recul 20 mm. Compatible rail rond', price: -40, weight: 75, lockedFor: [], compat: [{mid:'route',rec:false},{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: ['pilotage_rd_ala','pilotage_rd_suz_car','pilotage_gr_suz_car','pilotage_vtt_end'], image: 'assets/tige/tige_rd_de_z1.png' },
+    { id: 'tige_rd_ob_ti', name: 'Tige de selle Obvious titane TS25', desc: 'Diamètre 27,2 mm, recul 25 mm. Compatible rail rond ou oval', price: 90, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false},{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:true}], incompat: [], image: 'assets/tige/tige_rd_ob_ti.png' },
+    { id: 'tige_vtt_ob_ti', name: 'Tige de selle Obvious titane TS00', desc: 'Diamètre 27,2 mm, sans recul. Compatible rail rond ou oval', price: -120, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], image: 'assets/tige/tige_vtt_ob_ti.png' },
+    { id: 'tige_vtt_ou_tel', name: 'Tige de selle One-Up Dropper V3', desc: 'Tige de selle téléscopique', price: 0, weight: 0, lockedFor: ['vtt_enduro'], compat: [{mid:'vtt_enduro',rec:true},{mid:'vtt_xc',rec:true}], incompat: [], image: 'assets/tige/tige_vtt_ou_tel.png' },
+  ],
+  pedales: [
+    { id: 'ped_no', name: 'Sans pédales', desc: '', price: 0, weight: 0, lockedFor: ['gravel_racing','gravel_bikepacking','vtt_enduro','route'], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false},{mid:'vtt_enduro',rec:false},{mid:'route',rec:false}], incompat: [], image: 'assets/no_option.png' },
+    { id: 'ped_rd_sh_da', name: 'Pédales Shimano Dura-Ace 9100 Carbone', desc: 'Technologie SPD-SL. Carbone et inox.', price: 190, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: [], image: '' },
+    { id: 'ped_rd_sh_ul', name: 'Pédales Shimano Ultegra R8000 Carbone', desc: 'Technologie SPD-SL. Carbone.', price: 120, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: [], image: '' },
+    { id: 'ped_rd_sh_105', name: 'Pédales Shimano 105 R7000', desc: 'Technologie SPD-SL', price: 95, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: [], image: '' },
+    { id: 'ped_rd_sh_r55', name: 'Pédales Shimano PD-R550', desc: 'Pédales automatiques Shimano', price: 75, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: [], image: '' },
+    { id: 'ped_rd_lk_kbti', name: 'Pédales Look Keo Blade Carbone Ti', desc: 'Ressort à lame carbone, axe titane et roulements céramique', price: 300, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: [], image: '' },
+    { id: 'ped_rd_lk_kbc', name: 'Pédales Look Keo Blade Carbone', desc: 'Ressort à lame carbone', price: 130, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: [], image: '' },
+    { id: 'ped_rd_lk_k2m', name: 'Pédales Look Keo 2 Max', desc: 'Pédales automatiques Look', price: 75, weight: 0, lockedFor: [], compat: [{mid:'route',rec:false}], incompat: [], image: '' },
+    { id: 'ped_vtt_sh_xtrp', name: 'Pédales Shimano XTR M9220', desc: 'Pédales XTR Enduro à plateforme. Technologie SPD', price: 130, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false}], incompat: [], image: '' },
+    { id: 'ped_vtt_sh_xtp', name: 'Pédales Shimano XT M8120', desc: 'Pédales XT Enduro à plateforme. Technologie SPD', price: 90, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], image: '' },
+    { id: 'ped_vtt_lk_xer', name: 'Pédales Look X-Track En Rage', desc: 'Compatible SPD', price: 70, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], image: '' },
+    { id: 'ped_vtt_on_com', name: 'Pédales plates One-Up Composite noir', desc: 'Pédales plates Enduro. Corps composite', price: 55, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false}], incompat: [], image: '' },
+    { id: 'ped_vtt_on_alu', name: 'Pédales plates One-Up Aluminium noir', desc: 'Pédales plates Enduro. Corps aluminium', price: 165, weight: 0, lockedFor: [], compat: [{mid:'vtt_enduro',rec:false}], incompat: [], image: '' },
+    { id: 'ped_gr_sh_1sd', name: 'Pédales Shimano PD-ES600', desc: 'Pédales SPD à 1 seul côté', price: 65, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false}], incompat: [], image: '' },
+    { id: 'ped_gr_sh_xtr', name: 'Pédales Shimano XTR M9200', desc: 'Pédales XTR XC. Technologie SPD', price: 130, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], image: '' },
+    { id: 'ped_gr_sh_xt', name: 'Pédales Shimano XT M8100', desc: 'Pédales XT XC. Technologie SPD', price: 90, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], image: '' },
+    { id: 'ped_gr_sh_M54', name: 'Pédales Shimano PD-M540', desc: 'Pédales XC. Compatible SPD', price: 59, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], image: '' },
+    { id: 'ped_gr_lk_xrct', name: 'Pédales Look X-Track Race Carbon Ti', desc: 'Compatible SPD, corps carbone, axe titane et roulements céramique', price: 210, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], image: '' },
+    { id: 'ped_gr_lk_xrc', name: 'Pédales Look X-Track Race Carbon', desc: 'Compatible SPD, corps carbone', price: 110, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], image: '' },
+    { id: 'ped_gr_lk_xtk', name: 'Pédales Look X-Track', desc: 'Compatible SPD', price: 50, weight: 0, lockedFor: [], compat: [{mid:'gravel_racing',rec:false},{mid:'gravel_bikepacking',rec:false},{mid:'vtt_xc',rec:false}], incompat: [], image: '' },
+  ],
+};
+
+const POST_META = [
+  { id: 'fourche',      name: 'Fourche',             icon: 'ti-git-fork' },
+  { id: 'roues',        name: 'Roues',               icon: 'ti-circle' },
+  { id: 'pneus',        name: 'Pneus',               icon: 'ti-circle-dotted' },
+  { id: 'transmission', name: 'Transmission',        icon: 'ti-settings' },
+  { id: 'power',        name: 'Mesure de puissance', icon: 'ti-activity' },
+  { id: 'frein',        name: 'Freins',              icon: 'ti-hand-stop' },
+  { id: 'pilotage',     name: 'Poste de pilotage',   icon: 'ti-adjustments-horizontal' },
+  { id: 'selle',        name: 'Selle',               icon: 'ti-armchair' },
+  { id: 'tige',         name: 'Tige de selle',       icon: 'ti-arrows-vertical' },
+  { id: 'pedales',      name: 'Pédales',             icon: 'ti-rotate-clockwise' },
+];
+
+const PRESETS = {
+  'gravel_racing': {
+    'Ti2':       {fourche:'fourche_gr_car_00',roues:'roue_gr_fu_soa',pneus:'pneu_gr_sc_r',transmission:'trans_gr_sh_611',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_gr_suz_alu',selle:'selle_rd_ant_r5',tige:'tige_rd_ob_car',pedales:'ped_no'},
+    'Ti1':       {fourche:'fourche_gr_car_00',roues:'roue_gr_ob_35',pneus:'pneu_gr_sc_r',transmission:'trans_gr_sr_fo',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_gr_suz_alu',selle:'selle_rd_ant_r3',tige:'tige_rd_ob_car',pedales:'ped_no'},
+    'Signature': {fourche:'fourche_gr_car_00',roues:'roue_gr_ob_35',pneus:'pneu_gr_sc_r',transmission:'trans_gr_sr_re',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_gr_suz_car',selle:'selle_rd_arg_r00',tige:'tige_rd_ob_car',pedales:'ped_no'},
+  },
+  'gravel_bikepacking': {
+    'Ti2':       {fourche:'fourche_gr_car_ins',roues:'roue_gr_fu_soa',pneus:'pneu_gr_sc_r',transmission:'trans_gr_sh_cud',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_gr_drp_alu',selle:'selle_gr_arg_x5',tige:'tige_rd_ob_car',pedales:'ped_no'},
+    'Ti1':       {fourche:'fourche_gr_car_ins',roues:'roue_gr_dt_g16',pneus:'pneu_gr_sc_r',transmission:'trans_gr_sh_821',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_gr_ger_alu',selle:'selle_gr_arg_x3',tige:'tige_rd_ob_ti',pedales:'ped_no'},
+    'Signature': {fourche:'fourche_gr_car_ins',roues:'roue_gr_ob_35',pneus:'pneu_gr_sc_r',transmission:'trans_gr_ca_re',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_gr_ger_alu',selle:'selle_br_b17_ho',tige:'tige_rd_ob_ti',pedales:'ped_no'},
+  },
+  'route': {
+    'Ti2':       {fourche:'fourche_rd_car_00',roues:'roue_rd_dt_p16',pneus:'pneu_rd_co_gp',transmission:'trans_rd_sh_105',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_rd_suz_alu',selle:'selle_rd_ant_r5',tige:'tige_rd_ob_car',pedales:'ped_no'},
+    'Ti1':       {fourche:'fourche_rd_car_00',roues:'roue_rd_ob_35',pneus:'pneu_rd_co_gp',transmission:'trans_rd_sr_fo',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_rd_suz_alu',selle:'selle_rd_ant_r3',tige:'tige_rd_ob_car',pedales:'ped_no'},
+    'Signature': {fourche:'fourche_rd_car_00',roues:'roue_rd_fu_w57',pneus:'pneu_rd_co_gp',transmission:'trans_rd_sh_da',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_rd_ala',selle:'selle_rd_ari_r00',tige:'tige_rd_ob_car',pedales:'ped_no'},
+  },
+  'vtt_enduro': {
+    'Ti2':       {fourche:'fourche_vtt_rs_lyr_sel_150',roues:'roue_vtt_fu_rm5',pneus:'pneu_vtt_sc_gra',transmission:'trans_vtt_sh_slx',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_vtt_end',selle:'selle_vtt_alpt_x5',tige:'tige_vtt_ou_tel',pedales:'ped_no'},
+    'Ti1':       {fourche:'fourche_vtt_rs_lyr_ult_150',roues:'roue_vtt_hp_f30',pneus:'pneu_vtt_sc_gra',transmission:'trans_vtt_sh_xt',power:'pwr_all',frein:'frein_all',pilotage:'pilotage_vtt_end',selle:'selle_vtt_alpt_x5',tige:'tige_vtt_ou_tel',pedales:'ped_no'},
+    'Signature': {fourche:'fourche_vtt_fox_fac_36_150',roues:'roue_vtt_ob_30',pneus:'pneu_vtt_sc_gra',transmission:'trans_vtt_sr_x0',power:'pwr_all',frein:'frein_vtt_sr_mvs',pilotage:'pilotage_vtt_end',selle:'selle_vtt_alpt_x5',tige:'tige_vtt_ou_tel',pedales:'ped_no'},
+  },
+};
+
+const TAILLES_CADRE = {
+  "route": [
+    {
+      "taille": "XXS",
+      "stature_min": 155,
+      "stature_max": 164,
+      "ej_min": 73.9,
+      "ej_max": 78.4
+    },
+    {
+      "taille": "XS",
+      "stature_min": 163,
+      "stature_max": 171,
+      "ej_min": 77.3,
+      "ej_max": 81.8
+    },
+    {
+      "taille": "S",
+      "stature_min": 170,
+      "stature_max": 177,
+      "ej_min": 80.7,
+      "ej_max": 85.2
+    },
+    {
+      "taille": "M",
+      "stature_min": 176,
+      "stature_max": 182,
+      "ej_min": 84.1,
+      "ej_max": 88.6
+    },
+    {
+      "taille": "L",
+      "stature_min": 181,
+      "stature_max": 187,
+      "ej_min": 87.5,
+      "ej_max": 92.0
+    },
+    {
+      "taille": "XL",
+      "stature_min": 186,
+      "stature_max": 194,
+      "ej_min": 90.9,
+      "ej_max": 95.5
+    }
+  ],
+  "gravel_racing": [
+    {
+      "taille": "XS",
+      "stature_min": 160,
+      "stature_max": 168,
+      "ej_min": 76.3,
+      "ej_max": 80.9
+    },
+    {
+      "taille": "S",
+      "stature_min": 166,
+      "stature_max": 174,
+      "ej_min": 79.7,
+      "ej_max": 84.3
+    },
+    {
+      "taille": "M",
+      "stature_min": 172,
+      "stature_max": 180,
+      "ej_min": 83.1,
+      "ej_max": 87.7
+    },
+    {
+      "taille": "L",
+      "stature_min": 178,
+      "stature_max": 186,
+      "ej_min": 86.6,
+      "ej_max": 91.1
+    },
+    {
+      "taille": "XL",
+      "stature_min": 184,
+      "stature_max": 194,
+      "ej_min": 90.0,
+      "ej_max": 94.5
+    }
+  ],
+  "gravel_bikepacking": [
+    {
+      "taille": "XS",
+      "stature_min": 160,
+      "stature_max": 168,
+      "ej_min": 75.3,
+      "ej_max": 79.9
+    },
+    {
+      "taille": "S",
+      "stature_min": 166,
+      "stature_max": 174,
+      "ej_min": 78.8,
+      "ej_max": 83.3
+    },
+    {
+      "taille": "M",
+      "stature_min": 172,
+      "stature_max": 180,
+      "ej_min": 82.2,
+      "ej_max": 86.8
+    },
+    {
+      "taille": "L",
+      "stature_min": 178,
+      "stature_max": 186,
+      "ej_min": 85.6,
+      "ej_max": 90.2
+    },
+    {
+      "taille": "XL",
+      "stature_min": 184,
+      "stature_max": 194,
+      "ej_min": 89.0,
+      "ej_max": 93.6
+    }
+  ],
+  "vtt_enduro": [
+    {
+      "taille": "S",
+      "stature_min": 164,
+      "stature_max": 172,
+      "ej_min": 77.2,
+      "ej_max": 83.9
+    },
+    {
+      "taille": "M",
+      "stature_min": 170,
+      "stature_max": 178,
+      "ej_min": 83.2,
+      "ej_max": 89.0
+    },
+    {
+      "taille": "L",
+      "stature_min": 176,
+      "stature_max": 184,
+      "ej_min": 87.8,
+      "ej_max": 93.5
+    },
+    {
+      "taille": "XL",
+      "stature_min": 182,
+      "stature_max": 192,
+      "ej_min": 92.4,
+      "ej_max": 98.1
+    }
+  ]
+}
+
+const DEFAULTS_BY_TAILLE = {
+  "route": {
+    "XXS": {
+      "section": 28,
+      "cassette": "11x34",
+      "plateaux": "52x36",
+      "manivelle": 165,
+      "cintre": 380,
+      "potence": 80,
+      "largeur_selle": 145
+    },
+    "XS": {
+      "section": 28,
+      "cassette": "11x34",
+      "plateaux": "52x36",
+      "manivelle": 165,
+      "cintre": 400,
+      "potence": 90,
+      "largeur_selle": 145
+    },
+    "S": {
+      "section": 28,
+      "cassette": "11x34",
+      "plateaux": "52x36",
+      "manivelle": 170,
+      "cintre": 400,
+      "potence": 90,
+      "largeur_selle": 145
+    },
+    "M": {
+      "section": 28,
+      "cassette": "11x34",
+      "plateaux": "52x36",
+      "manivelle": 170,
+      "cintre": 420,
+      "potence": 100,
+      "largeur_selle": 145
+    },
+    "L": {
+      "section": 28,
+      "cassette": "11x34",
+      "plateaux": "52x36",
+      "manivelle": 172.5,
+      "cintre": 420,
+      "potence": 110,
+      "largeur_selle": 145
+    },
+    "XL": {
+      "section": 28,
+      "cassette": "11x34",
+      "plateaux": "52x36",
+      "manivelle": 175,
+      "cintre": 440,
+      "potence": 120,
+      "largeur_selle": 145
+    }
+  },
+  "gravel_racing": {
+    "XS": {
+      "section": 45,
+      "cassette": "10x45",
+      "plateaux": "40",
+      "manivelle": 165,
+      "cintre": 400,
+      "potence": 80,
+      "largeur_selle": 145
+    },
+    "S": {
+      "section": 45,
+      "cassette": "10x45",
+      "plateaux": "40",
+      "manivelle": 170,
+      "cintre": 420,
+      "potence": 90,
+      "largeur_selle": 145
+    },
+    "M": {
+      "section": 45,
+      "cassette": "10x45",
+      "plateaux": "40",
+      "manivelle": 170,
+      "cintre": 420,
+      "potence": 100,
+      "largeur_selle": 145
+    },
+    "L": {
+      "section": 45,
+      "cassette": "10x45",
+      "plateaux": "40",
+      "manivelle": 172.5,
+      "cintre": 440,
+      "potence": 110,
+      "largeur_selle": 145
+    },
+    "XL": {
+      "section": 45,
+      "cassette": "10x45",
+      "plateaux": "40",
+      "manivelle": 175,
+      "cintre": 460,
+      "potence": 120,
+      "largeur_selle": 145
+    }
+  },
+  "gravel_bikepacking": {
+    "XS": {
+      "section": 40,
+      "cassette": "10x51",
+      "plateaux": "40",
+      "manivelle": 165,
+      "cintre": 400,
+      "potence": 80,
+      "largeur_selle": 145
+    },
+    "S": {
+      "section": 40,
+      "cassette": "10x52",
+      "plateaux": "40",
+      "manivelle": 170,
+      "cintre": 420,
+      "potence": 90,
+      "largeur_selle": 145
+    },
+    "M": {
+      "section": 40,
+      "cassette": "10x53",
+      "plateaux": "40",
+      "manivelle": 170,
+      "cintre": 420,
+      "potence": 100,
+      "largeur_selle": 145
+    },
+    "L": {
+      "section": 40,
+      "cassette": "10x54",
+      "plateaux": "40",
+      "manivelle": 172.5,
+      "cintre": 440,
+      "potence": 110,
+      "largeur_selle": 145
+    },
+    "XL": {
+      "section": 40,
+      "cassette": "10x55",
+      "plateaux": "40",
+      "manivelle": 175,
+      "cintre": 460,
+      "potence": 120,
+      "largeur_selle": 145
+    }
+  },
+  "vtt_enduro": {
+    "S": {
+      "debattement": 150,
+      "section": "2.4\"",
+      "cassette": "10x52",
+      "plateaux": "32",
+      "manivelle": 165,
+      "largeur_selle": 145
+    },
+    "M": {
+      "debattement": 150,
+      "section": "2.4\"",
+      "cassette": "10x52",
+      "plateaux": "32",
+      "manivelle": 170,
+      "largeur_selle": 145
+    },
+    "L": {
+      "debattement": 150,
+      "section": "2.4\"",
+      "cassette": "10x52",
+      "plateaux": "32",
+      "manivelle": 170,
+      "largeur_selle": 145
+    },
+    "XL": {
+      "debattement": 150,
+      "section": "2.4\"",
+      "cassette": "10x52",
+      "plateaux": "32",
+      "manivelle": 172.5,
+      "largeur_selle": 145
+    }
+  }
+}
+
+// ══ ÉTAT ═══════════════════════════════════════════════════════════════════════
+let selModel = null;
+let selOpts  = {};
+let openPost = null;
+let savedConfigs = [];
+let selSize  = {};
+let currentSizeMode = null;
+let overlapTailles  = null;
+let currentTab = 'config';
+let _fpObserver = null;
+
+// ══ PERSISTANCE ════════════════════════════════════════════════════════════════
+function persistSaved() {
+  try { localStorage.setItem('velo_configs', JSON.stringify(savedConfigs)); } catch(e) {}
+}
+function loadSaved() {
+  try { savedConfigs = JSON.parse(localStorage.getItem('velo_configs') || '[]'); } catch(e) { savedConfigs = []; }
+}
+function updateSavedCount() {
+  document.getElementById('saved-count').textContent = savedConfigs.length;
+}
+
+// ══ NAVIGATION ═════════════════════════════════════════════════════════════════
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+
+  // Masquer toutes les vues
+  document.getElementById('view-config').classList.remove('active');
+  document.getElementById('view-size').classList.remove('active');
+  document.getElementById('view-saved').classList.remove('active');
+  document.getElementById('size-layout').classList.remove('visible');
+  document.getElementById('bottom-row').classList.remove('visible');
+
+  if (tab === 'config') {
+    document.getElementById('view-config').classList.add('active');
+    if (allDone()) showBottomRow();
+    showBtns('config');
+
+  } else if (tab === 'size') {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    document.getElementById('size-layout').classList.add('visible');
+    // Mirror du recap dans size-recap-col
+    renderSizeRecap();
+    showBtns('size-base');
+    if (currentSizeMode) buildDimsGrid();
+
+  } else if (tab === 'saved') {
+    document.getElementById('view-saved').classList.add('active');
+    renderSaved();
+  }
+}
+
+function showBottomRow() {
+  document.getElementById('bottom-row').classList.add('visible');
+}
+
+function showBtns(mode) {
+  document.getElementById('btns-config').style.display     = 'none';
+  document.getElementById('size-btns-base').style.display   = 'none';
+  document.getElementById('size-btns-action').style.display = 'none';
+  if (mode === 'config')      document.getElementById('btns-config').style.display = 'flex';
+  if (mode === 'size-base')   document.getElementById('size-btns-base').style.display = 'flex';
+  if (mode === 'size-action') document.getElementById('size-btns-action').style.display = 'flex';
+}
+
+function showSizeActionBtns() {
+  showBtns('size-action');
+}
+
+function allDone() {
+  return selModel && POST_META.every(p => !!selOpts[p.id]);
+}
+
+// ══ UTILITAIRES ════════════════════════════════════════════════════════════════
+function optionsFor(postId, modelId) {
+  return (ALL_OPTIONS[postId] || []).filter(o => {
+    if (!o.compat || o.compat.length === 0) return true;
+    return o.compat.some(c => c.mid === modelId);
+  });
+}
+
+function isLocked(opt, modelId) {
+  return opt.lockedFor && opt.lockedFor.includes(modelId);
+}
+
+function computeTotals(modelId, opts) {
+  const model = MODELS.find(m => m.id === modelId);
+  if (!model) return { price: 0, weight: 0 };
+  let price = model.basePrice, weight = model.baseWeight || 0;
+  POST_META.forEach(p => {
+    const opt = optionsFor(p.id, modelId).find(o => o.id === opts[p.id]);
+    if (opt && !isLocked(opt, modelId)) { price += opt.price; weight += opt.weight || 0; }
+  });
+  return { price, weight };
+}
+
+function buildConfigText(modelId, opts) {
+  const model = MODELS.find(m => m.id === modelId);
+  if (!model) return '';
+  let lines = [model.badge + ' · ' + model.name + ' titane', ''];
+  POST_META.forEach(p => {
+    const opt = optionsFor(p.id, modelId).find(o => o.id === opts[p.id]);
+    if (opt) lines.push(p.name + ' : ' + opt.name + (isLocked(opt, modelId) ? ' (inclus)' : ''));
+  });
+  const { price } = computeTotals(modelId, opts);
+  lines.push('', 'Prix total : ' + price.toLocaleString('fr-FR') + ' €');
+  return lines.join('\n');
+}
+
+function buildSizeText() {
+  const lines = [];
+  if (selSize.taille)        lines.push('Taille cadre : ' + selSize.taille);
+  if (selSize.manivelle)     lines.push('Manivelle : ' + selSize.manivelle + ' mm');
+  if (selSize.plateaux)      lines.push('Plateau(x) : ' + selSize.plateaux);
+  if (selSize.cassette)      lines.push('Cassette : ' + selSize.cassette);
+  if (selSize.cintre)        lines.push('Cintre : ' + selSize.cintre + ' mm');
+  if (selSize.potence)       lines.push('Potence : ' + selSize.potence + ' mm');
+  if (selSize.section)       lines.push('Section pneu : ' + selSize.section);
+  if (selSize.debattement)   lines.push('Débattement : ' + selSize.debattement + ' mm');
+  if (selSize.largeur_selle) lines.push('Largeur selle : ' + selSize.largeur_selle + ' mm');
+  return lines.length ? lines.join('\n') : '';
+}
+
+function syncSelSize() {
+  const keyMap = {
+    'dim-taille':'taille', 'dim-manivelle':'manivelle', 'dim-plateaux':'plateaux',
+    'dim-cassette':'cassette', 'dim-cintre':'cintre', 'dim-potence':'potence',
+    'dim-section':'section', 'dim-debattement':'debattement', 'dim-largeur-selle':'largeur_selle'
+  };
+  Object.entries(keyMap).forEach(([id, key]) => {
+    const el = document.getElementById(id);
+    if (el && el.tagName === 'SELECT' && el.value) selSize[key] = el.value;
+  });
+}
+
+// ══ RENDU MODÈLES ═══════════════════════════════════════════════════════════
+function renderModels() {
+  const models = window._singleModel ? MODELS.filter(m => m.id === window._singleModel) : MODELS;
+  const grid = document.getElementById('model-grid');
+  grid.className = 'model-grid' + (models.length === 1 ? ' single' : '');
+  grid.innerHTML = models.map(m => {
+    const sel = m.id === selModel;
+    return '<div class="model-card' + (sel ? ' selected' : '') + '" onclick="selectModel(\'' + m.id + '\')">' +
+      '<img class="mc-photo" src="' + (m.photo || '') + '" alt="' + m.name + '">' +
+      '<div class="mc-body">' +
+        '<div class="mc-badge">' + m.badge + '</div>' +
+        '<div class="mc-name">' + m.name + ' titane</div>' +
+        '<div class="mc-price">' + m.basePrice.toLocaleString('fr-FR') + ' €</div>' +
+      '</div></div>';
+  }).join('');
+}
+
+// ══ SÉLECTION MODÈLE ════════════════════════════════════════════════════════
+function selectModel(id) {
+  if (selModel === id) return;
+  selModel = id;
+  selOpts = {};
+  openPost = null;
+  window._activePreset = null;
+
+  // Appliquer préset Ti1
+  const preset = PRESETS[id] && PRESETS[id]['Ti1'];
+  if (preset) { window._activePreset = 'Ti1'; selOpts = { ...preset }; }
+
+  // Gérer conflits lockedFor
+  POST_META.forEach(p => {
+    const opts = optionsFor(p.id, id);
+    if (selOpts[p.id]) {
+      const cur = opts.find(o => o.id === selOpts[p.id]);
+      if (cur && isLocked(cur, id)) {
+        const locked = opts.find(o => isLocked(o, id));
+        if (locked) selOpts[p.id] = locked.id;
+      }
+    }
+  });
+
+  renderModels();
+  renderPresets();
+  renderPosts();
+  updateRecap();
+  document.getElementById('step2-frame').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'instant' });
+}
+
+// ══ PRÉSETS ═════════════════════════════════════════════════════════════════
+function renderPresets() {
+  if (!selModel || !PRESETS[selModel]) { document.getElementById('preset-bar').style.display = 'none'; return; }
+  const bar = document.getElementById('preset-bar');
+  bar.style.display = 'flex';
+  bar.innerHTML = Object.keys(PRESETS[selModel]).map(k =>
+    '<div class="preset-btn' + (window._activePreset === k ? ' active' : '') + '" onclick="applyPreset(\'' + k + '\')">' + k + '</div>'
+  ).join('');
+}
+
+function applyPreset(key) {
+  if (!selModel || !PRESETS[selModel] || !PRESETS[selModel][key]) return;
+  window._activePreset = key;
+  selOpts = { ...PRESETS[selModel][key] };
+  // Gérer lockedFor
+  POST_META.forEach(p => {
+    const opts = optionsFor(p.id, selModel);
+    if (selOpts[p.id]) {
+      const cur = opts.find(o => o.id === selOpts[p.id]);
+      if (cur && isLocked(cur, selModel)) {
+        const locked = opts.find(o => isLocked(o, selModel));
+        if (locked) selOpts[p.id] = locked.id;
+      }
+    }
+  });
+  renderPresets();
+  renderPosts();
+  updateRecap();
+}
+
+// ══ RENDU POSTES ═════════════════════════════════════════════════════════════
+let postViewMode = {}; // 'photos' ou 'list' par poste
+
+function renderPosts() {
+  if (!selModel) return;
+  const container = document.getElementById('posts-list');
+  container.innerHTML = POST_META.map(p => {
+    const opts = optionsFor(p.id, selModel);
+    if (!opts.length) return '';
+    const selOpt = opts.find(o => o.id === selOpts[p.id]);
+    const mode = postViewMode[p.id] || (opts.some(o => o.image) ? 'photos' : 'list');
+    const isOpen = openPost === p.id;
+
+    // Calculer prix différentiel
+    const curPrice = selOpt && !isLocked(selOpt, selModel) ? selOpt.price : 0;
+
+    const optHtml = mode === 'photos' ? renderPostPhotos(p, opts, curPrice) : renderPostList(p, opts, curPrice);
+
+    return '<div class="post-hdr" onclick="togglePost(\'' + p.id + '\')">' +
+      '<i class="ti ' + p.icon + ' ph-icon"></i>' +
+      '<div class="ph-name">' + p.name + '</div>' +
+      '<div class="ph-sel">' + (selOpt ? selOpt.name : '—') + '</div>' +
+      '<i class="ti ti-chevron-down ph-arr' + (isOpen ? ' open' : '') + '"></i></div>' +
+      '<div class="post-body' + (isOpen ? ' open' : '') + '">' +
+        '<div class="view-toggle">' +
+          '<div class="vt-btn' + (mode==='photos'?' active':'') + '" onclick="setMode(event,\''+p.id+'\',\'photos\')"><i class="ti ti-layout-grid"></i></div>' +
+          '<div class="vt-btn' + (mode==='list'?' active':'') + '" onclick="setMode(event,\''+p.id+'\',\'list\')"><i class="ti ti-list"></i></div>' +
+        '</div>' +
+        optHtml +
+      '</div>';
+  }).join('');
+}
+
+function setMode(e, postId, mode) {
+  e.stopPropagation();
+  postViewMode[postId] = mode;
+  renderPosts();
+}
+
+function renderPostPhotos(p, opts, curPrice) {
+  return '<div class="opt-photo-grid">' + opts.map(o => {
+    const locked = isLocked(o, selModel);
+    const incompat = o.incompat && o.incompat.some(id => selOpts[Object.keys(selOpts).find(k => selOpts[k] === id)]);
+    const sel = selOpts[p.id] === o.id;
+    const diff = locked ? (curPrice !== 0 ? (-curPrice).toLocaleString('fr-FR')+' €' : '') : (o.price === curPrice ? '±0 €' : (o.price > curPrice ? '+'+(o.price-curPrice).toLocaleString('fr-FR')+' €' : (o.price-curPrice).toLocaleString('fr-FR')+' €'));
+    const cls = 'opt-photo-card' + (sel?' sel':'') + (locked?' locked':'') + (incompat?' incompatible':'');
+    const priceClass = locked ? (curPrice!==0?'neg':'') : (o.price < curPrice?'neg':o.price > curPrice?'pos':'zero');
+    return '<div class="'+cls+'" onclick="selectOpt(\''+p.id+'\',\''+o.id+'\')">' +
+      '<img class="opc-img" src="'+o.image+'" alt="'+o.name+'" loading="lazy">' +
+      '<div class="opc-body">' +
+        '<div class="opc-name">'+o.name+'</div>' +
+        (diff ? '<div class="opc-price '+priceClass+'">'+diff+'</div>' : '') +
+      '</div></div>';
+  }).join('') + '</div>';
+}
+
+function renderPostList(p, opts, curPrice) {
+  return '<div class="opt-list">' + opts.map(o => {
+    const locked = isLocked(o, selModel);
+    const sel = selOpts[p.id] === o.id;
+    const diff = locked ? (curPrice !== 0 ? (-curPrice).toLocaleString('fr-FR')+' €' : 'inclus') : (o.price === curPrice ? '±0 €' : (o.price > curPrice ? '+'+(o.price-curPrice).toLocaleString('fr-FR')+' €' : (o.price-curPrice).toLocaleString('fr-FR')+' €'));
+    const cls = 'opt-list-item' + (sel?' sel':'') + (locked?' locked':'');
+    const priceClass = locked ? (curPrice!==0?'neg':'incl') : (o.price < curPrice?'neg':o.price > curPrice?'pos':'zero');
+    return '<div class="'+cls+'" onclick="selectOpt(\''+p.id+'\',\''+o.id+'\')">' +
+      '<div class="oli-name">'+o.name+(o.desc?'<br><span class="oli-desc">'+o.desc+'</span>':'')+'</div>' +
+      '<div class="oli-price '+priceClass+'">'+diff+'</div>' +
+    '</div>';
+  }).join('') + '</div>';
+}
+
+// ══ SÉLECTION OPTION ════════════════════════════════════════════════════════
+function selectOpt(postId, optId) {
+  const opt = optionsFor(postId, selModel).find(o => o.id === optId);
+  if (!opt || isLocked(opt, selModel)) return;
+
+  selOpts[postId] = optId;
+  window._activePreset = null;
+
+  // Gérer incompatibilités
+  if (opt.incompat) {
+    opt.incompat.forEach(incompId => {
+      POST_META.forEach(p => {
+        if (selOpts[p.id] === incompId) {
+          const fallback = optionsFor(p.id, selModel).find(o => isLocked(o, selModel));
+          if (fallback) selOpts[p.id] = fallback.id;
+        }
+      });
+    });
+  }
+
+  renderPresets();
+  renderPosts();
+  updateRecap();
+}
+
+function togglePost(id) {
+  openPost = openPost === id ? null : id;
+  renderPosts();
+}
+
+// ══ AUTO-SELECT LOCKED ═══════════════════════════════════════════════════════
+function autoSelectLocked(modelId) {
+  POST_META.forEach(p => {
+    if (!selOpts[p.id]) {
+      const locked = optionsFor(p.id, modelId).find(o => isLocked(o, modelId));
+      if (locked) selOpts[p.id] = locked.id;
+    }
+  });
+}
+
+// ══ RÉCAPITULATIF ════════════════════════════════════════════════════════════
+function updateRecap() {
+  const model = MODELS.find(m => m.id === selModel);
+  const done = allDone();
+
+  if (done) showBottomRow();
+  updateFloatingPrice();
+
+  // Activer boutons
+  ['btn-size','btn-save','btn-reset'].forEach(id => {
+    const b = document.getElementById(id);
+    if (b) { b.disabled = !done; b.style.opacity = done ? '1' : '.35'; b.style.cursor = done ? '' : 'not-allowed'; }
+  });
+
+  if (!done || !model) { document.getElementById('recap-box').innerHTML = ''; document.getElementById('size-recap-box').innerHTML = ''; return; }
+
+  const { price, weight } = computeTotals(selModel, selOpts);
+  const curPrices = {};
+  POST_META.forEach(p => {
+    const opt = optionsFor(p.id, selModel).find(o => o.id === selOpts[p.id]);
+    curPrices[p.id] = opt && !isLocked(opt, selModel) ? opt.price : 0;
+  });
+
+  const icons = { fourche:'ti-git-fork', roues:'ti-circle', pneus:'ti-circle-dotted', transmission:'ti-settings', power:'ti-activity', frein:'ti-hand-stop', pilotage:'ti-adjustments-horizontal', selle:'ti-armchair', tige:'ti-arrows-vertical', pedales:'ti-rotate-clockwise' };
+
+  const cards = POST_META.map(p => {
+    const opt = optionsFor(p.id, selModel).find(o => o.id === selOpts[p.id]);
+    if (!opt) return '';
+    const locked = isLocked(opt, selModel);
+    let priceStr = '', priceClass = '';
+    if (locked) {
+      const cp = curPrices[p.id]; // 0 car locked
+      const otherSel = POST_META.find(pp => pp.id !== p.id && selOpts[pp.id]);
+      // Calculer différentiel inverse : prix de l'opt sélectionné sur ce poste pour les autres postes
+      // En fait pour locked : si une option payante est sélectionnée, locked = base → différentiel négatif
+      priceStr = ''; priceClass = 'incl';
+    } else {
+      const cp = curPrices[p.id];
+      if (cp === 0) { priceStr = '±0 €'; priceClass = 'zero'; }
+      else if (cp > 0) { priceStr = '+'+cp.toLocaleString('fr-FR')+' €'; priceClass = 'pos'; }
+      else { priceStr = cp.toLocaleString('fr-FR')+' €'; priceClass = 'neg'; }
+    }
+    return '<div class="recap-card">' +
+      '<div class="recap-card-hdr"><i class="ti ' + (icons[p.id]||'ti-point') + '"></i>' + p.name + '</div>' +
+      '<div class="recap-card-name">' + opt.name + '</div>' +
+      (priceStr ? '<div class="recap-card-price ' + priceClass + '">' + priceStr + '</div>' : '') +
+    '</div>';
+  }).join('');
+
+  const totalHtml = '<div class="recap-total-block">' +
+    '<div class="recap-total-card"><div class="recap-total-label">Prix total</div><div class="recap-total-val price" id="recap-total-price">' + price.toLocaleString('fr-FR') + ' €</div></div>' +
+    '<div class="recap-total-card"><div class="recap-total-label">Poids estimé</div><div class="recap-total-val">' + (weight/1000).toFixed(2) + ' kg</div></div>' +
+    '</div>';
+
+  const recapHtml = '<div class="recap-cards">' + cards + '</div>' + totalHtml;
+  document.getElementById('recap-box').innerHTML = recapHtml;
+  document.getElementById('size-recap-box').innerHTML = recapHtml;
+
+  // Attacher observer sur prix total
+  initPriceObserver();
+}
+
+function renderSizeRecap() {
+  // Déjà fait dans updateRecap
+}
+
+// ══ PRIX FLOTTANT ═══════════════════════════════════════════════════════════
+function updateFloatingPrice() {
+  const fp = document.getElementById('floating-price');
+  if (!selModel) { fp.classList.remove('visible'); return; }
+  const { price } = computeTotals(selModel, selOpts);
+  document.getElementById('fp-price').textContent = price.toLocaleString('fr-FR') + ' €';
+  fp.classList.add('visible');
+  fp.classList.remove('hidden');
+  // Desktop : masquer si prix total visible
+  if (window.innerWidth >= 768) fp.classList.add('hidden');
+}
+
+function initPriceObserver() {
+  if (_fpObserver) { _fpObserver.disconnect(); _fpObserver = null; }
+  const target = document.getElementById('recap-total-price');
+  if (!target) return;
+  _fpObserver = new IntersectionObserver(entries => {
+    const fp = document.getElementById('floating-price');
+    if (!fp) return;
+    if (entries[0].isIntersecting) fp.classList.add('hidden');
+    else if (window.innerWidth < 768) fp.classList.remove('hidden');
+  }, { threshold: 0.1 });
+  _fpObserver.observe(target);
+}
+
+function scrollToRecap() {
+  const r = document.getElementById('recap-col') || document.getElementById('size-recap-col');
+  if (r) { const top = r.getBoundingClientRect().top + window.pageYOffset - 20; window.scrollTo({ top, behavior: 'smooth' }); }
+}
+
+// ══ FORMULAIRE SAUVEGARDE ════════════════════════════════════════════════════
+function toggleSaveForm() {
+  const f = document.getElementById('save-form');
+  f.classList.toggle('open');
+  if (f.classList.contains('open')) {
+    const model = MODELS.find(m => m.id === selModel);
+    if (model) document.getElementById('save-name-input').value = model.name + ' — ma configuration';
+    document.getElementById('save-toast').style.display = 'none';
+    setTimeout(() => document.getElementById('save-name-input').focus(), 50);
+  }
+}
+
+function saveConfig() {
+  syncSelSize();
+  const name = document.getElementById('save-name-input').value.trim();
+  if (!name) return;
+  const model = MODELS.find(m => m.id === selModel);
+  if (!model) return;
+  const { price, weight } = computeTotals(selModel, selOpts);
+  const details = POST_META.map(p => {
+    const opt = optionsFor(p.id, selModel).find(o => o.id === selOpts[p.id]);
+    return { post: p.name, option: opt ? opt.name : '—', locked: opt ? isLocked(opt, selModel) : false };
+  });
+  const entry = { id: Date.now(), name, modelName: model.name, modelBadge: model.badge, date: new Date().toLocaleDateString('fr-FR'), price, weight, details, selModel, selOpts: {...selOpts}, selSize: {...selSize} };
+  savedConfigs.unshift(entry);
+  persistSaved();
+  updateSavedCount();
+  document.getElementById('save-toast').style.display = 'block';
+  setTimeout(() => { document.getElementById('save-form').classList.remove('open'); document.getElementById('save-toast').style.display = 'none'; }, 1800);
+}
+
+// ══ RESET ════════════════════════════════════════════════════════════════════
+function resetConfig() {
+  selOpts = {}; openPost = null;
+  document.getElementById('save-form').classList.remove('open');
+  if (selModel && PRESETS[selModel] && PRESETS[selModel]['Ti1']) {
+    window._activePreset = 'Ti1';
+    selOpts = { ...PRESETS[selModel]['Ti1'] };
+  }
+  renderModels(); renderPresets(); renderPosts(); updateRecap();
+  document.getElementById('step2-frame').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ══ MES CONFIGURATIONS ═══════════════════════════════════════════════════════
+function renderSaved() {
+  const el = document.getElementById('saved-list');
+  if (!savedConfigs.length) { el.innerHTML = '<p style="color:var(--text2);font-size:13px;">Aucune configuration sauvegardée.</p>'; return; }
+  el.innerHTML = savedConfigs.map(c => {
+    const sizeText = c.selSize ? Object.entries(c.selSize).filter(([,v])=>v).map(([k,v]) => {
+      const labels = {taille:'Taille',manivelle:'Manivelle',plateaux:'Plateau(x)',cassette:'Cassette',cintre:'Cintre',potence:'Potence',section:'Section',debattement:'Débattement',largeur_selle:'Largeur selle'};
+      const units = {manivelle:' mm',cintre:' mm',potence:' mm',debattement:' mm',largeur_selle:' mm'};
+      return (labels[k]||k) + ' : ' + v + (units[k]||'');
+    }).join(' · ') : '';
+    return '<div class="sc-card">' +
+      '<div class="sc-head">' +
+        '<div>' +
+          '<div class="sc-name">' + c.name + '</div>' +
+          '<div class="sc-meta">' + c.modelBadge + ' · ' + c.modelName + ' titane · ' + c.date + '</div>' +
+        '</div>' +
+        '<div class="sc-price">' + c.price.toLocaleString('fr-FR') + ' €</div>' +
+      '</div>' +
+      '<div class="sc-detail">' + (c.details || []).filter(d=>!d.locked).map(d=>d.post+' : '+d.option).join(' · ') + '</div>' +
+      (sizeText ? '<div class="sc-size">' + sizeText + '</div>' : '') +
+      '<button class="sc-btn blue" onclick="restoreConfig(' + c.id + ')"><i class="ti ti-edit"></i> Reprendre</button>' +
+      '<button class="sc-btn" onclick="deleteConfig(' + c.id + ')"><i class="ti ti-trash"></i> Supprimer</button>' +
+    '</div>';
+  }).join('');
+}
+
+function restoreConfig(id) {
+  const cfg = savedConfigs.find(c => c.id === id);
+  if (!cfg) return;
+  selModel = cfg.selModel; selOpts = {...cfg.selOpts}; selSize = {...(cfg.selSize||{})};
+  window._singleModel = cfg.selModel; window._activePreset = null;
+  switchTab('config');
+  renderModels(); renderPresets(); renderPosts(); updateRecap();
+  document.getElementById('step2-frame').style.display = 'block';
+  ['btn-size','btn-save','btn-reset'].forEach(id => {
+    const b = document.getElementById(id);
+    if (b) { b.disabled = false; b.style.opacity = '1'; b.style.cursor = ''; }
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function deleteConfig(id) {
+  if (!confirm('Supprimer cette configuration ?')) return;
+  savedConfigs = savedConfigs.filter(c => c.id !== id);
+  persistSaved(); updateSavedCount(); renderSaved();
+}
+
+// ══ MODAL DEVIS ═══════════════════════════════════════════════════════════════
+function openOrderModal() {
+  syncSelSize();
+  document.getElementById('order-config').value = buildConfigText(selModel, selOpts);
+  const sizeText = buildSizeText();
+  const sf = document.getElementById('order-size-field');
+  if (sizeText) { document.getElementById('order-size').value = sizeText; sf.style.display = 'block'; }
+  else sf.style.display = 'none';
+  document.getElementById('order-modal').classList.add('open');
+}
+function closeOrderModal() { document.getElementById('order-modal').classList.remove('open'); }
+
+async function sendOrder() {
+  const name  = document.getElementById('order-name').value.trim();
+  const email = document.getElementById('order-email').value.trim();
+  const phone = document.getElementById('order-phone').value.trim();
+  const msg   = document.getElementById('order-msg').value.trim();
+  const config = document.getElementById('order-config').value;
+  if (!name) { alert('Merci de renseigner votre nom et prénom.'); return; }
+  if (!email && !phone) { alert('Merci de renseigner au moins votre email ou votre téléphone pour que nous puissions vous recontacter.'); return; }
+  const btn = document.querySelector('.btn-send');
+  btn.textContent = 'Envoi en cours...'; btn.disabled = true;
+  try {
+    const res = await fetch('https://formspree.io/f/mqeoqewy', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ nom: name, email, telephone: phone||'—', configuration: config, dimensions: buildSizeText()||'—', message: msg||'—', _replyto: email, _subject: 'Demande de devis OBVIOUS-ON-DEMAND — ' + name })
+    });
+    if (res.ok) {
+      closeOrderModal();
+      ['order-name','order-email','order-phone','order-msg'].forEach(id => { document.getElementById(id).value = ''; });
+      alert('✅ Votre demande de devis a bien été envoyée !\n\nNous vous recontacterons sous 48h.');
+    } else alert('Une erreur s\'est produite. Merci de réessayer.');
+  } catch(e) { alert('Impossible d\'envoyer. Vérifiez votre connexion.'); }
+  finally { btn.textContent = 'Envoyer'; btn.disabled = false; }
+}
+
+// ══ CONTACT / RAPPEL ════════════════════════════════════════════════════════
+async function _sendCallback(phoneId, emailId, toastId, errorId) {
+  const phone = document.getElementById(phoneId).value.trim();
+  const email = document.getElementById(emailId).value.trim();
+  const toast = document.getElementById(toastId);
+  const error = document.getElementById(errorId);
+  toast.style.display = 'none'; error.style.display = 'none'; error.textContent = '';
+  if (!phone && !email) { error.textContent = 'Merci de renseigner au moins un contact.'; error.style.display = 'block'; return; }
+  const model = MODELS.find(m => m.id === selModel);
+  try {
+    const res = await fetch('https://formspree.io/f/mqeoqewy', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ telephone: phone, email, modele: model ? model.name : '', _subject: 'Demande de rappel — Obvious Configurateur' })
+    });
+    if (res.ok) { toast.style.display = 'block'; document.getElementById(phoneId).value = ''; document.getElementById(emailId).value = ''; }
+    else { error.textContent = 'Erreur, réessayez.'; error.style.display = 'block'; }
+  } catch(e) { error.textContent = 'Erreur réseau.'; error.style.display = 'block'; }
+}
+function sendCallback()      { _sendCallback('cf-phone',  'cf-email',  'cf-toast',  'cf-error'); }
+function sendCallbackSize()  { _sendCallback('cf-phone-s','cf-email-s','cf-toast-s','cf-error-s'); }
+function sendCallbackDrawer(){ _sendCallback('cf-phone-d','cf-email-d','cf-toast-d','cf-error-d'); }
+
+// ══ DRAWER MOBILE ════════════════════════════════════════════════════════════
+function openDrawer()  { document.getElementById('contact-drawer').classList.add('open'); document.getElementById('drawer-overlay').classList.add('open'); document.body.style.overflow = 'hidden'; }
+function closeDrawer() { document.getElementById('contact-drawer').classList.remove('open'); document.getElementById('drawer-overlay').classList.remove('open'); document.body.style.overflow = ''; }
+
+// ══ TOOLTIPS ══════════════════════════════════════════════════════════════════
+function toggleTooltip(id) {
+  const t = document.getElementById(id);
+  if (t) t.classList.toggle('open');
+}
+
+// ══ PAGE TAILLE ══════════════════════════════════════════════════════════════
+function toggleSizeMode(mode) {
+  currentSizeMode = mode;
+  document.getElementById('choice-guide').classList.toggle('active', mode === 'guide');
+  document.getElementById('choice-manual').classList.toggle('active', mode === 'manual');
+  document.getElementById('panel-guide').classList.toggle('open', mode === 'guide');
+  document.getElementById('panel-manual').classList.toggle('open', mode === 'manual');
+  if (mode === 'manual') buildDimsGrid();
+  setTimeout(() => {
+    const p = document.getElementById(mode === 'guide' ? 'panel-guide' : 'panel-manual');
+    if (p) { const top = p.getBoundingClientRect().top + window.pageYOffset - (window.innerHeight / 2); window.scrollTo({ top, behavior: 'smooth' }); }
+  }, 50);
+}
+
+function calcSize() {
+  const stature = parseInt(document.getElementById('guide-stature').value);
+  const ejRaw   = parseFloat(document.getElementById('guide-ej').value) || null;
+  const ej      = ejRaw ? ejRaw : null; // en cm
+  const acroRaw = parseFloat(document.getElementById('guide-acro').value) || null;
+  const acro    = acroRaw ? Math.round(acroRaw * 10) : null; // cm → mm
+
+  const result  = document.getElementById('guide-result');
+  const main    = document.getElementById('guide-result-main');
+  const sub     = document.getElementById('guide-result-sub');
+  const overlap = document.getElementById('guide-overlap');
+
+  if (!selModel) { main.textContent = 'Veuillez d\'abord choisir un modèle.'; result.classList.add('show'); overlap.style.display='none'; return; }
+  if (!stature || stature < 140 || stature > 220) { main.textContent = 'Veuillez saisir une taille valide (140–220 cm).'; result.classList.add('show'); overlap.style.display='none'; return; }
+
+  const tailles = TAILLES_CADRE[selModel] || [];
+  let matches;
+  if (ej) {
+    matches = tailles.filter(t => ej >= t.ej_min && ej <= t.ej_max);
+    if (!matches.length) {
+      const cl = tailles.reduce((a,b) => Math.min(Math.abs(ej-a.ej_min),Math.abs(ej-a.ej_max)) < Math.min(Math.abs(ej-b.ej_min),Math.abs(ej-b.ej_max)) ? a : b);
+      matches = [cl];
+    }
+  } else {
+    matches = tailles.filter(t => stature >= t.stature_min && stature <= t.stature_max);
+  }
+
+  result.classList.add('show'); overlap.style.display='none';
+  document.getElementById('btn-sport').classList.remove('sel');
+  document.getElementById('btn-confort').classList.remove('sel');
+  overlapTailles = null;
+
+  if (!matches.length) { main.textContent = 'Aucune taille trouvée.'; sub.textContent = 'Contactez-nous.'; return; }
+
+  if (matches.length === 1) {
+    const t = matches[0];
+    showSizeActionBtns();
+    selSize.taille = t.taille;
+    const defs = DEFAULTS_BY_TAILLE[selModel] ? DEFAULTS_BY_TAILLE[selModel][t.taille] : {};
+    if (defs) Object.assign(selSize, Object.fromEntries(Object.entries(defs).map(([k,v])=>[k,String(v)])));
+    if (acro) calcCintreFromAcro(acro);
+    main.innerHTML = 'Taille recommandée : <span style="color:var(--yellow)">' + t.taille + '</span>';
+    let info = 'Stature ' + t.stature_min + '–' + t.stature_max + ' cm';
+    if (ej) info += ' · Entrejambe ' + t.ej_min + '–' + t.ej_max + ' cm';
+    if (acro && selSize.cintre) info += ' · Cintre recommandé : <span style="color:var(--yellow)">' + selSize.cintre + ' mm</span>';
+    sub.innerHTML = info;
+    return;
+  }
+
+  overlapTailles = matches;
+  main.innerHTML = 'Votre stature correspond à deux tailles : <span style="color:var(--yellow)">' + matches.map(t=>t.taille).join(' ou ') + '</span>';
+  sub.innerHTML = '<span style="color:#e8e8e8;font-size:14px;font-weight:500;">Précisez votre usage pour affiner le choix ↓</span>';
+  overlap.style.display = 'block';
+}
+
+function chooseUsage(usage) {
+  if (!overlapTailles) return;
+  document.getElementById('btn-sport').classList.toggle('sel', usage==='sport');
+  document.getElementById('btn-confort').classList.toggle('sel', usage==='confort');
+  const sorted = [...overlapTailles].sort((a,b)=>a.stature_min-b.stature_min);
+  const chosen = usage==='sport' ? sorted[0] : sorted[sorted.length-1];
+  showSizeActionBtns();
+  selSize.taille = chosen.taille;
+  const defsC = DEFAULTS_BY_TAILLE[selModel] ? DEFAULTS_BY_TAILLE[selModel][chosen.taille] : {};
+  if (defsC) Object.assign(selSize, Object.fromEntries(Object.entries(defsC).map(([k,v])=>[k,String(v)])));
+  const acroRaw = parseFloat(document.getElementById('guide-acro').value) || null;
+  const acroU = acroRaw ? Math.round(acroRaw * 10) : null;
+  if (acroU) calcCintreFromAcro(acroU);
+  const cintreInfo = (acroU && selSize.cintre) ? ' · Cintre recommandé : <span style="color:var(--yellow)">' + selSize.cintre + ' mm</span>' : '';
+  document.getElementById('guide-result-main').innerHTML =
+    'Taille recommandée : <span style="color:var(--yellow)">' + chosen.taille + '</span>' +
+    ' <span style="font-size:13px;color:var(--text2)">(' + (usage==='sport'?'usage sportif':'usage confort') + ')</span>';
+  document.getElementById('guide-result-sub').innerHTML = 'Stature ' + chosen.stature_min + '–' + chosen.stature_max + ' cm' + cintreInfo;
+}
+
+function calcCintreFromAcro(acro) {
+  const pilOpt = selOpts.pilotage ? ALL_OPTIONS.pilotage.find(o => o.id === selOpts.pilotage) : null;
+  if (!pilOpt || !pilOpt.dims || !pilOpt.dims.cintre) return;
+  const available = pilOpt.dims.cintre.map(Number).filter(n=>!isNaN(n));
+  if (!available.length) return;
+  if (selModel === 'vtt_enduro') {
+    const s = [...available].sort((a,b)=>a-b);
+    selSize.cintre = String(s[Math.ceil((s.length-1)/2)]);
+    return;
+  }
+  const nums = [...available].sort((a,b)=>a-b);
+  const target = acro;
+  let best;
+  if (selModel === 'route') {
+    best = nums.reduce((a,b) => { const da=Math.abs(a-target),db=Math.abs(b-target); if(da===db)return Math.min(a,b); return da<db?a:b; });
+  } else {
+    best = nums.reduce((a,b) => { const da=Math.abs(a-target),db=Math.abs(b-target); if(da===db)return Math.max(a,b); return da<db?a:b; });
+  }
+  selSize.cintre = String(best);
+}
+
+function buildDimsGrid() {
+  const grid = document.getElementById('dims-grid');
+  if (!grid) return;
+  const fields = [];
+
+  const tailles = TAILLES_CADRE[selModel] || [];
+  if (tailles.length) fields.push({ id:'dim-taille', label:'Taille de cadre', options: tailles.map(t=>t.taille), key:'taille' });
+
+  const transOpt = selOpts.transmission ? ALL_OPTIONS.transmission.find(o=>o.id===selOpts.transmission) : null;
+  if (transOpt && transOpt.dims) {
+    if (transOpt.dims.manivelle && transOpt.dims.manivelle.length>1) fields.push({id:'dim-manivelle',label:'Longueur manivelle (mm)',options:transOpt.dims.manivelle,key:'manivelle'});
+    if (transOpt.dims.plateaux && transOpt.dims.plateaux.length>1) fields.push({id:'dim-plateaux',label:'Plateau(x)',options:transOpt.dims.plateaux,key:'plateaux'});
+    if (transOpt.dims.cassette && transOpt.dims.cassette.length>1) fields.push({id:'dim-cassette',label:'Cassette',options:transOpt.dims.cassette,key:'cassette'});
+  }
+
+  const pilOpt = selOpts.pilotage ? ALL_OPTIONS.pilotage.find(o=>o.id===selOpts.pilotage) : null;
+  if (pilOpt && pilOpt.dims) {
+    if (selOpts.pilotage === 'pilotage_rd_ala') {
+      if (pilOpt.dims.cintre && pilOpt.dims.cintre.length>1) fields.push({id:'dim-cintre',label:'Largeur ensemble ext-ext (mm)',options:pilOpt.dims.cintre,key:'cintre',note:'Monobloc cintre + potence'});
+    } else {
+      if (pilOpt.dims.cintre && pilOpt.dims.cintre.length>1) fields.push({id:'dim-cintre',label:'Largeur cintre ext-ext (mm)',options:pilOpt.dims.cintre,key:'cintre'});
+      if (pilOpt.dims.potence && pilOpt.dims.potence.length>1) fields.push({id:'dim-potence',label:'Longueur potence (mm)',options:pilOpt.dims.potence,key:'potence'});
+    }
+  }
+
+  const pneuOpt = selOpts.pneus ? ALL_OPTIONS.pneus.find(o=>o.id===selOpts.pneus) : null;
+  if (pneuOpt && pneuOpt.dims && pneuOpt.dims.section && pneuOpt.dims.section.length>1)
+    fields.push({id:'dim-section',label:'Section pneu',options:pneuOpt.dims.section,key:'section',note:selModel==='vtt_enduro'?'en pouces':'en mm'});
+
+  const forcheOpt = selOpts.fourche ? ALL_OPTIONS.fourche.find(o=>o.id===selOpts.fourche) : null;
+  if (forcheOpt && forcheOpt.dims && forcheOpt.dims.debattement && forcheOpt.dims.debattement.length>1)
+    fields.push({id:'dim-debattement',label:'Débattement fourche (mm)',options:forcheOpt.dims.debattement,key:'debattement'});
+
+  const selleOpt = selOpts.selle ? ALL_OPTIONS.selle.find(o=>o.id===selOpts.selle) : null;
+  if (selleOpt && selleOpt.dims && selleOpt.dims.largeur_selle && selleOpt.dims.largeur_selle.length>1)
+    fields.push({id:'dim-largeur-selle',label:'Largeur selle (mm)',options:selleOpt.dims.largeur_selle,key:'largeur_selle'});
+
+  if (!fields.length) { grid.innerHTML = '<p style="color:var(--text2);font-size:13px;">Sélectionnez un modèle et vos composants en onglet "Configurer".</p>'; return; }
+
+  // Pré-remplir défauts
+  const defs = selSize.taille && DEFAULTS_BY_TAILLE[selModel] ? DEFAULTS_BY_TAILLE[selModel][selSize.taille] : {};
+  if (defs) {
+    fields.forEach(f => {
+      if (!selSize[f.key] && defs[f.key] !== undefined) {
+        const defVal = defs[f.key];
+        const nums = f.options.map(Number).filter(n=>!isNaN(n));
+        if (nums.length) {
+          let best;
+          if (f.key==='manivelle'||f.key==='potence') {
+            const lte = nums.filter(n=>n<=defVal);
+            best = lte.length ? Math.max(...lte) : Math.min(...nums);
+          } else {
+            best = nums.reduce((a,b)=>{ const da=Math.abs(a-defVal),db=Math.abs(b-defVal); if(da===db)return Math.max(a,b); return da<db?a:b; });
+          }
+          selSize[f.key] = String(best);
+        } else if (f.options.includes(String(defVal))) {
+          selSize[f.key] = String(defVal);
+        }
+      }
+    });
+  }
+
+  grid.innerHTML = fields.map(f => {
+    if (f.options.length === 1) {
+      selSize[f.key] = String(f.options[0]);
+      const unit = ['manivelle','potence','cintre','debattement','largeur_selle'].includes(f.key) ? ' mm' : '';
+      return `<div class="dim-field"><label>${f.label}</label><div class="dim-single">${f.options[0]}${unit}</div>${f.note?`<span class="dim-note">${f.note}</span>`:''}</div>`;
+    }
+    const onchange = f.key==='taille'
+      ? `selSize['${f.key}']=this.value;selSize.manivelle=null;selSize.cintre=null;selSize.potence=null;selSize.debattement=null;buildDimsGrid();`
+      : `selSize['${f.key}']=this.value`;
+    const opts = f.options.map(o => `<option value="${o}" ${selSize[f.key]==o?'selected':''}>` + o + (['manivelle','potence'].includes(f.key)?' mm':'') + '</option>').join('');
+    return `<div class="dim-field"><label>${f.label}</label><select class="dim-select" id="${f.id}" onchange="${onchange}"><option value="">— choisir —</option>${opts}</select>${f.note?`<span class="dim-note">${f.note}</span>`:''}</div>`;
+  }).join('');
+}
+
+function validateDims() {
+  syncSelSize();
+  const summary = document.getElementById('dims-summary');
+  const lines = [];
+  if (selSize.taille)        lines.push('<strong>Taille :</strong> ' + selSize.taille);
+  if (selSize.manivelle)     lines.push('<strong>Manivelle :</strong> ' + selSize.manivelle + ' mm');
+  if (selSize.plateaux)      lines.push('<strong>Plateau(x) :</strong> ' + selSize.plateaux);
+  if (selSize.cassette)      lines.push('<strong>Cassette :</strong> ' + selSize.cassette);
+  if (selSize.cintre)        lines.push('<strong>Cintre :</strong> ' + selSize.cintre + ' mm');
+  if (selSize.potence)       lines.push('<strong>Potence :</strong> ' + selSize.potence + ' mm');
+  if (selSize.section)       lines.push('<strong>Section pneu :</strong> ' + selSize.section);
+  if (selSize.debattement)   lines.push('<strong>Débattement :</strong> ' + selSize.debattement + ' mm');
+  if (selSize.largeur_selle) lines.push('<strong>Largeur selle :</strong> ' + selSize.largeur_selle + ' mm');
+  if (!lines.length) { summary.innerHTML = '<span style="color:var(--red)">Veuillez sélectionner au moins une dimension.</span>'; summary.classList.add('show'); return; }
+  summary.innerHTML = '✅ <strong>Dimensions enregistrées :</strong><br>' + lines.join(' · ');
+  summary.classList.add('show');
+  showSizeActionBtns();
+}
+
+function syncSelSize() {
+  const keyMap = { 'dim-taille':'taille', 'dim-manivelle':'manivelle', 'dim-plateaux':'plateaux', 'dim-cassette':'cassette', 'dim-cintre':'cintre', 'dim-potence':'potence', 'dim-section':'section', 'dim-debattement':'debattement', 'dim-largeur-selle':'largeur_selle' };
+  Object.entries(keyMap).forEach(([id, key]) => {
+    const el = document.getElementById(id);
+    if (el && el.tagName === 'SELECT' && el.value) selSize[key] = el.value;
+  });
+}
+
+// ══ INIT ════════════════════════════════════════════════════════════════════
+loadSaved();
+updateSavedCount();
+renderModels();
+
+// Lien retour
+document.querySelectorAll('.back-link').forEach(el => el.href = 'https://www.obviouscycles.com/velos-titane/');
+
+// Scroll haut au chargement
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+window.addEventListener('beforeunload', () => window.scrollTo(0,0));
+
+// Prix flottant → scroll recap
+window.addEventListener('DOMContentLoaded', () => {
+  // Scroll event pour masquer floating price
+  window.addEventListener('scroll', () => {
+    const fp = document.getElementById('floating-price');
+    const fixed = document.getElementById('recap-total-price');
+    if (!fp || !fixed) return;
+    if (fixed.getBoundingClientRect().top <= window.innerHeight) fp.classList.add('hidden');
+    else if (selModel) fp.classList.remove('hidden');
+  }, { passive: true });
+});
+
+// URL param modele
+const urlParams = new URLSearchParams(window.location.search);
+const modeleParam = urlParams.get('modele');
+if (modeleParam) {
+  const ALIASES = { 'ON/':'route', 'ON/OFF':'gravel_racing', 'OUT/QUEST':'gravel_bikepacking', '/OFF':'vtt_enduro' };
+  const mid = ALIASES[decodeURIComponent(modeleParam)] || modeleParam;
+  const m = MODELS.find(m => m.id === mid);
+  if (m) { window._singleModel = mid; selectModel(mid); }
+}
+</script>
+</body>
+</html>
