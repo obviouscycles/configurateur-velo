@@ -728,7 +728,6 @@
 
   /* ── PROTO6 : PAGE TAILLE ──────────────────────────────── */
   #ej-tooltip { display: none; }
-  #ej-tooltip.show { display: block; }
   .size-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
   @media (max-width: 767px) { .size-cards { grid-template-columns: 1fr; } }
   .size-card {
@@ -769,9 +768,10 @@
   }
   .size-result.show { display: block; }
   .size-result-main { font-size: 22px; font-weight: 600; color: #F5C400; margin-bottom: .5rem; }
-  .size-result-sub  { font-size: 13px; color: var(--text2); line-height: 1.6; }
+  .size-result-sub  { font-size: 13px; color: #c8c8c8; line-height: 1.6; }
   .size-overlap { margin-top: 1rem; padding: 1rem; background: #1a1200; border: 0.5px solid #F5C400; }
   .size-overlap-title { font-size: 12px; font-weight: 600; color: #F5C400; text-transform: uppercase; letter-spacing: .06em; margin-bottom: .75rem; }
+  .size-result-sub.overlap-hint { color: #e8e8e8; font-size: 14px; font-weight: 500; }
   .size-overlap-btns { display: flex; gap: 10px; flex-wrap: wrap; }
   .size-overlap-btn {
     flex: 1; min-width: 120px; padding: 10px; text-align: center; cursor: pointer;
@@ -937,7 +937,7 @@
           <div class="size-field">
             <label>Entrejambe (cm)
               <span style="color:var(--text3)">optionnel</span>
-              <span id="ej-info-btn" style="cursor:pointer;color:#F5C400;font-size:13px;margin-left:4px;" onclick="document.getElementById('ej-tooltip').classList.toggle('show')" title="Comment mesurer ?">ⓘ</span>
+              <span id="ej-info-btn" style="cursor:pointer;color:#F5C400;font-size:13px;margin-left:4px;" onclick="const t=document.getElementById('ej-tooltip');t.style.display=t.style.display==='block'?'none':'block';" title="Comment mesurer ?">ⓘ</span>
             </label>
             <div id="ej-tooltip" style="display:none;font-size:11px;color:var(--text2);background:var(--bg2);border:0.5px solid var(--border);padding:10px 12px;margin-bottom:8px;line-height:1.6;">
               <strong style="color:var(--text1);">Comment mesurer votre entrejambe :</strong><br>
@@ -2437,6 +2437,8 @@ function chooseUsage(usage) {
 }
 
 // ─── GRILLE DIMENSIONS MANUELLES ─────────────────────────────────────────────
+const DEFAULTS_BY_TAILLE = {"route": {"XXS": {"manivelle": 165, "cintre": 380, "potence": 80}, "XS": {"manivelle": 165, "cintre": 400, "potence": 90}, "S": {"manivelle": 170, "cintre": 400, "potence": 90}, "M": {"manivelle": 170, "cintre": 420, "potence": 100}, "L": {"manivelle": 172.5, "cintre": 420, "potence": 110}, "XL": {"manivelle": 175, "cintre": 440, "potence": 120}}, "gravel_racing": {"XS": {"manivelle": 165, "cintre": 400, "potence": 80}, "S": {"manivelle": 170, "cintre": 420, "potence": 90}, "M": {"manivelle": 170, "cintre": 420, "potence": 100}, "L": {"manivelle": 172.5, "cintre": 440, "potence": 110}, "XL": {"manivelle": 175, "cintre": 460, "potence": 120}}, "gravel_bikepacking": {"XS": {"manivelle": 165, "cintre": 400, "potence": 80}, "S": {"manivelle": 170, "cintre": 420, "potence": 90}, "M": {"manivelle": 170, "cintre": 420, "potence": 100}, "L": {"manivelle": 172.5, "cintre": 440, "potence": 110}, "XL": {"manivelle": 175, "cintre": 460, "potence": 120}}, "vtt_enduro": {"S": {"manivelle": 165, "debattement": 150}, "M": {"manivelle": 170, "debattement": 150}, "L": {"manivelle": 170, "debattement": 150}, "XL": {"manivelle": 172.5, "debattement": 150}}};
+
 function buildDimsGrid() {
   const grid = document.getElementById('dims-grid');
   if (!grid) return;
@@ -2500,15 +2502,47 @@ function buildDimsGrid() {
     return;
   }
 
+  // Pré-sélection des valeurs par défaut selon taille de cadre
+  const defs = selSize.taille && DEFAULTS_BY_TAILLE[selModel] ? DEFAULTS_BY_TAILLE[selModel][selSize.taille] : {};
+  if (defs) {
+    fields.forEach(f => {
+      if (!selSize[f.key] && defs[f.key] !== undefined) {
+        const defVal = defs[f.key];
+        // Trouver la valeur disponible la plus proche (inférieure pour manivelle)
+        if (f.options && f.options.length > 0) {
+          const nums = f.options.map(Number).filter(n => !isNaN(n));
+          if (nums.length > 0) {
+            let best;
+            if (f.key === 'manivelle') {
+              // Prendre la plus petite valeur ≤ defVal
+              const lte = nums.filter(n => n <= defVal);
+              best = lte.length > 0 ? Math.max(...lte) : Math.min(...nums);
+            } else {
+              // Prendre la plus proche
+              best = nums.reduce((a,b) => Math.abs(b-defVal) < Math.abs(a-defVal) ? b : a);
+            }
+            selSize[f.key] = String(best);
+          } else {
+            // Options non numériques : cherche la correspondance exacte ou skip
+            if (f.options.includes(String(defVal))) selSize[f.key] = String(defVal);
+          }
+        }
+      }
+    });
+  }
+
   grid.innerHTML = fields.map(f => {
     const optHTML = f.options.map(o =>
       `<option value="${o}" ${selSize[f.key]==o?'selected':''}>` + o + (
         f.key==='manivelle'?' mm':f.key==='potence'?' mm':''
       ) + `</option>`
     ).join('');
+    const onchangeFn = f.key === 'taille'
+      ? `selSize['${f.key}']=this.value; selSize.manivelle=null; selSize.cintre=null; selSize.potence=null; selSize.debattement=null; buildDimsGrid();`
+      : `selSize['${f.key}']=this.value`;
     return `<div class="dim-field">
       <label>${f.label}</label>
-      <select class="size-select" id="${f.id}" onchange="selSize['${f.key}']=this.value">
+      <select class="size-select" id="${f.id}" onchange="${onchangeFn}">
         <option value="">— choisir —</option>
         ${optHTML}
       </select>
