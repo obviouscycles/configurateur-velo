@@ -935,15 +935,15 @@
             <input type="number" class="size-input" id="guide-stature" placeholder="Ex : 175" min="140" max="210">
           </div>
           <div class="size-field">
-            <label>Entrejambe (mm)
+            <label>Entrejambe (cm)
               <span style="color:var(--text3)">optionnel</span>
               <span id="ej-info-btn" style="cursor:pointer;color:#F5C400;font-size:13px;margin-left:4px;" onclick="document.getElementById('ej-tooltip').classList.toggle('show')" title="Comment mesurer ?">ⓘ</span>
             </label>
             <div id="ej-tooltip" style="display:none;font-size:11px;color:var(--text2);background:var(--bg2);border:0.5px solid var(--border);padding:10px 12px;margin-bottom:8px;line-height:1.6;">
               <strong style="color:var(--text1);">Comment mesurer votre entrejambe :</strong><br>
-              Debout, pieds nus, dos contre un mur, pieds écartés d'environ 20 cm. Placez un livre à plat entre vos jambes, bien calé contre le pubis. Mesurez la distance entre le sol et le dessus du livre. En mm.
+              Debout, pieds nus, dos et talons contre un mur, pieds écartés d'environ 20 cm. Placez un livre entre vos jambes avec une tranche bien calée contre le mur. Remontez-le jusqu'à sentir une pression comme avec votre selle. Faites-vous aider pour mesurer la distance entre le sol et le dessus du livre.
             </div>
-            <input type="number" class="size-input" id="guide-selle" placeholder="Ex : 820" min="600" max="1100">
+            <input type="number" class="size-input" id="guide-selle" placeholder="Ex : 82" min="60" max="110" step="0.5">
           </div>
           <div style="display:flex;align-items:flex-end;">
             <button class="size-btn" onclick="calcSize()"><i class="ti ti-calculator"></i> Calculer</button>
@@ -2196,43 +2196,43 @@ const TAILLES_CADRE = {
       "taille": "XXS",
       "stature_min": 155,
       "stature_max": 164,
-      "ej_min": 739,
-      "ej_max": 784
+      "ej_min": 73.9,
+      "ej_max": 78.4
     },
     {
       "taille": "XS",
       "stature_min": 163,
       "stature_max": 171,
-      "ej_min": 773,
-      "ej_max": 818
+      "ej_min": 77.3,
+      "ej_max": 81.8
     },
     {
       "taille": "S",
       "stature_min": 170,
       "stature_max": 177,
-      "ej_min": 807,
-      "ej_max": 852
+      "ej_min": 80.7,
+      "ej_max": 85.2
     },
     {
       "taille": "M",
       "stature_min": 176,
       "stature_max": 182,
-      "ej_min": 841,
-      "ej_max": 886
+      "ej_min": 84.1,
+      "ej_max": 88.6
     },
     {
       "taille": "L",
       "stature_min": 181,
       "stature_max": 187,
-      "ej_min": 875,
-      "ej_max": 920
+      "ej_min": 87.5,
+      "ej_max": 92.0
     },
     {
       "taille": "XL",
       "stature_min": 186,
       "stature_max": 194,
-      "ej_min": 909,
-      "ej_max": 955
+      "ej_min": 90.9,
+      "ej_max": 95.5
     }
   ],
   "gravel_racing": [
@@ -2240,36 +2240,36 @@ const TAILLES_CADRE = {
       "taille": "XS",
       "stature_min": 160,
       "stature_max": 168,
-      "ej_min": 763,
-      "ej_max": 809
+      "ej_min": 76.3,
+      "ej_max": 80.9
     },
     {
       "taille": "S",
       "stature_min": 166,
       "stature_max": 174,
-      "ej_min": 797,
-      "ej_max": 843
+      "ej_min": 79.7,
+      "ej_max": 84.3
     },
     {
       "taille": "M",
       "stature_min": 172,
       "stature_max": 180,
-      "ej_min": 831,
-      "ej_max": 877
+      "ej_min": 83.1,
+      "ej_max": 87.7
     },
     {
       "taille": "L",
       "stature_min": 178,
       "stature_max": 186,
-      "ej_min": 866,
-      "ej_max": 911
+      "ej_min": 86.6,
+      "ej_max": 91.1
     },
     {
       "taille": "XL",
       "stature_min": 184,
       "stature_max": 194,
-      "ej_min": 900,
-      "ej_max": 945
+      "ej_min": 90.0,
+      "ej_max": 94.5
     }
   ],
   "gravel_bikepacking": [
@@ -2277,36 +2277,36 @@ const TAILLES_CADRE = {
       "taille": "XS",
       "stature_min": 160,
       "stature_max": 168,
-      "ej_min": 753,
-      "ej_max": 799
+      "ej_min": 75.3,
+      "ej_max": 79.9
     },
     {
       "taille": "S",
       "stature_min": 166,
       "stature_max": 174,
-      "ej_min": 788,
-      "ej_max": 833
+      "ej_min": 78.8,
+      "ej_max": 83.3
     },
     {
       "taille": "M",
       "stature_min": 172,
       "stature_max": 180,
-      "ej_min": 822,
-      "ej_max": 868
+      "ej_min": 82.2,
+      "ej_max": 86.8
     },
     {
       "taille": "L",
       "stature_min": 178,
       "stature_max": 186,
-      "ej_min": 856,
-      "ej_max": 902
+      "ej_min": 85.6,
+      "ej_max": 90.2
     },
     {
       "taille": "XL",
       "stature_min": 184,
       "stature_max": 194,
-      "ej_min": 890,
-      "ej_max": 936
+      "ej_min": 89.0,
+      "ej_max": 93.6
     }
   ],
   "vtt_enduro": [
@@ -2314,29 +2314,29 @@ const TAILLES_CADRE = {
       "taille": "S",
       "stature_min": 164,
       "stature_max": 172,
-      "ej_min": 772,
-      "ej_max": 839
+      "ej_min": 77.2,
+      "ej_max": 83.9
     },
     {
       "taille": "M",
       "stature_min": 170,
       "stature_max": 178,
-      "ej_min": 832,
-      "ej_max": 890
+      "ej_min": 83.2,
+      "ej_max": 89.0
     },
     {
       "taille": "L",
       "stature_min": 176,
       "stature_max": 184,
-      "ej_min": 878,
-      "ej_max": 935
+      "ej_min": 87.8,
+      "ej_max": 93.5
     },
     {
       "taille": "XL",
       "stature_min": 182,
       "stature_max": 192,
-      "ej_min": 924,
-      "ej_max": 981
+      "ej_min": 92.4,
+      "ej_max": 98.1
     }
   ]
 }
@@ -2410,7 +2410,7 @@ function calcSize() {
     showSizeActionBtns();
     main.innerHTML = 'Taille recommandée : <span style="color:#F5C400">' + t.taille + '</span>';
     let info = 'Stature ' + t.stature_min + '–' + t.stature_max + ' cm';
-    if (selle) info += ' · Entrejambe ' + Math.round(t.ej_min) + '–' + Math.round(t.ej_max) + ' mm';
+    if (selle) info += ' · Entrejambe ' + t.ej_min + '–' + t.ej_max + ' cm';
     sub.textContent = info;
     return;
   }
