@@ -2463,7 +2463,7 @@ function toggleSizeMode(mode) {
   setTimeout(() => {
     const panel = document.getElementById(mode === 'guide' ? 'panel-guide' : 'panel-manual');
     if (panel) {
-      const top = panel.getBoundingClientRect().top + window.pageYOffset - 80;
+      const top = panel.getBoundingClientRect().top + window.pageYOffset - (window.innerHeight / 2);
       window.scrollTo({ top, behavior: 'smooth' });
     }
   }, 50);
