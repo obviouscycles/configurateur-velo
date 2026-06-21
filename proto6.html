@@ -926,6 +926,8 @@
       </div>
       <div id="recap-section">
         <div id="recap-box-container"></div>
+
+        <!-- Boutons onglet 2 "Votre taille" : conditionnels -->
         <div id="size-action-btns" style="display:none;margin-bottom:1rem;">
           <div class="btn-row">
             <button class="btn primary" onclick="openOrderModal()"><i class="ti ti-send"></i> Demander votre devis</button>
@@ -933,11 +935,16 @@
             <button class="btn" onclick="switchTab('config')"><i class="ti ti-arrow-left"></i> Revenir à la configuration</button>
           </div>
         </div>
+
+        <!-- Boutons onglet 2 "Votre taille" : permanents -->
         <div id="size-base-btns" style="display:none;margin-bottom:1rem;">
           <button class="btn success" onclick="toggleSaveForm()"><i class="ti ti-bookmark"></i> Sauvegarder</button>
           <button class="btn" onclick="switchTab('config')"><i class="ti ti-arrow-left"></i> Revenir à la configuration</button>
         </div>
+
+        <!-- Boutons onglet 1 "Configurer" -->
         <div class="btn-row" id="btn-row-config">
+          <button class="btn primary" id="btn-size" onclick="switchTab('size')" disabled style="opacity:.35;cursor:not-allowed">
             <i class="ti ti-ruler"></i> Choisir votre taille
           </button>
           <button class="btn success" id="btn-save" onclick="toggleSaveForm()" disabled style="opacity:.35;cursor:not-allowed">
