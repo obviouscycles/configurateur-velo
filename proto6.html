@@ -1007,15 +1007,15 @@
             <input type="number" class="size-input" id="guide-selle" placeholder="Ex : 82" min="60" max="110" step="0.5">
           </div>
           <div class="size-field">
-            <label>Distance inter-acromions (mm)
+            <label>Largeur d'épaules (cm)
               <span style="color:var(--text3)">optionnel</span>
               <span style="cursor:pointer;color:#F5C400;font-size:13px;margin-left:4px;" onclick="const t=document.getElementById('acro-tooltip');t.style.display=t.style.display==='block'?'none':'block';" title="Comment mesurer ?">ⓘ</span>
             </label>
             <div id="acro-tooltip" style="display:none;font-size:11px;color:var(--text2);background:var(--bg2);border:0.5px solid var(--border);padding:10px 12px;margin-bottom:8px;line-height:1.6;">
-              <strong style="color:var(--text1);">Comment mesurer :</strong><br>
-              Debout, bras le long du corps. Mesurez la distance entre les deux pointes d'épaules (acromions) d'un côté à l'autre. En mm. Faites-vous aider.
+              <strong style="color:var(--text1);">Comment mesurer votre largeur d'épaules :</strong><br>
+              Debout, bras le long du corps. Faites-vous aider pour mesurer la distance entre les deux pointes osseuses de vos épaules les plus éloignées.
             </div>
-            <input type="number" class="size-input" id="guide-acro" placeholder="Ex : 390" min="300" max="500">
+            <input type="number" class="size-input" id="guide-acro" placeholder="Ex : 40" min="25" max="60" step="0.5">
           </div>
           <div style="display:flex;align-items:flex-end;">
             <button class="size-btn" onclick="calcSize()"><i class="ti ti-calculator"></i> Calculer</button>
@@ -2459,13 +2459,22 @@ function toggleSizeMode(mode) {
   document.getElementById('panel-guide').classList.toggle('open', mode === 'guide');
   document.getElementById('panel-manual').classList.toggle('open', mode === 'manual');
   if (mode === 'manual') buildDimsGrid();
+  // Auto-scroll vers le panel ouvert
+  setTimeout(() => {
+    const panel = document.getElementById(mode === 'guide' ? 'panel-guide' : 'panel-manual');
+    if (panel) {
+      const top = panel.getBoundingClientRect().top + window.pageYOffset - 80;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }
+  }, 50);
 }
 
 // ─── CALCUL TAILLE GUIDÉE ─────────────────────────────────────────────────────
 function calcSize() {
   const stature = parseInt(document.getElementById('guide-stature').value);
   const selle   = parseInt(document.getElementById('guide-selle').value) || null;
-  const acro    = parseInt(document.getElementById('guide-acro').value) || null;
+  const acroRaw = parseFloat(document.getElementById('guide-acro').value) || null;
+  const acro    = acroRaw ? Math.round(acroRaw * 10) : null; // cm → mm
   const result  = document.getElementById('guide-result');
   const main    = document.getElementById('guide-result-main');
   const sub     = document.getElementById('guide-result-sub');
@@ -2548,7 +2557,8 @@ function chooseUsage(usage) {
   selSize.taille = chosen.taille;
   const defsC = DEFAULTS_BY_TAILLE[selModel] ? DEFAULTS_BY_TAILLE[selModel][chosen.taille] : {};
   if (defsC) Object.assign(selSize, Object.fromEntries(Object.entries(defsC).map(([k,v]) => [k, String(v)])));
-  const acroU = parseInt(document.getElementById('guide-acro').value) || null;
+  const acroRawU = parseFloat(document.getElementById('guide-acro').value) || null;
+  const acroU = acroRawU ? Math.round(acroRawU * 10) : null;
   if (acroU) calcCintreFromAcro(acroU);
   const cintreInfo = (acroU && selSize.cintre) ? ' · Cintre recommandé : <span style="color:#F5C400">' + selSize.cintre + ' mm</span>' : '';
   document.getElementById('guide-result-main').innerHTML =
