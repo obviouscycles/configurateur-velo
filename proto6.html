@@ -652,18 +652,20 @@
   }
   /* Mobile : espacement et fond des blocs */
   @media (max-width: 767px) {
-    #bottom-row  { flex-direction: column; }
-    #recap-col   { background: #111111; padding: 1.5rem; margin-top: 1.5rem; }
-    /* Contact-hint masqué sur mobile — remplacé par le FAB */
-    #contact-hint      { display: none !important; }
+    /* ── Layout général mobile ── */
+    #bottom-row    { flex-direction: column; }
+    #recap-col     { background: #111111; padding: 1.5rem; margin-top: 1.5rem; }
+    #size-right-col { display: none !important; }
+    #contact-hint  { display: none !important; }
     #contact-hint-size { display: none !important; }
-    #size-right-col    { display: none !important; }
 
-    /* Onglet taille */
+    /* ── Onglet "Votre taille" sur mobile ── */
     .on-tab-size #view-config    { display: none !important; }
     .on-tab-size #bottom-row     { display: flex !important; flex-direction: column; }
+    /* size-right-col en premier (order:1), recap-col en second (order:2) */
     .on-tab-size #size-right-col { display: flex !important; flex-direction: column; width: 100%; order: 1; margin-top: 0; }
     .on-tab-size #recap-col      { width: 100%; margin-top: 1.5rem; order: 2; }
+    /* Boutons : masquer btn-row-config, gérer size-base/action via JS */
     .on-tab-size #btn-row-config { display: none !important; }
   }
 
