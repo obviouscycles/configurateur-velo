@@ -975,6 +975,140 @@
     </div>
   </div>
 
+  <!-- ══ PROTO11 : PARCOURS MOBILE ══════════════════════════════════════════ -->
+  <div id="p11-container" style="display:none">
+    <div class="p11-stepper">
+      <div class="p11-step-dot active" id="p11-dot-1"></div>
+      <div class="p11-step-line"></div>
+      <div class="p11-step-dot" id="p11-dot-2"></div>
+      <div class="p11-step-line"></div>
+      <div class="p11-step-dot" id="p11-dot-3"></div>
+      <div class="p11-step-line"></div>
+      <div class="p11-step-dot" id="p11-dot-4"></div>
+    </div>
+    <div class="p11-step-label" id="p11-step-label">Choisir votre modèle</div>
+
+    <!-- Étape 1 -->
+    <div class="p11-step active" id="p11-s1">
+      <div style="padding:1.5rem 1rem 0;">
+        <div class="step-label" style="color:#888;">Étape 1 sur 4</div>
+        <p class="section-title" style="color:#F5C400;margin-bottom:1.25rem;">Choisir votre modèle</p>
+        <div class="model-grid" id="p11-model-grid"></div>
+        <div class="preset-bar" id="p11-preset-bar" style="display:none;margin-top:.5rem;"></div>
+      </div>
+    </div>
+
+    <!-- Étape 2 -->
+    <div class="p11-step" id="p11-s2">
+      <div style="padding:1.5rem 1rem 0;">
+        <div class="step-label" style="color:#888;">Étape 2 sur 4</div>
+        <p class="section-title" style="color:#111;margin-bottom:1rem;">Configurer vos composants</p>
+        <div id="p11-posts-list"></div>
+      </div>
+      <div id="p11-recap-inline">
+        <div class="p11-total-row">
+          <span class="p11-total-label">Prix total</span>
+          <span class="p11-total-val" id="p11-total-val">—</span>
+        </div>
+        <button class="p11-save-btn" onclick="p11ToggleSave()">
+          <i class="ti ti-bookmark"></i> Sauvegarder cette configuration
+        </button>
+        <div class="save-form" id="p11-save-form" style="margin-top:8px;">
+          <div class="save-label">Donnez un nom à cette configuration :</div>
+          <div class="save-input-row">
+            <input type="text" id="p11-save-name" placeholder="Ex : Mon gravel bikepacking" maxlength="60">
+            <button onclick="doSave('p11-save-name','p11-save-toast')">OK</button>
+          </div>
+          <div class="toast" id="p11-save-toast"><i class="ti ti-check"></i> Sauvegardée !</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Étape 3 -->
+    <div class="p11-step" id="p11-s3">
+      <div style="padding:1.5rem 1rem 0;">
+        <div class="step-label" style="color:#888;">Étape 3 sur 4</div>
+        <p class="section-title" style="color:#f2f2f2;margin-bottom:1.5rem;">Votre taille</p>
+        <div class="size-choices" style="margin-bottom:1.5rem;">
+          <div class="size-choice" id="p11-choice-guide" onclick="p11ToggleSizeMode('guide')">
+            <div class="sc-choice-icon"><i class="ti ti-user-check"></i></div>
+            <div class="sc-choice-title">Laissez-vous guider</div>
+            <div class="sc-choice-desc">Taille, entrejambe, largeur d'épaules.</div>
+          </div>
+          <div class="size-choice" id="p11-choice-manual" onclick="p11ToggleSizeMode('manual')">
+            <div class="sc-choice-icon"><i class="ti ti-ruler-measure"></i></div>
+            <div class="sc-choice-title">Je connais mes dimensions</div>
+            <div class="sc-choice-desc">Taille cadre, potence, cintre...</div>
+          </div>
+        </div>
+        <p class="size-note">Vous n'avez pas toutes les informations ? Nous vous recontacterons pour affiner vos cotes.</p>
+        <div class="size-panel" id="p11-panel-guide">
+          <div class="size-form-row">
+            <div class="size-field">
+              <label>Votre taille (cm)</label>
+              <input type="number" class="size-input" id="p11-guide-stature" placeholder="Ex : 175" min="140" max="210">
+            </div>
+            <div class="size-field">
+              <label>Entrejambe (cm) <span class="lbl-opt">optionnel</span> <span class="lbl-info" onclick="toggleTooltip('p11-tt-ej')">ⓘ</span></label>
+              <div class="size-tooltip" id="p11-tt-ej">Debout pieds nus, dos au mur. Livre entre les jambes, mesurez sol → dessus du livre.</div>
+              <input type="number" class="size-input" id="p11-guide-ej" placeholder="Ex : 82" min="60" max="110" step="0.5">
+            </div>
+            <div class="size-field">
+              <label>Largeur épaules (cm) <span class="lbl-opt">optionnel</span> <span class="lbl-info" onclick="toggleTooltip('p11-tt-acro')">ⓘ</span></label>
+              <div class="size-tooltip" id="p11-tt-acro">Distance entre les deux pointes osseuses de vos épaules les plus éloignées.</div>
+              <input type="number" class="size-input" id="p11-guide-acro" placeholder="Ex : 40" min="25" max="60" step="0.5">
+            </div>
+          </div>
+          <button class="size-btn" onclick="p11CalcSize()" style="width:100%;justify-content:center;"><i class="ti ti-calculator"></i> Calculer</button>
+          <div class="size-result" id="p11-guide-result" style="margin-top:1rem;">
+            <div class="size-result-main" id="p11-result-main"></div>
+            <div class="size-result-sub" id="p11-result-sub"></div>
+            <div class="size-overlap" id="p11-overlap" style="display:none">
+              <div class="size-overlap-title"><i class="ti ti-git-fork"></i> Deux tailles possibles — votre usage ?</div>
+              <div class="size-overlap-btns">
+                <div class="size-overlap-btn" id="p11-btn-sport" onclick="p11ChooseUsage('sport')"><strong>Sportif</strong><br><span style="font-size:11px;opacity:.7">Petite taille</span></div>
+                <div class="size-overlap-btn" id="p11-btn-confort" onclick="p11ChooseUsage('confort')"><strong>Confort</strong><br><span style="font-size:11px;opacity:.7">Grande taille</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="size-panel" id="p11-panel-manual">
+          <div class="dims-grid" id="p11-dims-grid"></div>
+          <button class="validate-btn" onclick="p11ValidateDims()" style="width:100%;justify-content:center;margin-top:1rem;"><i class="ti ti-check"></i> Valider ces dimensions</button>
+          <div class="dims-summary" id="p11-dims-summary"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Étape 4 -->
+    <div class="p11-step" id="p11-s4">
+      <div style="padding:1.5rem 1rem 0;">
+        <div class="step-label" style="color:#888;">Étape 4 sur 4</div>
+        <p class="section-title" style="color:#f2f2f2;margin-bottom:1rem;">Votre configuration</p>
+        <div id="p11-final-recap"></div>
+        <div class="p11-final-btns">
+          <button class="btn primary" onclick="openOrderModal()" style="width:100%;"><i class="ti ti-send"></i> Demander votre devis</button>
+          <button class="btn success" onclick="p11ToggleSaveFinal()" style="width:100%;"><i class="ti ti-bookmark"></i> Sauvegarder cette configuration</button>
+          <div class="save-form" id="p11-save-form-final">
+            <div class="save-label">Donnez un nom :</div>
+            <div class="save-input-row">
+              <input type="text" id="p11-save-name-final" placeholder="Ex : Mon gravel" maxlength="60">
+              <button onclick="doSave('p11-save-name-final','p11-save-toast-final')">OK</button>
+            </div>
+            <div class="toast" id="p11-save-toast-final"><i class="ti ti-check"></i> Sauvegardée !</div>
+          </div>
+          <button class="btn" onclick="p11GoTo(1);p11Reset();" style="width:100%;"><i class="ti ti-refresh"></i> Recommencer</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bouton next fixe -->
+    <button id="p11-next-btn" onclick="p11Next()">
+      <span id="p11-next-label">Configurer vos composants</span>
+      <i class="ti ti-arrow-right"></i>
+    </button>
+  </div><!-- /p11-container -->
+
   <!-- VUE CONFIGURATEUR -->
   <div class="view active" id="view-config">
     <div id="step1-wrap" style="background:#111111;padding:1.5rem;margin-bottom:1.5rem;">
@@ -3493,16 +3627,19 @@ function p11Reset() {
 }
 
 // Init au chargement
-window.addEventListener('DOMContentLoaded', () => {
+function p11TryInit() {
   if (window.innerWidth < 768) {
+    document.getElementById('p11-container').style.display = 'block';
     p11Init();
   }
-});
-window.addEventListener('resize', () => {
-  if (window.innerWidth < 768 && document.getElementById('p11-container').style.display === 'none') {
-    p11Init();
-  }
-});
+}
+// Appel immédiat ET sur DOMContentLoaded pour être sûr
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', p11TryInit);
+} else {
+  p11TryInit();
+}
+window.addEventListener('resize', p11TryInit);
 </script>
 
 <a class="back-btn back-link" href="https://www.obviouscycles.com/velos-titane/" title="Retour au site"><i class="ti ti-arrow-left"></i> Retour au site</a>
