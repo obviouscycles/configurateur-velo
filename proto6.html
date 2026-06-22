@@ -1485,6 +1485,7 @@ function switchTab(tab) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.getElementById('tab-' + tab).classList.add('active');
   if (tab !== 'size') document.getElementById('view-' + tab).classList.add('active');
+  if (tab === 'config') sizeValidated = false;
   document.body.classList.toggle('on-tab-saved', tab === 'saved');
   document.body.classList.toggle('on-tab-size', tab === 'size');
   showTabBtns(tab);
@@ -1893,6 +1894,7 @@ function updateRecap() {
 }
 
 function resetConfig() {
+  sizeValidated = false;
   const currentModel = selModel; // conserver le modèle en cours
   selOpts = {}; openPost = null;
   document.getElementById('save-form-1').classList.remove('open'); document.getElementById('save-form-2').classList.remove('open');
@@ -2049,8 +2051,7 @@ function buildSizeText() {
 // ─── OUVERTURE MODAL DEPUIS ONGLET TAILLE ────────────────────────────────────
 function openOrderModalFromSize() {
   syncSelSize();
-  const sizeText = buildSizeText();
-  if (!sizeText) {
+  if (!sizeValidated) {
     // Pas de taille validée → alerte
     document.getElementById('size-alert-modal').classList.add('open');
   } else {
@@ -2969,7 +2970,7 @@ function saveConfigFromSize() {
   setTimeout(() => { document.getElementById('save-toast-size').style.display = 'none'; nameInput.value = ''; }, 2500);
 }
 
-function showSizeActionBtns() { /* plus utilisé */ }
+function showSizeActionBtns() { sizeValidated = true; }
 
 function validateDims() {
   // Lire les valeurs actuelles des selects dans la grille
