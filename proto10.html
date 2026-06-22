@@ -18,7 +18,7 @@
     --text3: #999990;
     --border: rgba(0,0,0,0.12);
     --border2: rgba(0,0,0,0.22);
-    --blue: #f2f2f2;
+    --blue: #4A7FA5;
     --blue-light: #FFF8D6;
     --blue-dark: #3D3000;
     --green: #3B6D11;
@@ -81,7 +81,7 @@
     display: flex; align-items: center; gap: 6px;
   }
   .tab:hover { color: var(--text1); }
-  .tab.active { color: #9a7a00; border-bottom-color: #f2f2f2; }
+  .tab.active { color: #9a7a00; border-bottom-color: #4A7FA5; }
   .count-badge {
     font-size: 11px; background: #FFF8D6; color: #7a5f00;
     padding: 1px 7px; border-radius: 0px;
@@ -131,7 +131,7 @@
   .prog-wrap { margin-bottom: 1.5rem; }
   .prog-bar { display: flex; gap: 4px; margin-top: 6px; }
   .prog-step { flex: 1; height: 3px; border-radius: 2px; background: var(--border); transition: background .3s; }
-  .prog-step.done { background: #f2f2f2; }
+  .prog-step.done { background: #4A7FA5; }
 
   .post-block {
     border: 0.5px solid var(--border); border-radius: var(--radius-lg);
@@ -142,7 +142,7 @@
     padding: 12px 16px; cursor: pointer;
   }
   .post-hdr:hover { background: var(--bg2); }
-  .ph-icon { font-size: 16px; color: #f2f2f2; width: 20px; text-align: center; }
+  .ph-icon { font-size: 16px; color: #4A7FA5; width: 20px; text-align: center; }
   .ph-name { font-size: 14px; font-weight: 500; color: var(--text1); flex: 1; }
   .ph-sel { font-size: 12px; color: var(--text1); max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .ph-pending { font-size: 12px; color: var(--text3); }
@@ -213,9 +213,9 @@
     font-family: var(--font);
   }
   .btn:hover { background: var(--bg2); }
-  .btn.primary { background: var(--blue); border-color: var(--blue); color: #000000; font-weight: 500; }
+  .btn.primary { background: var(--blue); border-color: var(--blue); color: #ffffff; font-weight: 500; }
   .btn.primary:hover { background: #d4a900; }
-  .btn.success { background: #b38f00; border-color: #b38f00; color: #000000; }
+  .btn.success { background: #b38f00; border-color: #b38f00; color: #ffffff; }
   .btn.success:hover { background: #8a6d00; }
 
   .save-form {
@@ -235,7 +235,7 @@
   .save-input-row button {
     padding: 9px 16px; font-size: 13px; font-weight: 500;
     border-radius: var(--radius-md); border: none;
-    background: var(--blue); color: #000000; cursor: pointer; font-family: var(--font);
+    background: var(--blue); color: #ffffff; cursor: pointer; font-family: var(--font);
     white-space: nowrap;
   }
   .save-input-row button:hover { background: #d4a900; }
@@ -303,7 +303,7 @@
     background: var(--bg2); color: var(--text1); font-family: var(--font);
     outline: none; resize: vertical;
   }
-  .field input:focus, .field textarea:focus { border-color: #f2f2f2; }
+  .field input:focus, .field textarea:focus { border-color: #4A7FA5; }
   .modal-actions { display: flex; gap: 8px; margin-top: 1rem; }
   .modal-actions button {
     flex: 1; padding: 11px; font-size: 13px; font-weight: 500;
@@ -311,7 +311,7 @@
   }
   .modal-actions .btn-cancel { border: 0.5px solid var(--border2); background: var(--bg); color: var(--text1); }
   .modal-actions .btn-cancel:hover { background: var(--bg2); }
-  .modal-actions .btn-send { border: none; background: var(--blue); color: #000000; }
+  .modal-actions .btn-send { border: none; background: var(--blue); color: #ffffff; }
   .modal-actions .btn-send:hover { background: #d4a900; }
 
   @media (max-width: 600px) {
@@ -358,7 +358,7 @@
     font-size: 12px; margin-top: 2px;
   }
   .recap-card-price.incl { color: #666; }
-  .recap-card-price.pos  { color: #f2f2f2; }
+  .recap-card-price.pos  { color: #4A7FA5; }
   .recap-card-price.neg  { color: #7ecf5a; }
   .recap-card-price.zero { color: #666; }
   .recap-price-block {
@@ -371,11 +371,11 @@
     font-size: 12px; color: #888; padding: 2px 0;
   }
   .recap-price-detail span:last-child { color: #ccc; }
-  .recap-price-detail.upgrade span:last-child { color: #f2f2f2; }
+  .recap-price-detail.upgrade span:last-child { color: #4A7FA5; }
   .recap-price-detail.saving span:last-child { color: #7ecf5a; }
   .recap-price-divider { border: none; border-top: 0.5px solid #333; margin: 8px 0; }
   .recap-price-detail.assembly { border-top: 0.5px solid #333; margin-top: 6px; padding-top: 8px; color: #aaa; }
-  .recap-price-detail.assembly span:last-child { color: #f2f2f2 !important; }
+  .recap-price-detail.assembly span:last-child { color: #4A7FA5 !important; }
   .recap-total-block {
     display: flex; gap: 12px; margin-top: .5rem;
   }
@@ -390,11 +390,11 @@
   .recap-total-val {
     font-size: 28px; font-weight: 500; color: #ffffff; letter-spacing: -.02em;
   }
-  .recap-total-val.price { color: #f2f2f2; }
+  .recap-total-val.price { color: #4A7FA5; }
 
   .recap-model-card {
     background: #1e1e1e;
-    border: 0.5px solid #f2f2f2;
+    border: 0.5px solid #4A7FA5;
     padding: 10px 12px;
     display: flex; align-items: center; gap: 12px;
     margin-bottom: 8px;
@@ -427,7 +427,7 @@
   #view-config > div:first-child .mc-desc { color: #aaa; }
   #view-config > div:first-child .mc-price { color: #aaa; }
   #view-config > div:first-child .model-card.sel .mc-name { color: #fff8d6; }
-  #view-config > div:first-child .model-card.sel .mc-price { color: #f2f2f2; }
+  #view-config > div:first-child .model-card.sel .mc-price { color: #4A7FA5; }
   #view-config > div:first-child .step-label { color: #888; }
   #view-config > div:first-child .mc-text { background: transparent; }
 
@@ -461,7 +461,7 @@
     box-shadow: 0 2px 12px rgba(0,0,0,.25);
     text-decoration: none;
   }
-  .back-btn:hover { background: #1a1a1a; border-color: #f2f2f2; color: #f2f2f2; }
+  .back-btn:hover { background: #1a1a1a; border-color: #4A7FA5; color: #4A7FA5; }
   @media (min-width: 768px) { .back-btn { display: flex; } }
 
   /* Mode single-modèle : carte unique pleine largeur */
@@ -492,7 +492,7 @@
     transition: color .15s, border-color .15s;
     font-family: var(--font);
   }
-  .change-model-btn a:hover { color: #f2f2f2; border-color: #f2f2f2; }
+  .change-model-btn a:hover { color: #4A7FA5; border-color: #4A7FA5; }
 
   /* Boutons pré-config sous la carte modèle */
   .preset-bar {
@@ -512,14 +512,14 @@
     cursor: pointer; font-family: var(--font); text-align: center;
     transition: border-color .15s, color .15s, background .15s;
   }
-  .preset-btn:hover { border-color: var(--blue); color: var(--blue); background: #1a1a1a; }
-  .preset-btn.active { border-color: var(--blue); color: var(--blue); background: #1a1a1a; }
+  .preset-btn:hover { border-color: var(--blue); color: var(--blue); background: #071428; }
+  .preset-btn.active { border-color: var(--blue); color: var(--blue); background: #071428; }
 
   /* Surbrillance pré-config active */
   .preset-btn.active {
     border-color: var(--blue) !important;
     color: var(--blue) !important;
-    background: #1a1a1a !important;
+    background: #071428 !important;
   }
   /* Carte modèle en surbrillance quand arrivée via URL pré-config */
   .model-card.preset-active {
@@ -549,7 +549,7 @@
   .opc-price.negative { color:var(--green); }
   .opc-check { position:absolute; top:5px; right:5px; width:18px; height:18px; border-radius:50%; background:var(--blue); display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity .15s; }
   .opt-photo-card.sel .opc-check { opacity:1; }
-  .opc-check i { font-size:10px; color:#000000; }
+  .opc-check i { font-size:10px; color:#ffffff; }
   @media (prefers-color-scheme: dark) {
     .opt-photo-card.sel { background:#2a2200 !important; }
     .opt-photo-card.sel .opc-name { color:#FFF8D6 !important; }
@@ -591,7 +591,7 @@
   #floating-price.hidden { opacity: 0; pointer-events: none; }
   .fp-price-row { display: flex; justify-content: center; align-items: baseline; gap: 8px; }
   .fp-price-label { font-size: 9px; text-transform: uppercase; letter-spacing: .1em; color: #666; margin-bottom: 1px; display: block; }
-  .fp-price { font-size: 17px; font-weight: 500; color: #f2f2f2; letter-spacing: -.02em; }
+  .fp-price { font-size: 17px; font-weight: 500; color: #4A7FA5; letter-spacing: -.02em; }
 
   /* ── BLOC CONTACT ───────────────────────────────────── */
   .contact-block {
@@ -628,10 +628,10 @@
     transition: opacity .15s;
   }
   .contact-btn:hover { opacity: .8; }
-  .contact-btn-tel { background: #1a1a1a; color: #f2f2f2; border: 0.5px solid #333; }
-  .contact-btn-msg { background: #f2f2f2; color: #000000; }
+  .contact-btn-tel { background: #1a1a1a; color: #4A7FA5; border: 0.5px solid #333; }
+  .contact-btn-msg { background: #4A7FA5; color: #ffffff; }
   .contact-btn-rdv { background: #1a1a1a; color: #ffffff; border: 0.5px solid #555; }
-  .contact-btn-send { background: #f2f2f2; color: #000000; width: 100%; justify-content: center; margin-top: 4px; }
+  .contact-btn-send { background: #4A7FA5; color: #ffffff; width: 100%; justify-content: center; margin-top: 4px; }
   .contact-sep {
     display: flex; align-items: center; justify-content: center;
     padding: 0 1rem; color: var(--text3); font-size: 12px;
@@ -643,7 +643,7 @@
     color: var(--text1); padding: 7px 10px; font-size: 13px;
     margin-bottom: 6px;
   }
-  .contact-input:focus { outline: none; border-color: #f2f2f2; }
+  .contact-input:focus { outline: none; border-color: #4A7FA5; }
   .cf-toast { font-size: 12px; color: #2da44e; margin-top: 6px; }
   .cf-error { font-size: 12px; color: #e24b4a; margin-top: 6px; }
   @media (max-width: 600px) {
@@ -726,10 +726,10 @@
     padding: 1.5rem; cursor: pointer; transition: border-color .15s, background .15s;
   }
   .size-card:hover { border-color: var(--border2); }
-  .size-card.active { border: 1.5px solid #f2f2f2; background: #1a1a1a; }
-  .size-card.active .size-card-title { color: #f2f2f2; }
+  .size-card.active { border: 1.5px solid #4A7FA5; background: #071428; }
+  .size-card.active .size-card-title { color: #4A7FA5; }
   .size-card.active .size-card-desc  { color: #c8a800; }
-  .size-card-icon { font-size: 28px; color: #f2f2f2; margin-bottom: .75rem; }
+  .size-card-icon { font-size: 28px; color: #4A7FA5; margin-bottom: .75rem; }
   .size-card-title { font-size: 16px; font-weight: 500; color: var(--text1); margin-bottom: .4rem; }
   .size-card-desc  { font-size: 13px; color: var(--text2); line-height: 1.5; }
 
@@ -743,13 +743,13 @@
     background: var(--bg); border: 0.5px solid var(--border2); color: var(--text1);
     padding: 8px 10px; font-size: 14px; width: 100%; box-sizing: border-box;
   }
-  .size-input:focus { outline: none; border-color: #f2f2f2; }
+  .size-input:focus { outline: none; border-color: #4A7FA5; }
   .size-select {
     background: var(--bg); border: 0.5px solid var(--border2); color: var(--text1);
     padding: 8px 10px; font-size: 14px; width: 100%; box-sizing: border-box; cursor: pointer;
   }
   .size-btn {
-    background: #f2f2f2; color: #000000; border: none; padding: 10px 24px;
+    background: #4A7FA5; color: #ffffff; border: none; padding: 10px 24px;
     font-size: 14px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
   }
   .size-btn:hover { opacity: .85; }
@@ -758,10 +758,10 @@
     display: none;
   }
   .size-result.show { display: block; }
-  .size-result-main { font-size: 22px; font-weight: 600; color: #f2f2f2; margin-bottom: .5rem; }
+  .size-result-main { font-size: 22px; font-weight: 600; color: #4A7FA5; margin-bottom: .5rem; }
   .size-result-sub  { font-size: 13px; color: #c8c8c8; line-height: 1.6; }
-  .size-overlap { margin-top: 1rem; padding: 1rem; background: #1a1200; border: 0.5px solid #f2f2f2; }
-  .size-overlap-title { font-size: 12px; font-weight: 600; color: #f2f2f2; text-transform: uppercase; letter-spacing: .06em; margin-bottom: .75rem; }
+  .size-overlap { margin-top: 1rem; padding: 1rem; background: #1a1200; border: 0.5px solid #4A7FA5; }
+  .size-overlap-title { font-size: 12px; font-weight: 600; color: #4A7FA5; text-transform: uppercase; letter-spacing: .06em; margin-bottom: .75rem; }
   .size-result-sub.overlap-hint { color: #e8e8e8; font-size: 14px; font-weight: 500; }
   .size-overlap-btns { display: flex; gap: 10px; flex-wrap: wrap; }
   .size-overlap-btn {
@@ -769,7 +769,7 @@
     border: 0.5px solid #555; font-size: 13px; color: var(--text1); background: var(--bg2);
     transition: all .15s;
   }
-  .size-overlap-btn:hover, .size-overlap-btn.sel { background: #f2f2f2; color: #000000; border-color: #f2f2f2; font-weight: 600; }
+  .size-overlap-btn:hover, .size-overlap-btn.sel { background: #4A7FA5; color: #ffffff; border-color: #4A7FA5; font-weight: 600; }
 
   .dims-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
   .dim-field { display: flex; flex-direction: column; gap: 4px; }
@@ -779,16 +779,16 @@
   .dim-note { font-size: 11px; color: var(--text3); margin-top: 2px; font-style: italic; }
 
   .size-validate-btn {
-    margin-top: 1.5rem; background: #f2f2f2; color: #000000; border: none;
+    margin-top: 1.5rem; background: #4A7FA5; color: #ffffff; border: none;
     padding: 12px 32px; font-size: 14px; font-weight: 600; cursor: pointer;
     display: inline-flex; align-items: center; gap: 8px;
   }
   .size-validate-btn:hover { opacity: .85; }
   .size-summary {
-    margin-top: 1.5rem; padding: 1rem 1.25rem; background: #1a1a1a; border: 0.5px solid #f2f2f2; font-size: 13px; color: #f2f2f2; display: none; line-height: 1.8;
+    margin-top: 1.5rem; padding: 1rem 1.25rem; background: #071428; border: 0.5px solid #4A7FA5; font-size: 13px; color: #f2f2f2; display: none; line-height: 1.8;
   }
   .size-summary.show { display: block; }
-  .size-summary strong { color: #f2f2f2; font-weight: 600; }
+  .size-summary strong { color: #4A7FA5; font-weight: 600; }
 
   /* ── FAB AIDE-CONTACT (mobile uniquement) ──────────── */
   #fab-contact {
@@ -798,9 +798,9 @@
     left: 12px;
     height: 44px;
     border-radius: 22px;
-    background: #f2f2f2;
+    background: #4A7FA5;
     border: none;
-    color: #000000;
+    color: #ffffff;
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
@@ -861,7 +861,7 @@
     color: #888; cursor: pointer; font-size: 16px;
     transition: color .15s, border-color .15s;
   }
-  #btn-fullscreen:hover { color: #f2f2f2; border-color: #f2f2f2; }
+  #btn-fullscreen:hover { color: #4A7FA5; border-color: #4A7FA5; }
   @media (min-width: 768px) { #btn-fullscreen { display: flex; } }
   /* Styles plein écran */
   :fullscreen body, :-webkit-full-screen body { overflow-y: auto; }
@@ -887,7 +887,7 @@
   </div>
   <div style="display:flex;align-items:center;gap:10px;">
     <div style="font-size:12px;color:#ffffff;opacity:.7">Montage à la carte</div>
-    <span style="font-size:10px;font-weight:500;background:#f2f2f2;color:#000000;padding:2px 8px;letter-spacing:.06em;">PROTO10</span>
+    <span style="font-size:10px;font-weight:500;background:#4A7FA5;color:#ffffff;padding:2px 8px;letter-spacing:.06em;">PROTO10</span>
   </div>
   <button id="btn-fullscreen" onclick="toggleFullscreen()" title="Plein écran"><i class="ti ti-maximize" id="fs-icon"></i></button>
 </header>
@@ -1023,7 +1023,7 @@
           <div class="size-field">
             <label>Entrejambe (cm)
               <span style="color:var(--text3)">optionnel</span>
-              <span id="ej-info-btn" style="cursor:pointer;color:#f2f2f2;font-size:13px;margin-left:4px;" onclick="const t=document.getElementById('ej-tooltip');t.style.display=t.style.display==='block'?'none':'block';" title="Comment mesurer ?">ⓘ</span>
+              <span id="ej-info-btn" style="cursor:pointer;color:#4A7FA5;font-size:13px;margin-left:4px;" onclick="const t=document.getElementById('ej-tooltip');t.style.display=t.style.display==='block'?'none':'block';" title="Comment mesurer ?">ⓘ</span>
             </label>
             <div id="ej-tooltip" style="display:none;font-size:11px;color:var(--text2);background:var(--bg2);border:0.5px solid var(--border);padding:10px 12px;margin-bottom:8px;line-height:1.6;">
               <strong style="color:var(--text1);">Comment mesurer votre entrejambe :</strong><br>
@@ -1034,7 +1034,7 @@
           <div class="size-field">
             <label>Largeur d'épaules (cm)
               <span style="color:var(--text3)">optionnel</span>
-              <span style="cursor:pointer;color:#f2f2f2;font-size:13px;margin-left:4px;" onclick="const t=document.getElementById('acro-tooltip');t.style.display=t.style.display==='block'?'none':'block';" title="Comment mesurer ?">ⓘ</span>
+              <span style="cursor:pointer;color:#4A7FA5;font-size:13px;margin-left:4px;" onclick="const t=document.getElementById('acro-tooltip');t.style.display=t.style.display==='block'?'none':'block';" title="Comment mesurer ?">ⓘ</span>
             </label>
             <div id="acro-tooltip" style="display:none;font-size:11px;color:var(--text2);background:var(--bg2);border:0.5px solid var(--border);padding:10px 12px;margin-bottom:8px;line-height:1.6;">
               <strong style="color:var(--text1);">Comment mesurer votre largeur d'épaules :</strong><br>
@@ -1176,7 +1176,7 @@
 <!-- ── MODAL ALERTE TAILLE ──────────────────────────────────────────────────── -->
 <div class="modal-overlay" id="size-alert-modal" style="z-index:200">
   <div class="modal" style="max-width:400px;text-align:center;">
-    <div style="font-size:32px;margin-bottom:1rem;"><i class="ti ti-alert-triangle" style="color:#f2f2f2;"></i></div>
+    <div style="font-size:32px;margin-bottom:1rem;"><i class="ti ti-alert-triangle" style="color:#4A7FA5;"></i></div>
     <h2 style="font-size:16px;margin-bottom:1rem;">Taille non validée</h2>
     <p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:1.5rem;">
       Vous n'avez pas validé la taille de votre vélo.<br>
@@ -2632,17 +2632,17 @@ function calcSize() {
     if (defs) Object.assign(selSize, Object.fromEntries(Object.entries(defs).map(([k,v]) => [k, String(v)])));
     // Calculer cintre depuis inter-acromions
     if (acro) calcCintreFromAcro(acro);
-    main.innerHTML = 'Taille recommandée : <span style="color:#f2f2f2">' + t.taille + '</span>';
+    main.innerHTML = 'Taille recommandée : <span style="color:#4A7FA5">' + t.taille + '</span>';
     let info = 'Stature ' + t.stature_min + '–' + t.stature_max + ' cm';
     if (selle) info += ' · Entrejambe ' + t.ej_min + '–' + t.ej_max + ' cm';
-    if (acro && selSize.cintre) info += ' · Cintre recommandé : <span style="color:#f2f2f2">' + selSize.cintre + ' mm</span>';
+    if (acro && selSize.cintre) info += ' · Cintre recommandé : <span style="color:#4A7FA5">' + selSize.cintre + ' mm</span>';
     sub.innerHTML = info;
     return;
   }
 
   // Chevauchement
   overlapTailles = matches;
-  main.innerHTML = 'Votre stature correspond à deux tailles : <span style="color:#f2f2f2">' + matches.map(t=>t.taille).join(' ou ') + '</span>';
+  main.innerHTML = 'Votre stature correspond à deux tailles : <span style="color:#4A7FA5">' + matches.map(t=>t.taille).join(' ou ') + '</span>';
   sub.textContent = 'Précisez votre usage pour affiner le choix.';
   overlap.style.display = 'block';
 }
@@ -2662,9 +2662,9 @@ function chooseUsage(usage) {
   const acroRawU = parseFloat(document.getElementById('guide-acro').value) || null;
   const acroU = acroRawU ? Math.round(acroRawU * 10) : null;
   if (acroU) calcCintreFromAcro(acroU);
-  const cintreInfo = (acroU && selSize.cintre) ? ' · Cintre recommandé : <span style="color:#f2f2f2">' + selSize.cintre + ' mm</span>' : '';
+  const cintreInfo = (acroU && selSize.cintre) ? ' · Cintre recommandé : <span style="color:#4A7FA5">' + selSize.cintre + ' mm</span>' : '';
   document.getElementById('guide-result-main').innerHTML =
-    'Taille recommandée : <span style="color:#f2f2f2">' + chosen.taille + '</span>' +
+    'Taille recommandée : <span style="color:#4A7FA5">' + chosen.taille + '</span>' +
     ' <span style="font-size:13px;color:var(--text2)">(' + (usage==='sport'?'usage sportif':'usage confort') + ')</span>';
   document.getElementById('guide-result-sub').innerHTML =
     'Stature ' + chosen.stature_min + '–' + chosen.stature_max + ' cm' + cintreInfo;
