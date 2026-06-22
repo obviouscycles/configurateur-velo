@@ -665,8 +665,6 @@
     /* size-right-col en premier (order:1), recap-col en second (order:2) */
     .on-tab-size #size-right-col { display: flex !important; flex-direction: column; width: 100%; order: 1; margin-top: 0; }
     .on-tab-size #recap-col      { width: 100%; margin-top: 1.5rem; order: 2; }
-    /* Boutons : masquer btn-row-config, gérer size-base/action via JS */
-    .on-tab-size #btn-row-config { display: none !important; }
   }
 
   /* ── PROTO3 : étape1+étape2 côte à côte, résumé en bas ── */
@@ -700,9 +698,6 @@
     .on-tab-size #view-config    { display: none !important; }
     .on-tab-size #bottom-row     { display: flex !important; }
     .on-tab-size #size-right-col { display: flex !important; }
-    .on-tab-size #btn-row-config { display: none !important; }
-    .on-tab-size #size-action-btns { display: none; }
-    .on-tab-size #size-action-btns.show { display: block !important; }
     /* Sur onglet taille, contact-hint passe sous size-right-col */
     .on-tab-size #contact-hint   { display: none !important; }
     #size-right-col { display: none; flex-direction: column; gap: 0; width: calc(30% - 0.75rem); flex: none; min-width: 0; align-self: flex-start; box-sizing: border-box; }
@@ -928,41 +923,60 @@
       <div id="recap-section">
         <div id="recap-box-container"></div>
 
-        <!-- Boutons onglet 2 "Votre taille" : conditionnels -->
-        <div id="size-action-btns" style="display:none;margin-bottom:1rem;">
+        <!-- ═══ BOUTONS ONGLET 1 "CONFIGURER" ═══════════════════════════════ -->
+        <div id="btns-tab1">
           <div class="btn-row">
-            <button class="btn primary" onclick="openOrderModal()"><i class="ti ti-send"></i> Demander votre devis</button>
-            <button class="btn success" onclick="toggleSaveForm()"><i class="ti ti-bookmark"></i> Sauvegarder cette configuration</button>
-            <button class="btn" onclick="switchTab('config')"><i class="ti ti-arrow-left"></i> Revenir à la configuration</button>
+            <button class="btn primary" id="btn-size" onclick="switchTab('size')" disabled style="opacity:.35;cursor:not-allowed">
+              <i class="ti ti-ruler"></i> Choisir votre taille
+            </button>
+            <button class="btn success" id="btn-save" onclick="toggleSaveForm1()" disabled style="opacity:.35;cursor:not-allowed">
+              <i class="ti ti-bookmark"></i> Sauvegarder cette configuration
+            </button>
+            <button class="btn" id="btn-reset" onclick="resetConfig()" disabled style="opacity:.35;cursor:not-allowed">
+              <i class="ti ti-refresh"></i> Recommencer
+            </button>
+          </div>
+          <div class="save-form" id="save-form-1">
+            <div class="save-label">Donnez un nom à cette configuration :</div>
+            <div class="save-input-row">
+              <input type="text" id="save-name-1" placeholder="Ex : Mon gravel bikepacking" maxlength="60" />
+              <button onclick="doSave('save-name-1','save-toast-1')">Sauvegarder</button>
+            </div>
+            <div class="toast" id="save-toast-1"><i class="ti ti-check"></i> Configuration sauvegardée !</div>
           </div>
         </div>
 
-        <!-- Boutons onglet 2 "Votre taille" : permanents -->
-        <div id="size-base-btns" style="display:none;margin-bottom:1rem;">
-          <button class="btn success" onclick="toggleSaveForm()"><i class="ti ti-bookmark"></i> Sauvegarder cette configuration</button>
-          <button class="btn" onclick="switchTab('config')"><i class="ti ti-arrow-left"></i> Revenir à la configuration</button>
-        </div>
-
-        <!-- Boutons onglet 1 "Configurer" -->
-        <div class="btn-row" id="btn-row-config">
-          <button class="btn primary" id="btn-size" onclick="switchTab('size')" disabled style="opacity:.35;cursor:not-allowed">
-            <i class="ti ti-ruler"></i> Choisir votre taille
-          </button>
-          <button class="btn success" id="btn-save" onclick="toggleSaveForm()" disabled style="opacity:.35;cursor:not-allowed">
-            <i class="ti ti-bookmark"></i> Sauvegarder cette configuration
-          </button>
-          <button class="btn" id="btn-reset" onclick="resetConfig()" disabled style="opacity:.35;cursor:not-allowed">
-            <i class="ti ti-refresh"></i> Recommencer
-          </button>
-        </div>
-        <!-- save-form hors de btn-row-config pour être accessible depuis tous les onglets -->
-        <div class="save-form" id="save-form">
-          <div class="save-label">Donnez un nom à cette configuration :</div>
-          <div class="save-input-row">
-            <input type="text" id="save-name-input" placeholder="Ex : Mon gravel bikepacking" maxlength="60" />
-            <button onclick="saveConfig()">Sauvegarder</button>
+        <!-- ═══ BOUTONS ONGLET 2 "VOTRE TAILLE" ════════════════════════════ -->
+        <div id="btns-tab2" style="display:none">
+          <!-- Avant qu'une taille soit trouvée -->
+          <div id="btns-tab2-base" class="btn-row">
+            <button class="btn success" onclick="toggleSaveForm2()">
+              <i class="ti ti-bookmark"></i> Sauvegarder cette configuration
+            </button>
+            <button class="btn" onclick="switchTab('config')">
+              <i class="ti ti-arrow-left"></i> Revenir à la configuration
+            </button>
           </div>
-          <div class="toast" id="save-toast"><i class="ti ti-check"></i> Configuration sauvegardée !</div>
+          <!-- Après qu'une taille est trouvée -->
+          <div id="btns-tab2-action" style="display:none" class="btn-row">
+            <button class="btn primary" onclick="openOrderModal()">
+              <i class="ti ti-send"></i> Demander votre devis
+            </button>
+            <button class="btn success" onclick="toggleSaveForm2()">
+              <i class="ti ti-bookmark"></i> Sauvegarder cette configuration
+            </button>
+            <button class="btn" onclick="switchTab('config')">
+              <i class="ti ti-arrow-left"></i> Revenir à la configuration
+            </button>
+          </div>
+          <div class="save-form" id="save-form-2">
+            <div class="save-label">Donnez un nom à cette configuration :</div>
+            <div class="save-input-row">
+              <input type="text" id="save-name-2" placeholder="Ex : Mon gravel bikepacking" maxlength="60" />
+              <button onclick="doSave('save-name-2','save-toast-2')">Sauvegarder</button>
+            </div>
+            <div class="toast" id="save-toast-2"><i class="ti ti-check"></i> Configuration sauvegardée !</div>
+          </div>
         </div>
       </div>
     </div>
@@ -1462,20 +1476,13 @@ function switchTab(tab) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.getElementById('tab-' + tab).classList.add('active');
-  if (tab !== 'size') {
-    document.getElementById('view-' + tab).classList.add('active');
-    const sbbOff = document.getElementById('size-base-btns');
-    if (sbbOff) sbbOff.style.display = 'none';
-  }
+  if (tab !== 'size') document.getElementById('view-' + tab).classList.add('active');
   document.body.classList.toggle('on-tab-saved', tab === 'saved');
   document.body.classList.toggle('on-tab-size', tab === 'size');
+  showTabBtns(tab);
   if (tab === 'saved') renderSaved();
   if (tab === 'size') {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    // Afficher size-base-btns si allDone
-    const allDoneNow = POST_META.every(p => !!selOpts[p.id]);
-    const sbbNow = document.getElementById('size-base-btns');
-    if (sbbNow) sbbNow.style.display = allDoneNow ? 'flex' : 'none';
     const br = document.getElementById('bottom-row');
     if (br && br.style.display === 'none') {
       br.style.display = window.innerWidth >= 768 ? 'flex' : 'block';
@@ -1561,7 +1568,7 @@ function selectModel(id) {
   renderModels();
   renderPosts();
   updateRecap(); updateFloatingPrice();
-  document.getElementById('save-form').classList.remove('open');
+  document.getElementById('save-form-1').classList.remove('open'); document.getElementById('save-form-2').classList.remove('open');
   window.scrollTo({ top: 0, behavior: 'instant' });
 }
 
@@ -1806,9 +1813,6 @@ function updateRecap() {
   const allDone = POST_META.every(p => !!selOpts[p.id]);
   const bottomRow = document.getElementById('bottom-row');
   if (bottomRow) bottomRow.style.display = allDone ? (window.innerWidth >= 768 ? 'flex' : 'block') : 'none';
-  // size-base-btns : visible seulement sur onglet 2 quand allDone
-  const sbb = document.getElementById('size-base-btns');
-  if (sbb) sbb.style.display = (allDone && document.body.classList.contains('on-tab-size')) ? 'flex' : 'none';
   if (window.innerWidth < 768) document.getElementById('recap-col').style.display = allDone ? 'block' : 'none';
   if (!allDone) return;
 
@@ -1883,7 +1887,7 @@ function updateRecap() {
 function resetConfig() {
   const currentModel = selModel; // conserver le modèle en cours
   selOpts = {}; openPost = null;
-  document.getElementById('save-form').classList.remove('open');
+  document.getElementById('save-form-1').classList.remove('open'); document.getElementById('save-form-2').classList.remove('open');
   if (currentModel && PRESETS[currentModel] && PRESETS[currentModel]['Ti1']) {
     window._activePreset = 'Ti1';
     selOpts = { ...PRESETS[currentModel]['Ti1'] };
@@ -1896,16 +1900,58 @@ function resetConfig() {
 }
 
 // ─── SAUVEGARDE ───────────────────────────────────────────────────────────────
-function toggleSaveForm() {
-  const f = document.getElementById('save-form');
+// ─── BOUTONS PAR ONGLET ───────────────────────────────────────────────────────
+function showTabBtns(tab) {
+  document.getElementById('btns-tab1').style.display = tab === 'config' ? 'block' : 'none';
+  document.getElementById('btns-tab2').style.display = tab === 'size'   ? 'block' : 'none';
+}
+
+function toggleSaveForm1() {
+  const f = document.getElementById('save-form-1');
   f.classList.toggle('open');
   if (f.classList.contains('open')) {
     const model = MODELS.find(m => m.id === selModel);
-    document.getElementById('save-name-input').value = model.name + ' — ma configuration';
-    document.getElementById('save-toast').style.display = 'none';
-    setTimeout(() => document.getElementById('save-name-input').focus(), 50);
+    if (model) document.getElementById('save-name-1').value = model.name + ' — ma configuration';
+    document.getElementById('save-toast-1').style.display = 'none';
+    setTimeout(() => document.getElementById('save-name-1').focus(), 50);
   }
 }
+
+function toggleSaveForm2() {
+  const f = document.getElementById('save-form-2');
+  f.classList.toggle('open');
+  if (f.classList.contains('open')) {
+    const model = MODELS.find(m => m.id === selModel);
+    if (model) document.getElementById('save-name-2').value = model.name + ' — ma configuration';
+    document.getElementById('save-toast-2').style.display = 'none';
+    setTimeout(() => document.getElementById('save-name-2').focus(), 50);
+  }
+}
+
+function doSave(inputId, toastId) {
+  syncSelSize();
+  const name = document.getElementById(inputId).value.trim();
+  if (!name) return;
+  const model = MODELS.find(m => m.id === selModel);
+  if (!model) return;
+  const { price, weight } = computeTotals(selModel, selOpts);
+  const details = POST_META.map(p => {
+    const opt = optionsFor(p.id, selModel).find(o => o.id === selOpts[p.id]);
+    return { post: p.name, option: opt ? opt.name : '—', locked: opt ? !!opt.locked : false, price: opt && !opt.locked ? opt.price : 0 };
+  });
+  const entry = { id: Date.now(), name, modelName: model.name, modelBadge: model.badge, date: new Date().toLocaleDateString('fr-FR'), price, weight, details, selModel, selOpts: { ...selOpts }, selSize: { ...selSize } };
+  savedConfigs.unshift(entry);
+  persistSaved();
+  updateSavedCount();
+  const toast = document.getElementById(toastId);
+  if (toast) toast.style.display = 'block';
+  document.getElementById('save-form-1').classList.remove('open');
+  document.getElementById('save-form-2').classList.remove('open');
+  setTimeout(() => { if (toast) toast.style.display = 'none'; }, 1800);
+}
+
+// Alias pour compatibilité avec restoreConfig
+function toggleSaveForm() { toggleSaveForm1(); }
 
 // ─── SYNCHRONISER selSize DEPUIS LA GRILLE ACTUELLE ──────────────────────────
 function syncSelSize() {
@@ -1925,26 +1971,7 @@ function syncSelSize() {
   });
 }
 
-function saveConfig() {
-  syncSelSize();
-  const name = document.getElementById('save-name-input').value.trim();
-  if (!name) return;
-  const model = MODELS.find(m => m.id === selModel);
-  const { price, weight } = computeTotals(selModel, selOpts);
-  const details = POST_META.map(p => {
-    const opt = optionsFor(p.id, selModel).find(o => o.id === selOpts[p.id]);
-    return { post: p.name, option: opt ? opt.name : '—', locked: opt ? !!opt.locked : false, price: opt && !opt.locked ? opt.price : 0 };
-  });
-  const entry = { id: Date.now(), name, modelName: model.name, modelBadge: model.badge, date: new Date().toLocaleDateString('fr-FR'), price, weight, details, selModel, selOpts: { ...selOpts }, selSize: { ...selSize } };
-  savedConfigs.unshift(entry);
-  persistSaved();
-  updateSavedCount();
-  document.getElementById('save-toast').style.display = 'block';
-  setTimeout(() => {
-    document.getElementById('save-form').classList.remove('open');
-    document.getElementById('save-toast').style.display = 'none';
-  }, 1800);
-}
+function saveConfig() { doSave('save-name-1', 'save-toast-1'); }
 
 function deleteConfig(id) {
   if (!confirm('Supprimer cette configuration ?')) return;
@@ -2920,11 +2947,8 @@ function saveConfigFromSize() {
 }
 
 function showSizeActionBtns() {
-  const btns = document.getElementById('size-action-btns');
-  if (btns) { btns.classList.add('show'); btns.style.display = 'block'; }
-  // Masquer les 2 boutons de base — les 3 boutons les remplacent
-  const base = document.getElementById('size-base-btns');
-  if (base) base.style.display = 'none';
+  document.getElementById('btns-tab2-base').style.display = 'none';
+  document.getElementById('btns-tab2-action').style.display = 'flex';
 }
 
 function validateDims() {
