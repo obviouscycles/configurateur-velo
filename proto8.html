@@ -929,6 +929,55 @@
   .sm-recap.visible { display: block; }
   .sm-recap strong { color: #F5C400; }
   .sm-recap-line { margin-bottom: 4px; }
+
+  /* ── PAGE D'ACCUEIL ────────────────────────────────────── */
+  #welcome-screen {
+    min-height: calc(100vh - 56px);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 2rem 1rem 4rem;
+  }
+  .welcome-title {
+    font-size: 13px; text-transform: uppercase; letter-spacing: .15em;
+    color: #888; margin-bottom: .75rem; text-align: center;
+  }
+  .welcome-sub {
+    font-size: 28px; font-weight: 600; color: #f2f2f2;
+    text-align: center; margin-bottom: .5rem; letter-spacing: -.02em;
+  }
+  .welcome-desc {
+    font-size: 14px; color: #666; text-align: center;
+    margin-bottom: 2.5rem; max-width: 480px; line-height: 1.6;
+  }
+  .welcome-cards {
+    display: grid; grid-template-columns: repeat(2, 1fr);
+    gap: 1rem; width: 100%; max-width: 760px; margin-bottom: 1.5rem;
+  }
+  @media (max-width: 600px) { .welcome-cards { grid-template-columns: 1fr; } }
+  .welcome-card {
+    border: 0.5px solid #2a2a2a; padding: 1.25rem 1.5rem;
+    cursor: pointer; transition: border-color .2s, background .2s;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .welcome-card:hover { border-color: #F5C400; background: #0d0d00; }
+  .welcome-card-badge {
+    font-size: 9px; font-weight: 700; letter-spacing: .14em;
+    text-transform: uppercase; color: #555;
+  }
+  .welcome-card.featured .welcome-card-badge { color: #F5C400; }
+  .welcome-card-title { font-size: 15px; font-weight: 600; color: #f2f2f2; }
+  .welcome-card-line  { font-size: 12px; color: #666; line-height: 1.5; }
+  .welcome-card-tag {
+    font-size: 10px; color: #444; margin-top: 4px;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .welcome-card.featured .welcome-card-tag { color: #888; }
+  .welcome-skip {
+    font-size: 12px; color: #555; cursor: pointer;
+    text-decoration: underline; text-underline-offset: 3px;
+    transition: color .15s;
+  }
+  .welcome-skip:hover { color: #aaa; }
 </style>
   <!-- Google Analytics GA4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-KGZDWLZ7JZ"></script>
@@ -955,7 +1004,51 @@
   <button id="btn-fullscreen" onclick="toggleFullscreen()" title="Plein écran"><i class="ti ti-maximize" id="fs-icon"></i></button>
 </header>
 
-<main class="main">
+
+<!-- ── PAGE D'ACCUEIL ──────────────────────────────────────────────────────── -->
+<div id="welcome-screen">
+  <div class="welcome-title">Obvious On-Demand</div>
+  <div class="welcome-sub">Quel niveau de personnalisation<br>vous correspond ?</div>
+  <p class="welcome-desc">Choisissez votre point de départ. Vous pourrez toujours ajuster en cours de route.</p>
+
+  <div class="welcome-cards">
+
+    <div class="welcome-card featured" onclick="startLevel('essentiel')">
+      <div class="welcome-card-badge">Essentiel</div>
+      <div class="welcome-card-title">Choisissez vos composants</div>
+      <div class="welcome-card-line">Transmission, roues, cockpit... sur un cadre standard. Le point de départ de tous les niveaux.</div>
+      <div class="welcome-card-tag"><i class="ti ti-settings" style="font-size:11px"></i> Configurateur self-service</div>
+    </div>
+
+    <div class="welcome-card" onclick="startLevel('evolution')">
+      <div class="welcome-card-badge">Évolution</div>
+      <div class="welcome-card-title">Ajoutez des fonctions</div>
+      <div class="welcome-card-line">Inserts, fixations, gravure... des adaptations sur votre cadre standard.</div>
+      <div class="welcome-card-tag"><i class="ti ti-tool" style="font-size:11px"></i> Quelques échanges avec Obvious</div>
+    </div>
+
+    <div class="welcome-card" onclick="startLevel('performance')">
+      <div class="welcome-card-badge">Performance</div>
+      <div class="welcome-card-title">Adaptez la géométrie</div>
+      <div class="welcome-card-line">Le cadre selon votre morphologie et votre pratique. Plus vif, plus stable, plus vous.</div>
+      <div class="welcome-card-tag"><i class="ti ti-user-check" style="font-size:11px"></i> Projet avec notre équipe</div>
+    </div>
+
+    <div class="welcome-card" onclick="startLevel('titanium')">
+      <div class="welcome-card-badge">Titanium</div>
+      <div class="welcome-card-title">Prenez les commandes</div>
+      <div class="welcome-card-line">Intégration des câbles, formes de tubes, compatibilités uniques. Votre vélo, vraiment.</div>
+      <div class="welcome-card-tag"><i class="ti ti-atom" style="font-size:11px"></i> Projet sur-mesure complet</div>
+    </div>
+
+  </div>
+
+  <div class="welcome-skip" onclick="startLevel('essentiel')">
+    Je ne sais pas encore → Commencer par les composants
+  </div>
+</div>
+
+<main class="main" style="display:none" id="main-app">
 
   <div class="tab-bar">
     <div class="tab active" id="tab-config" onclick="switchTab('config')">
@@ -3465,6 +3558,37 @@ function openOrderModalCustom() {
   if (sizeText) { document.getElementById('order-size-display').value = sizeText; sf.style.display = 'block'; }
   else sf.style.display = 'none';
   document.getElementById('order-modal').classList.add('open');
+}
+
+// ══ PAGE D'ACCUEIL ════════════════════════════════════════════════════════════
+function startLevel(level) {
+  // Masquer l'accueil, afficher l'app
+  document.getElementById('welcome-screen').style.display = 'none';
+  document.getElementById('main-app').style.display = '';
+  document.getElementById('tab-bar').style.display = 'flex';
+
+  if (level === 'essentiel') {
+    switchTab('config');
+  } else if (level === 'evolution') {
+    switchTab('custom');
+    // Ouvrir directement le panneau Évolution
+    setTimeout(() => {
+      const card = document.getElementById('level-evolution');
+      if (card && !card.classList.contains('open')) card.classList.add('open');
+    }, 100);
+  } else if (level === 'performance') {
+    switchTab('custom');
+    setTimeout(() => {
+      const card = document.getElementById('level-performance');
+      if (card && !card.classList.contains('open')) card.classList.add('open');
+    }, 100);
+  } else if (level === 'titanium') {
+    switchTab('custom');
+    setTimeout(() => {
+      const card = document.getElementById('level-titanium');
+      if (card && !card.classList.contains('open')) card.classList.add('open');
+    }, 100);
+  }
 }
 </script>
 
