@@ -948,18 +948,8 @@
 
         <!-- ═══ BOUTONS ONGLET 2 "VOTRE TAILLE" ════════════════════════════ -->
         <div id="btns-tab2" style="display:none">
-          <!-- Avant qu'une taille soit trouvée -->
-          <div id="btns-tab2-base" class="btn-row">
-            <button class="btn success" onclick="toggleSaveForm2()">
-              <i class="ti ti-bookmark"></i> Sauvegarder cette configuration
-            </button>
-            <button class="btn" onclick="switchTab('config')">
-              <i class="ti ti-arrow-left"></i> Revenir à la configuration
-            </button>
-          </div>
-          <!-- Après qu'une taille est trouvée -->
-          <div id="btns-tab2-action" style="display:none" class="btn-row">
-            <button class="btn primary" onclick="openOrderModal()">
+          <div class="btn-row">
+            <button class="btn primary" onclick="openOrderModalFromSize()">
               <i class="ti ti-send"></i> Demander votre devis
             </button>
             <button class="btn success" onclick="toggleSaveForm2()">
@@ -1156,6 +1146,24 @@
 </main>
 
 <!-- MODAL COMMANDE -->
+
+<!-- ── MODAL ALERTE TAILLE ──────────────────────────────────────────────────── -->
+<div class="modal-overlay" id="size-alert-modal">
+  <div class="modal" style="max-width:400px;text-align:center;">
+    <div style="font-size:32px;margin-bottom:1rem;"><i class="ti ti-alert-triangle" style="color:#F5C400;"></i></div>
+    <h2 style="font-size:16px;margin-bottom:1rem;">Taille non validée</h2>
+    <p style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:1.5rem;">
+      Vous n'avez pas validé la taille de votre vélo.<br>
+      Nous vous recontacterons pour la définir ensemble.<br><br>
+      Voulez-vous continuer ?
+    </p>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeSizeAlert()">Annuler</button>
+      <button class="btn-send" onclick="closeSizeAlert(); openOrderModal();"><i class="ti ti-send"></i> Demander votre devis</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="order-modal">
   <div class="modal">
     <h3><i class="ti ti-file-invoice"></i> Demander mon devis</h3>
@@ -2036,6 +2044,21 @@ function buildSizeText() {
   if (selSize.debattement)   lines.push('Débattement fourche : ' + selSize.debattement + ' mm');
   if (selSize.largeur_selle) lines.push('Largeur selle : ' + selSize.largeur_selle + ' mm');
   return lines.length ? lines.join('\n') : '—';
+}
+
+// ─── OUVERTURE MODAL DEPUIS ONGLET TAILLE ────────────────────────────────────
+function openOrderModalFromSize() {
+  syncSelSize();
+  const sizeText = buildSizeText();
+  if (!sizeText) {
+    // Pas de taille validée → alerte
+    document.getElementById('size-alert-modal').classList.add('open');
+  } else {
+    openOrderModal();
+  }
+}
+function closeSizeAlert() {
+  document.getElementById('size-alert-modal').classList.remove('open');
 }
 
 function openOrderModal() {
@@ -2946,10 +2969,7 @@ function saveConfigFromSize() {
   setTimeout(() => { document.getElementById('save-toast-size').style.display = 'none'; nameInput.value = ''; }, 2500);
 }
 
-function showSizeActionBtns() {
-  document.getElementById('btns-tab2-base').style.display = 'none';
-  document.getElementById('btns-tab2-action').style.display = 'flex';
-}
+function showSizeActionBtns() { /* plus utilisé */ }
 
 function validateDims() {
   // Lire les valeurs actuelles des selects dans la grille
