@@ -870,9 +870,9 @@
   /* ── PROTO11 : PARCOURS MOBILE LINÉAIRE ──────────────────────────────────── */
   @media (max-width: 767px) {
 
-    /* Cache tout sauf l'étape courante */
-    .p11-step { display: none; }
-    .p11-step.active { display: block; }
+    /* Étapes gérées par JS uniquement */
+    .p11-step { display: none !important; }
+    .p11-step.p11-active { display: block !important; }
 
     /* Indicateur d'étapes */
     .p11-stepper {
@@ -3360,9 +3360,9 @@ function p11UpdateStep(n) {
   const lbl = document.getElementById('p11-step-label');
   if (lbl) lbl.textContent = P11_LABELS[n-1];
   // Steps
-  document.querySelectorAll('.p11-step').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.p11-step').forEach(s => { s.classList.remove('active'); s.classList.remove('p11-active'); s.style.display = 'none'; });
   const step = document.getElementById('p11-s' + n);
-  if (step) step.classList.add('active');
+  if (step) { step.classList.add('p11-active'); step.style.display = 'block'; }
   // Bouton next
   const btn = document.getElementById('p11-next-btn');
   const nextLbl = document.getElementById('p11-next-label');
