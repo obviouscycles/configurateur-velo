@@ -955,17 +955,17 @@
             <button class="btn success" onclick="toggleSaveForm2()">
               <i class="ti ti-bookmark"></i> Sauvegarder cette configuration
             </button>
+            <div class="save-form" id="save-form-2">
+              <div class="save-label">Donnez un nom à cette configuration :</div>
+              <div class="save-input-row">
+                <input type="text" id="save-name-2" placeholder="Ex : Mon gravel bikepacking" maxlength="60" />
+                <button onclick="doSave('save-name-2','save-toast-2')">Sauvegarder</button>
+              </div>
+              <div class="toast" id="save-toast-2"><i class="ti ti-check"></i> Configuration sauvegardée !</div>
+            </div>
             <button class="btn" onclick="switchTab('config')">
               <i class="ti ti-arrow-left"></i> Revenir à la configuration
             </button>
-          </div>
-          <div class="save-form" id="save-form-2">
-            <div class="save-label">Donnez un nom à cette configuration :</div>
-            <div class="save-input-row">
-              <input type="text" id="save-name-2" placeholder="Ex : Mon gravel bikepacking" maxlength="60" />
-              <button onclick="doSave('save-name-2','save-toast-2')">Sauvegarder</button>
-            </div>
-            <div class="toast" id="save-toast-2"><i class="ti ti-check"></i> Configuration sauvegardée !</div>
           </div>
         </div>
       </div>
@@ -1148,7 +1148,7 @@
 <!-- MODAL COMMANDE -->
 
 <!-- ── MODAL ALERTE TAILLE ──────────────────────────────────────────────────── -->
-<div class="modal-overlay" id="size-alert-modal">
+<div class="modal-overlay" id="size-alert-modal" style="z-index:200">
   <div class="modal" style="max-width:400px;text-align:center;">
     <div style="font-size:32px;margin-bottom:1rem;"><i class="ti ti-alert-triangle" style="color:#F5C400;"></i></div>
     <h2 style="font-size:16px;margin-bottom:1rem;">Taille non validée</h2>
