@@ -3451,9 +3451,8 @@ function p11Init() {
   // Masquer FAB drawer (le drawer reste accessible si besoin)
   p11RenderModels();
   p11UpdateStep(1);
-  // FAB au-dessus du bandeau
-  const fab = document.getElementById('fab-contact');
-  if (fab) fab.style.bottom = '76px';
+  // Swipe entre étapes (attaché sur le container après qu'il soit visible)
+  p11InitSwipe();
 }
 
 function p11UpdateStep(n) {
@@ -3483,7 +3482,7 @@ function p11UpdateStep(n) {
     if (nextLbl) nextLbl.textContent = P11_NEXT_LABELS[n-1];
   }
   // Afficher le prix uniquement sur étape 2 et 3 (config + taille)
-  if (priceStrip) priceStrip.style.display = (n >= 2 && selModel) ? 'flex' : 'none';
+  if (priceStrip) priceStrip.style.display = (selModel) ? 'flex' : 'none';
   // Step 1 : désactiver next si pas de modèle
   if (n === 1) btn.style.opacity = selModel ? '1' : '.4';
   // Step 2 : construire les postes
@@ -3570,6 +3569,10 @@ function p11SelectModel(id) {
   // Activer bouton next
   const btn = document.getElementById('p11-next-btn');
   if (btn) btn.style.opacity = '1';
+  // Afficher le bottom bar avec le prix dès l'onglet 1
+  const bar = document.getElementById('p11-bottom-bar');
+  if (bar) bar.style.display = 'block';
+  p11UpdateTotal();
 }
 
 // Rendu postes mobile
@@ -3980,56 +3983,36 @@ function p11Reset() {
 
 
 // ─── SWIPE HORIZONTAL ENTRE ÉTAPES ────────────────────────────────
-(function() {
-  let touchStartX = 0, touchStartY = 0, touchStartTime = 0;
-  let swipeBlocked = false;  // true si le touch démarre sur/dans un champ
+// Attaché sur p11-container uniquement, après son init
+function p11InitSwipe() {
+  const cont = document.getElementById('p11-container');
+  if (!cont) return;
 
-  function isInteractive(el) {
-    // Remonte jusqu'à 5 niveaux pour détecter input/select/textarea/button
-    let node = el;
-    for (let i = 0; i < 5; i++) {
-      if (!node) break;
-      const tag = node.tagName ? node.tagName.toUpperCase() : '';
-      if (['INPUT','TEXTAREA','SELECT','BUTTON','A'].includes(tag)) return true;
-      // Aussi bloquer si contenteditable
-      if (node.getAttribute && node.getAttribute('contenteditable')) return true;
-      node = node.parentElement;
-    }
-    return false;
-  }
+  let startX = 0, startY = 0, blocked = false;
 
-  document.addEventListener('touchstart', e => {
-    touchStartX = e.touches[0].clientX;
-    touchStartY = e.touches[0].clientY;
-    touchStartTime = Date.now();
-    swipeBlocked = isInteractive(e.target);
+  cont.addEventListener('touchstart', e => {
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    // Bloquer si le touch est dans/sur un élément interactif (closest est natif)
+    blocked = !!(e.target.closest('input, textarea, select, button, a, [contenteditable]'));
   }, { passive: true });
 
-  document.addEventListener('touchend', e => {
-    if (swipeBlocked) return;
-    // Vérifier qu'un input a le focus (clavier ouvert) — blocage additionnel
-    const active = document.activeElement;
-    if (active && ['INPUT','TEXTAREA','SELECT'].includes(active.tagName.toUpperCase())) return;
-    // Vérifier qu'on est bien dans p11-container
-    const cont = document.getElementById('p11-container');
-    if (!cont || cont.style.display === 'none') return;
+  cont.addEventListener('touchend', e => {
+    if (blocked) return;
+    // Bloquer si un champ a le focus (clavier iOS ouvert)
+    const af = document.activeElement;
+    if (af && af.closest('input, textarea, select')) return;
 
-    const dx = e.changedTouches[0].clientX - touchStartX;
-    const dy = Math.abs(e.changedTouches[0].clientY - touchStartY);
-    const dt = Date.now() - touchStartTime;
+    const dx = e.changedTouches[0].clientX - startX;
+    const dy = Math.abs(e.changedTouches[0].clientY - startY);
 
-    // Seuils stricts : horizontal net (dx > 2*dy), distance minimum 70px, temps max 400ms
-    if (Math.abs(dx) < 70) return;
-    if (dy > Math.abs(dx) * 0.5) return;  // trop vertical
-    if (dt > 400) return;
+    // Swipe horizontal net : au moins 70px, ratio H/V > 2
+    if (Math.abs(dx) < 70 || dy > Math.abs(dx) / 2) return;
 
-    if (dx < 0) {
-      if (p11CurrentStep < 4) p11UpdateStep(p11CurrentStep + 1);
-    } else {
-      if (p11CurrentStep > 1) p11UpdateStep(p11CurrentStep - 1);
-    }
+    if (dx < 0 && p11CurrentStep < 4) p11UpdateStep(p11CurrentStep + 1);
+    else if (dx > 0 && p11CurrentStep > 1) p11UpdateStep(p11CurrentStep - 1);
   }, { passive: true });
-})();
+}
 
 // Init au chargement
 function p11TryInit() {
