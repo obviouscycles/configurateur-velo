@@ -889,10 +889,6 @@
     .p11-step-line {
       flex: 1; height: 1px; background: #222; max-width: 40px;
     }
-    .p11-step-label {
-      font-size: 10px; color: #888; text-align: center;
-      padding: 6px 1rem 4px; letter-spacing: .06em; text-transform: uppercase;
-    }
 
     /* Bouton "Étape suivante" dans la barre fixe */
     #p11-next-btn {
@@ -945,7 +941,7 @@
   .sc-choice-icon { font-size: 22px; color: #F5C400; flex-shrink: 0; }
   .sc-choice-title { font-size: 14px; font-weight: 500; color: var(--text1); }
   .sc-choice-desc { font-size: 12px; color: var(--text2); margin-top: 2px; }
-  .size-note { font-size: 12px; color: var(--text3); font-style: italic; line-height: 1.5; margin-bottom: 1rem; }
+  .size-note { font-size: 12px; color: #aaa; font-style: normal; line-height: 1.5; margin-bottom: 1rem; }
   .validate-btn {
     background: #F5C400; color: #1a1a00; border: none;
     padding: 12px 24px; font-size: 14px; font-weight: 600; cursor: pointer;
@@ -999,7 +995,7 @@
     #p11-s3 .size-choice .sc-choice-title { color: #f2f2f2; }
     #p11-s3 .size-choice .sc-choice-desc { color: #888; }
     #p11-s3 .size-choice.active { background: #1a1500; border-color: #F5C400; }
-    #p11-s3 .size-note { color: #666; }
+    #p11-s3 .size-note { color: #aaa; }
     #p11-s3 .size-panel { background: transparent; border: none; }
     #p11-s3 .size-panel.open { background: transparent; }
     #p11-s3 .size-field label { color: #888; }
@@ -1081,7 +1077,6 @@
       <div class="p11-step-dot" id="p11-dot-4"></div>
       <button id="p11-fwd-btn" onclick="p11Next()" style="background:none;border:none;color:#555;font-size:18px;padding:0 0 0 8px;cursor:pointer;line-height:1;flex-shrink:0;"><i class="ti ti-chevron-right"></i></button>
     </div>
-    <div class="p11-step-label" id="p11-step-label">Choisir votre modèle</div>
 
     <!-- Étape 1 -->
     <div class="p11-step active" id="p11-s1" style="background:#111;">
@@ -1138,20 +1133,22 @@
         </div>
         <p class="size-note">Vous n'avez pas toutes les informations ? Nous vous recontacterons pour affiner vos cotes.</p>
         <div class="size-panel" id="p11-panel-guide">
-          <div class="size-form-row">
-            <div class="size-field">
+          <div class="size-form-row" style="flex-direction:column;gap:.75rem;">
+            <div class="size-field" style="width:100%;">
               <label>Votre taille (cm)</label>
               <input type="number" class="size-input" id="p11-guide-stature" placeholder="Ex : 175" min="140" max="210">
             </div>
-            <div class="size-field">
-              <label>Entrejambe (cm) <span class="lbl-opt">optionnel</span> <span class="lbl-info" onclick="toggleTooltip('p11-tt-ej')">ⓘ</span></label>
-              <div class="size-tooltip" id="p11-tt-ej">Debout pieds nus, dos au mur. Livre entre les jambes, mesurez sol → dessus du livre.</div>
-              <input type="number" class="size-input" id="p11-guide-ej" placeholder="Ex : 82" min="60" max="110" step="0.5">
-            </div>
-            <div class="size-field">
-              <label>Largeur épaules (cm) <span class="lbl-opt">optionnel</span> <span class="lbl-info" onclick="toggleTooltip('p11-tt-acro')">ⓘ</span></label>
-              <div class="size-tooltip" id="p11-tt-acro">Distance entre les deux pointes osseuses de vos épaules les plus éloignées.</div>
-              <input type="number" class="size-input" id="p11-guide-acro" placeholder="Ex : 40" min="25" max="60" step="0.5">
+            <div style="display:flex;gap:.75rem;">
+              <div class="size-field" style="flex:1;">
+                <label>Entrejambe (cm) <span class="lbl-opt">optionnel</span> <span class="lbl-info" onclick="toggleTooltip('p11-tt-ej')">ⓘ</span></label>
+                <div class="size-tooltip" id="p11-tt-ej">Debout pieds nus, dos au mur. Livre entre les jambes, mesurez sol → dessus du livre.</div>
+                <input type="number" class="size-input" id="p11-guide-ej" placeholder="Ex : 82" min="60" max="110" step="0.5">
+              </div>
+              <div class="size-field" style="flex:1;">
+                <label>Largeur épaules (cm) <span class="lbl-opt">optionnel</span> <span class="lbl-info" onclick="toggleTooltip('p11-tt-acro')">ⓘ</span></label>
+                <div class="size-tooltip" id="p11-tt-acro">Distance entre les deux pointes osseuses de vos épaules les plus éloignées.</div>
+                <input type="number" class="size-input" id="p11-guide-acro" placeholder="Ex : 40" min="25" max="60" step="0.5">
+              </div>
             </div>
           </div>
           <button class="size-btn" onclick="p11CalcSize()" style="width:100%;justify-content:center;"><i class="ti ti-calculator"></i> Calculer</button>
@@ -1518,7 +1515,7 @@
       <textarea id="order-config-display" rows="5" readonly style="font-size:11px;color:var(--text2);background:var(--bg3)"></textarea>
     </div>
     <div class="field" id="order-size-field" style="display:none">
-      <label>Dimensions choisies</label>
+      <label>Dimensions</label>
       <textarea id="order-size-display" rows="4" readonly style="font-size:11px;color:var(--text2);background:var(--bg3)"></textarea>
     </div>
     <div class="modal-actions">
@@ -3469,9 +3466,6 @@ function p11UpdateStep(n) {
   const fwdBtn  = document.getElementById('p11-fwd-btn');
   if (backBtn) backBtn.style.color = n > 1 ? '#F5C400' : '#333';
   if (fwdBtn)  fwdBtn.style.color  = n < 4 ? '#F5C400' : '#333';
-  // Label
-  const lbl = document.getElementById('p11-step-label');
-  if (lbl) lbl.textContent = P11_LABELS[n-1];
   // Steps
   document.querySelectorAll('.p11-step').forEach(s => { s.classList.remove('active'); s.classList.remove('p11-active'); s.style.display = 'none'; });
   const step = document.getElementById('p11-s' + n);
@@ -3944,10 +3938,13 @@ function p11RenderFinalRecap() {
   if (!model) return;
   const {price, weight} = computeTotals(selModel, selOpts);
   const icons = {fourche:'ti-git-fork',roues:'ti-circle',pneus:'ti-circle-dotted',transmission:'ti-settings',power:'ti-activity',frein:'ti-hand-stop',pilotage:'ti-adjustments-horizontal',selle:'ti-armchair',tige:'ti-arrows-vertical',pedales:'ti-rotate-clockwise'};
-  let html = '<div style="margin-bottom:1rem;padding:1rem;background:#111;border:0.5px solid #222;">' +
-    '<div style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">' + model.badge + '</div>' +
-    '<div style="font-size:16px;font-weight:600;color:#f2f2f2;margin-bottom:4px;">' + model.name + ' titane</div>' +
-    '<div style="font-size:22px;font-weight:700;color:#F5C400;">' + price.toLocaleString('fr-FR') + ' €</div>' +
+  let html = '<div style="margin-bottom:1rem;padding:1rem;background:#111;border:0.5px solid #222;display:flex;align-items:center;gap:12px;">' +
+    (model.photo ? '<img src="' + model.photo + '" alt="' + model.name + '" style="width:80px;height:54px;object-fit:cover;flex-shrink:0;border:0.5px solid #333;">' : '') +
+    '<div style="flex:1;min-width:0;">' +
+      '<div style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px;">' + model.badge + '</div>' +
+      '<div style="font-size:15px;font-weight:600;color:#f2f2f2;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + model.name + '</div>' +
+      '<div style="font-size:20px;font-weight:700;color:#F5C400;">' + price.toLocaleString('fr-FR') + ' €</div>' +
+    '</div>' +
     '</div>';
   POST_META.forEach(p => {
     const opt = optionsFor(p.id, selModel).find(o=>o.id===selOpts[p.id]);
@@ -3959,14 +3956,13 @@ function p11RenderFinalRecap() {
         '<div style="font-size:10px;color:#666;text-transform:uppercase;letter-spacing:.06em;">' + p.name + '</div>' +
         '<div style="font-size:13px;color:#f2f2f2;">' + opt.name + '</div>' +
       '</div>' +
-      (locked ? '<span style="font-size:10px;color:#555;">inclus</span>' : '') +
     '</div>';
   });
   // Taille si définie
   const sizeText = buildSizeText();
   if (sizeText) {
     html += '<div style="margin-top:1rem;padding:.75rem 1rem;background:#0a1520;border:0.5px solid #333;">' +
-      '<div style="font-size:10px;color:#666;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Dimensions choisies</div>' +
+      '<div style="font-size:10px;color:#666;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Dimensions</div>' +
       '<div style="font-size:12px;color:#aaa;line-height:1.8;">' + sizeText.replace(/\n/g,'<br>') + '</div>' +
     '</div>';
   }
