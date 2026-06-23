@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <link rel="icon" type="image/webp" href="https://www.obviouscycles.com/wp-content/uploads/2023/04/favicon-512-light.webp">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OBVIOUS-ON-DEMAND — Montage à la carte [PROTO12]</title>
+<title>OBVIOUS-ON-DEMAND — Montage à la carte [PROTO13A]</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1052,6 +1052,101 @@
     z-index: 100; white-space: normal; min-width: 180px;
   }
   .preset-info-popup strong { color: #F5C400; display: block; margin-bottom: 3px; font-size: 11px; }
+
+  /* ── PROTO13A : modale bienvenue desktop ── */
+  @media (min-width: 768px) {
+    #modal-welcome {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.85);
+      z-index: 3000;
+      display: flex; align-items: center; justify-content: center;
+      padding: 2rem;
+    }
+    #modal-welcome.hidden { display: none; }
+    .mw-panel {
+      background: #111; border: 0.5px solid #333;
+      width: 100%; max-width: 780px;
+      max-height: 90vh; overflow-y: auto;
+    }
+    .mw-header {
+      padding: 1.5rem 1.5rem 1rem;
+      border-bottom: 0.5px solid #1e1e1e;
+    }
+    .mw-header-label {
+      font-size: 10px; color: #666; text-transform: uppercase;
+      letter-spacing: .1em; margin-bottom: 6px;
+    }
+    .mw-header h2 {
+      font-size: 20px; font-weight: 400; color: #f2f2f2; margin: 0;
+    }
+    .mw-header p {
+      font-size: 13px; color: #666; margin: 6px 0 0;
+    }
+    .mw-body { padding: 1.25rem 1.5rem 1.5rem; }
+    /* Étape 1 : grille 4 vélos */
+    .mw-models {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+    }
+    .mw-model-card {
+      border: 0.5px solid #2a2a2a; background: #0d0d0d;
+      cursor: pointer; overflow: hidden;
+      transition: border-color .15s, background .15s;
+    }
+    .mw-model-card:hover { border-color: #555; background: #161616; }
+    .mw-model-card.sel { border: 1.5px solid #F5C400; background: #1a1500; }
+    .mw-model-card img { width: 100%; height: 90px; object-fit: cover; display: block; }
+    .mw-model-body { padding: 10px 10px 12px; }
+    .mw-model-badge { font-size: 9px; color: #555; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 3px; }
+    .mw-model-name { font-size: 13px; font-weight: 500; color: #ccc; margin-bottom: 2px; }
+    .mw-model-card.sel .mw-model-name { color: #FFF8D6; }
+    .mw-model-desc { font-size: 11px; color: #555; line-height: 1.35; margin-bottom: 6px; }
+    .mw-model-card.sel .mw-model-desc { color: #a09060; }
+    .mw-model-price { font-size: 11px; color: #555; }
+    .mw-model-card.sel .mw-model-price { color: #F5C400; }
+    /* Étape 2 : préconfigs */
+    .mw-presets { display: none; margin-top: 1.25rem; border-top: 0.5px solid #1e1e1e; padding-top: 1.25rem; }
+    .mw-presets.visible { display: block; }
+    .mw-presets-label {
+      font-size: 10px; color: #666; text-transform: uppercase;
+      letter-spacing: .08em; margin-bottom: 10px;
+    }
+    .mw-preset-cards {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+      margin-bottom: 1rem;
+    }
+    .mw-preset-card {
+      border: 0.5px solid #2a2a2a; background: #0d0d0d;
+      padding: 14px; cursor: pointer;
+      transition: border-color .15s, background .15s;
+    }
+    .mw-preset-card:hover { border-color: #555; }
+    .mw-preset-card.sel { border: 1.5px solid #F5C400; background: #1a1500; }
+    .mw-preset-name { font-size: 15px; font-weight: 600; color: #f2f2f2; margin-bottom: 4px; }
+    .mw-preset-card.sel .mw-preset-name { color: #F5C400; }
+    .mw-preset-desc { font-size: 12px; color: #666; line-height: 1.5; margin-bottom: 8px; }
+    .mw-preset-card.sel .mw-preset-desc { color: #a09060; }
+    .mw-preset-price { font-size: 13px; font-weight: 600; color: #888; }
+    .mw-preset-card.sel .mw-preset-price { color: #F5C400; }
+    /* Bouton lancer */
+    .mw-footer {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1rem 1.5rem; border-top: 0.5px solid #1e1e1e;
+    }
+    .mw-skip { background: none; border: none; color: #444; font-size: 12px; cursor: pointer; font-family: var(--font); }
+    .mw-skip:hover { color: #888; }
+    .mw-launch {
+      background: #F5C400; border: none; color: #1a1a00;
+      padding: 11px 28px; font-size: 14px; font-weight: 700;
+      cursor: pointer; font-family: var(--font);
+      display: flex; align-items: center; gap: 8px;
+      opacity: .4; pointer-events: none;
+      transition: opacity .15s;
+    }
+    .mw-launch.ready { opacity: 1; pointer-events: auto; }
+  }
+  @media (max-width: 767px) {
+    #modal-welcome { display: none !important; }
+  }
 </style>
   <!-- Google Analytics GA4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-KGZDWLZ7JZ"></script>
@@ -1076,7 +1171,7 @@
     <button id="header-contact-btn" onclick="openContactDrawer()" style="display:none;align-items:center;gap:6px;background:#F5C400;border:none;color:#1a1a00;padding:7px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font);">
       <i class="ti ti-headset" style="font-size:14px;"></i> Aide - Contact
     </button>
-    <span style="font-size:10px;font-weight:500;background:#F5C400;color:#1a1a00;padding:2px 8px;letter-spacing:.06em;" id="proto-badge">PROTO12</span>
+    <span style="font-size:10px;font-weight:500;background:#F5C400;color:#1a1a00;padding:2px 8px;letter-spacing:.06em;" id="proto-badge">PROTO13A</span>
   </div>
   <button id="btn-fullscreen" onclick="toggleFullscreen()" title="Plein écran"><i class="ti ti-maximize" id="fs-icon"></i></button>
 </header>
@@ -2683,9 +2778,94 @@ function togglePresetInfoDt(decl, btn) {
 document.addEventListener('click', () => {
   document.querySelectorAll('.preset-info-popup').forEach(p => p.style.display = 'none');
 });
+
+// ── PROTO13A : modale bienvenue ────────────────────────────────────
+let mwSelModel = null, mwSelPreset = null;
+
+function mwInit() {
+  if (window.innerWidth < 768) return;
+  // Rendre les cartes modèles
+  const grid = document.getElementById('mw-models');
+  if (!grid) return;
+  grid.innerHTML = MODELS.map(m =>
+    `<div class="mw-model-card" id="mw-mc-${m.id}" onclick="mwSelectModel('${m.id}')">` +
+      (m.photo ? `<img src="${m.photo}" alt="${m.name}" loading="lazy">` : '') +
+      `<div class="mw-model-body">` +
+        `<div class="mw-model-badge">${m.badge}</div>` +
+        `<div class="mw-model-name">${m.name}</div>` +
+        `<div class="mw-model-desc">${m.desc || ''}</div>` +
+        `<div class="mw-model-price">à partir de ${(m.basePrice + (m.assembly||0)).toLocaleString('fr-FR')} €</div>` +
+      `</div>` +
+    `</div>`
+  ).join('');
+}
+
+function mwSelectModel(id) {
+  mwSelModel = id; mwSelPreset = null;
+  // Surbrillance carte modèle
+  document.querySelectorAll('.mw-model-card').forEach(c => c.classList.remove('sel'));
+  const card = document.getElementById('mw-mc-' + id);
+  if (card) card.classList.add('sel');
+  // Afficher préconfigs
+  const presetsEl = document.getElementById('mw-presets');
+  const cardsEl = document.getElementById('mw-preset-cards');
+  const labelEl = document.getElementById('mw-presets-label');
+  if (!presetsEl || !cardsEl) return;
+  const model = MODELS.find(m => m.id === id);
+  if (labelEl && model) labelEl.textContent = '3 suggestions pour ' + model.name;
+  const presets = PRESETS[id];
+  if (!presets) { presetsEl.classList.remove('visible'); return; }
+  // Calculer les prix des préconfigs
+  cardsEl.innerHTML = ['Signature','Ti1','Ti2'].map(decl => {
+    const preset = presets[decl];
+    if (!preset) return '';
+    const { price } = computeTotals(id, preset);
+    return `<div class="mw-preset-card" id="mw-pc-${decl}" onclick="mwSelectPreset('${decl}')">` +
+      `<div class="mw-preset-name">${decl}</div>` +
+      `<div class="mw-preset-desc">${PRESET_DESCS_DT[decl] || ''}</div>` +
+      `<div class="mw-preset-price">${price.toLocaleString('fr-FR')} €</div>` +
+    `</div>`;
+  }).join('');
+  presetsEl.classList.add('visible');
+  mwUpdateLaunch();
+  // Scroll doux vers les préconfigs
+  presetsEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function mwSelectPreset(decl) {
+  mwSelPreset = decl;
+  document.querySelectorAll('.mw-preset-card').forEach(c => c.classList.remove('sel'));
+  const card = document.getElementById('mw-pc-' + decl);
+  if (card) card.classList.add('sel');
+  mwUpdateLaunch();
+}
+
+function mwUpdateLaunch() {
+  const btn = document.getElementById('mw-launch');
+  if (btn) btn.classList.toggle('ready', !!(mwSelModel && mwSelPreset));
+}
+
+function mwLaunch() {
+  if (!mwSelModel || !mwSelPreset) return;
+  // Sélectionner le modèle et charger la préconfig
+  window._singleModel = mwSelModel;
+  window._activePreset = null;
+  selectModel(mwSelModel);
+  loadPreset(mwSelPreset);
+  // Fermer la modale
+  const modal = document.getElementById('modal-welcome');
+  if (modal) modal.classList.add('hidden');
+}
+
+function mwSkip() {
+  const modal = document.getElementById('modal-welcome');
+  if (modal) modal.classList.add('hidden');
+}
+
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 loadSaved();
 renderModels();
+mwInit();
 
 // Présélection via paramètre URL (?modele=ON/OFF&roues=roue_gr_ob_35...)
 const ALIASES = {
@@ -4404,5 +4584,31 @@ window.addEventListener('resize', () => {
       <div id="cmm-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;"></div>
     </div>
   </div>
+
+<!-- ── PROTO13A : modale bienvenue desktop ── -->
+<div id="modal-welcome">
+  <div class="mw-panel">
+    <div class="mw-header">
+      <div class="mw-header-label">Obvious On-Demand — Configurateur</div>
+      <h2>Choisissez votre vélo</h2>
+      <p>Sélectionnez un modèle puis une suggestion de départ. Tout reste modifiable.</p>
+    </div>
+    <div class="mw-body">
+      <!-- Étape 1 : 4 vélos -->
+      <div class="mw-models" id="mw-models"></div>
+      <!-- Étape 2 : préconfigs -->
+      <div class="mw-presets" id="mw-presets">
+        <div class="mw-presets-label" id="mw-presets-label">3 suggestions pour démarrer</div>
+        <div class="mw-preset-cards" id="mw-preset-cards"></div>
+      </div>
+    </div>
+    <div class="mw-footer">
+      <button class="mw-skip" onclick="mwSkip()">Passer — configurer librement</button>
+      <button class="mw-launch" id="mw-launch" onclick="mwLaunch()">
+        <i class="ti ti-arrow-right"></i> Commencer
+      </button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
