@@ -994,12 +994,6 @@
     .p11-model-card.sel .mc-price { color:#F5C400; }
   }
 
-  /* FAB au-dessus du bandeau bas */
-  @media (max-width: 767px) {
-    #fab-contact {
-      bottom: 76px !important;
-    }
-  }
 
   /* ── PROTO11 : step 3 dark mode ── */
   @media (max-width: 767px) {
@@ -3443,6 +3437,9 @@ function p11Init() {
   // Masquer FAB drawer (le drawer reste accessible si besoin)
   p11RenderModels();
   p11UpdateStep(1);
+  // FAB au-dessus du bandeau
+  const fab = document.getElementById('fab-contact');
+  if (fab) fab.style.bottom = '76px';
 }
 
 function p11UpdateStep(n) {
@@ -3477,6 +3474,9 @@ function p11UpdateStep(n) {
   if (n === 3 && p11SizeMode) p11BuildDimsGrid();
   // Step 4 : construire le récap final
   if (n === 4) p11RenderFinalRecap();
+  // FAB : 20px si étape 4 (pas de bandeau), 76px sinon (au-dessus du bandeau)
+  const fab = document.getElementById('fab-contact');
+  if (fab && window.innerWidth < 768) fab.style.bottom = (n === 4 ? '20px' : '76px');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -3749,23 +3749,138 @@ function p11ChooseUsage(usage) {
 }
 
 function p11BuildDimsGrid() {
-  // Réutilise la logique existante de buildDimsGrid en redirigeant vers p11-dims-grid
-  const oldGrid = document.getElementById('dims-grid');
-  const p11Grid = document.getElementById('p11-dims-grid');
-  if (!p11Grid) return;
-  // Appel de buildDimsGrid qui cible dims-grid, puis copie le résultat
-  buildDimsGrid();
-  if (oldGrid) p11Grid.innerHTML = oldGrid.innerHTML;
+  const grid = document.getElementById('p11-dims-grid');
+  if (!grid || !selModel) return;
+  const fields = [];
+
+  // Taille de cadre
+  const tailles = TAILLES_CADRE[selModel] || [];
+  if (tailles.length > 0) fields.push({ id:'p11-dim-taille', label:'Taille de cadre', options: tailles.map(t=>t.taille), key:'taille' });
+
+  // Transmission
+  const transOpt = selOpts.transmission ? ALL_OPTIONS.transmission.find(o=>o.id===selOpts.transmission) : null;
+  if (transOpt && transOpt.dims) {
+    if (transOpt.dims.manivelle && transOpt.dims.manivelle.length > 1)
+      fields.push({id:'p11-dim-manivelle', label:'Longueur manivelle (mm)', options:transOpt.dims.manivelle, key:'manivelle'});
+    if (transOpt.dims.plateaux && transOpt.dims.plateaux.length > 1)
+      fields.push({id:'p11-dim-plateaux', label:'Plateau(x)', options:transOpt.dims.plateaux, key:'plateaux'});
+    if (transOpt.dims.cassette && transOpt.dims.cassette.length > 1)
+      fields.push({id:'p11-dim-cassette', label:'Cassette', options:transOpt.dims.cassette, key:'cassette'});
+  }
+
+  // Pilotage
+  const pilOpt = selOpts.pilotage ? ALL_OPTIONS.pilotage.find(o=>o.id===selOpts.pilotage) : null;
+  if (pilOpt && pilOpt.dims) {
+    if (selOpts.pilotage === 'pilotage_rd_ala') {
+      if (pilOpt.dims.cintre && pilOpt.dims.cintre.length > 1)
+        fields.push({id:'p11-dim-cintre', label:'Largeur ensemble ext-ext (mm)', options:pilOpt.dims.cintre, key:'cintre', note:'Ensemble monobloc'});
+    } else {
+      if (pilOpt.dims.cintre && pilOpt.dims.cintre.length > 1)
+        fields.push({id:'p11-dim-cintre', label:'Largeur cintre ext-ext (mm)', options:pilOpt.dims.cintre, key:'cintre'});
+      if (pilOpt.dims.potence && pilOpt.dims.potence.length > 1)
+        fields.push({id:'p11-dim-potence', label:'Longueur potence (mm)', options:pilOpt.dims.potence, key:'potence'});
+    }
+  }
+
+  // Pneus
+  const pneuOpt = selOpts.pneus ? ALL_OPTIONS.pneus.find(o=>o.id===selOpts.pneus) : null;
+  if (pneuOpt && pneuOpt.dims && pneuOpt.dims.section && pneuOpt.dims.section.length > 1)
+    fields.push({id:'p11-dim-section', label:'Section pneu', options:pneuOpt.dims.section, key:'section',
+      note: selModel==='vtt_enduro' ? 'en pouces' : 'en mm'});
+
+  // Fourche VTT
+  const fourcheOpt = selOpts.fourche ? ALL_OPTIONS.fourche.find(o=>o.id===selOpts.fourche) : null;
+  if (fourcheOpt && fourcheOpt.dims && fourcheOpt.dims.debattement && fourcheOpt.dims.debattement.length > 1)
+    fields.push({id:'p11-dim-debattement', label:'Débattement fourche (mm)', options:fourcheOpt.dims.debattement, key:'debattement'});
+
+  // Selle
+  const selleOpt = selOpts.selle ? ALL_OPTIONS.selle.find(o=>o.id===selOpts.selle) : null;
+  if (selleOpt && selleOpt.dims && selleOpt.dims.largeur_selle && selleOpt.dims.largeur_selle.length > 1)
+    fields.push({id:'p11-dim-largeur-selle', label:'Largeur selle (mm)', options:selleOpt.dims.largeur_selle, key:'largeur_selle'});
+
+  if (fields.length === 0) {
+    grid.innerHTML = '<p style="color:#666;font-size:13px;">Sélectionnez d\'abord vos composants à l\'étape 2.</p>';
+    return;
+  }
+
+  // Pré-sélection des valeurs par défaut selon taille
+  const defs = selSize.taille && DEFAULTS_BY_TAILLE[selModel] ? DEFAULTS_BY_TAILLE[selModel][selSize.taille] : {};
+  if (defs) {
+    fields.forEach(f => {
+      if (!selSize[f.key] && defs[f.key] !== undefined) {
+        const defVal = defs[f.key];
+        if (f.options && f.options.length > 0) {
+          const nums = f.options.map(Number).filter(n=>!isNaN(n));
+          if (nums.length > 0) {
+            let best;
+            if (f.key === 'manivelle' || f.key === 'potence') {
+              const lte = nums.filter(n=>n<=defVal);
+              best = lte.length > 0 ? Math.max(...lte) : Math.min(...nums);
+            } else {
+              best = nums.reduce((a,b) => Math.abs(a-defVal)<=Math.abs(b-defVal)?a:b);
+            }
+            selSize[f.key] = String(best);
+          } else {
+            if (f.options.includes(String(defVal))) selSize[f.key] = String(defVal);
+          }
+        }
+      }
+    });
+  }
+
+  grid.innerHTML = fields.map(f => {
+    if (f.options.length === 1) {
+      selSize[f.key] = String(f.options[0]);
+      const unit = ['manivelle','potence','cintre','debattement','largeur_selle'].includes(f.key) ? ' mm' : '';
+      return '<div class="dim-field"><label>' + f.label + '</label>' +
+        '<div class="dim-single">' + f.options[0] + unit + '</div>' +
+        (f.note ? '<span class="dim-note">' + f.note + '</span>' : '') + '</div>';
+    }
+    const optHTML = f.options.map(o =>
+      '<option value="' + o + '"' + (selSize[f.key]==o?' selected':'') + '>' + o +
+      (['manivelle','potence'].includes(f.key) ? ' mm' : '') + '</option>'
+    ).join('');
+    const onchangeFn = f.key === 'taille'
+      ? "selSize['" + f.key + "']=this.value; selSize.manivelle=null; selSize.cintre=null; selSize.potence=null; selSize.debattement=null; p11BuildDimsGrid();"
+      : "selSize['" + f.key + "']=this.value";
+    return '<div class="dim-field"><label>' + f.label + '</label>' +
+      '<select class="size-select" id="' + f.id + '" onchange="' + onchangeFn + '">' +
+      '<option value="">— choisir —</option>' + optHTML + '</select>' +
+      (f.note ? '<span class="dim-note">' + f.note + '</span>' : '') + '</div>';
+  }).join('');
 }
 
 function p11ValidateDims() {
-  // Réutilise validateDims
-  validateDims();
+  // Lire les selects p11-
+  const keyMap = {
+    'p11-dim-taille':'taille','p11-dim-manivelle':'manivelle','p11-dim-plateaux':'plateaux',
+    'p11-dim-cassette':'cassette','p11-dim-cintre':'cintre','p11-dim-potence':'potence',
+    'p11-dim-section':'section','p11-dim-debattement':'debattement','p11-dim-largeur-selle':'largeur_selle'
+  };
+  Object.entries(keyMap).forEach(([id,key]) => {
+    const el = document.getElementById(id);
+    if (el && el.value) selSize[key] = el.value;
+  });
   window.sizeValidated = true;
-  const summary = document.getElementById('dims-summary');
+  const lines = [];
+  if (selSize.taille)        lines.push('<strong>Taille :</strong> ' + selSize.taille);
+  if (selSize.manivelle)     lines.push('<strong>Manivelle :</strong> ' + selSize.manivelle + ' mm');
+  if (selSize.plateaux)      lines.push('<strong>Plateau(x) :</strong> ' + selSize.plateaux);
+  if (selSize.cassette)      lines.push('<strong>Cassette :</strong> ' + selSize.cassette);
+  if (selSize.cintre)        lines.push('<strong>Cintre :</strong> ' + selSize.cintre + ' mm');
+  if (selSize.potence)       lines.push('<strong>Potence :</strong> ' + selSize.potence + ' mm');
+  if (selSize.section)       lines.push('<strong>Section pneu :</strong> ' + selSize.section);
+  if (selSize.debattement)   lines.push('<strong>Débattement :</strong> ' + selSize.debattement + ' mm');
+  if (selSize.largeur_selle) lines.push('<strong>Largeur selle :</strong> ' + selSize.largeur_selle + ' mm');
   const p11Summary = document.getElementById('p11-dims-summary');
-  if (summary && p11Summary) p11Summary.innerHTML = summary.innerHTML;
-  if (p11Summary) p11Summary.classList.add('show');
+  if (p11Summary) {
+    if (lines.length === 0) {
+      p11Summary.innerHTML = '<span style="color:#e24b4a">Veuillez sélectionner au moins une dimension.</span>';
+    } else {
+      p11Summary.innerHTML = '✅ <strong>Dimensions enregistrées :</strong><br>' + lines.join(' · ');
+    }
+    p11Summary.classList.add('show');
+  }
 }
 
 // Récap final étape 4
@@ -3828,12 +3943,15 @@ function p11Reset() {
 (function() {
   let touchStartX = 0, touchStartY = 0, touchStartTime = 0;
   let isSwiping = false;
+  let touchStartTag = '';  // capturer la target AU DÉPART du touch
 
   document.addEventListener('touchstart', e => {
     touchStartX = e.touches[0].clientX;
     touchStartY = e.touches[0].clientY;
     touchStartTime = Date.now();
     isSwiping = false;
+    // Mémoriser le type d'élément touché au départ
+    touchStartTag = e.target ? e.target.tagName.toUpperCase() : '';
   }, { passive: true });
 
   document.addEventListener('touchmove', e => {
@@ -3851,9 +3969,11 @@ function p11Reset() {
     // Vérifier qu'on est bien dans p11-container
     const cont = document.getElementById('p11-container');
     if (!cont || cont.style.display === 'none') return;
-    // Ne pas swiper si on était sur un input ou textarea
-    const tag = e.target.tagName;
-    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+    // Ne pas swiper si le touch a DÉMARRÉ sur un input/select/textarea/button
+    if (['INPUT','TEXTAREA','SELECT','BUTTON'].includes(touchStartTag)) return;
+    // Ne pas swiper si un input a le focus (clavier ouvert)
+    const active = document.activeElement;
+    if (active && ['INPUT','TEXTAREA','SELECT'].includes(active.tagName.toUpperCase())) return;
     if (dx < 0) {
       // Swipe gauche → étape suivante
       if (p11CurrentStep < 4) p11UpdateStep(p11CurrentStep + 1);
