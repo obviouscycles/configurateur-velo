@@ -1045,7 +1045,7 @@
   <div style="display:flex;align-items:center;gap:8px;">
     <!-- Bouton Aide & Contact : mobile uniquement dans le header -->
     <button id="header-contact-btn" onclick="openContactDrawer()" style="display:none;align-items:center;gap:6px;background:#F5C400;border:none;color:#1a1a00;padding:7px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font);">
-      <i class="ti ti-headset" style="font-size:14px;"></i> Aide
+      <i class="ti ti-headset" style="font-size:14px;"></i> Aide - Contact
     </button>
     <span style="font-size:10px;font-weight:500;background:#F5C400;color:#1a1a00;padding:2px 8px;letter-spacing:.06em;" id="proto-badge">PROTO11</span>
   </div>
@@ -1069,9 +1069,7 @@
 
   <!-- ══ PROTO11 : PARCOURS MOBILE ══════════════════════════════════════════ -->
   <div id="p11-container" style="display:none;position:relative;">
-    <!-- Zones de swipe sur les bords — ne recouvrent pas le contenu central -->
-    <div id="p11-swipe-left"  style="position:fixed;top:56px;left:0;width:28px;bottom:60px;z-index:900;touch-action:pan-y;"></div>
-    <div id="p11-swipe-right" style="position:fixed;top:56px;right:0;width:28px;bottom:60px;z-index:900;touch-action:pan-y;"></div>
+
     <div class="p11-stepper">
       <button id="p11-back-btn" onclick="if(p11CurrentStep>1)p11UpdateStep(p11CurrentStep-1)" style="background:none;border:none;color:#555;font-size:18px;padding:0 8px 0 0;cursor:pointer;line-height:1;flex-shrink:0;"><i class="ti ti-chevron-left"></i></button>
       <div class="p11-step-dot active" id="p11-dot-1"></div>
@@ -3456,8 +3454,6 @@ function p11Init() {
   // Masquer FAB drawer (le drawer reste accessible si besoin)
   p11RenderModels();
   p11UpdateStep(1);
-  // Swipe entre étapes (attaché sur le container après qu'il soit visible)
-  p11InitSwipe();
 }
 
 function p11UpdateStep(n) {
@@ -3995,32 +3991,7 @@ function p11Reset() {
 }
 
 
-// ─── NAVIGATION ENTRE ÉTAPES : swipe sur zones bord + flèches stepper ──────
-function p11InitSwipe() {
-  // Zone de swipe gauche (bord gauche 28px)
-  const zoneL = document.getElementById('p11-swipe-left');
-  // Zone de swipe droite (bord droit 28px)
-  const zoneR = document.getElementById('p11-swipe-right');
-
-  function addSwipe(el, direction) {
-    if (!el) return;
-    let sx = 0, sy = 0;
-    el.addEventListener('touchstart', e => {
-      sx = e.touches[0].clientX;
-      sy = e.touches[0].clientY;
-    }, { passive: true });
-    el.addEventListener('touchend', e => {
-      const dx = e.changedTouches[0].clientX - sx;
-      const dy = Math.abs(e.changedTouches[0].clientY - sy);
-      if (Math.abs(dx) < 30 || dy > 60) return; // pas un swipe
-      if (direction === 'left'  && dx < 0 && p11CurrentStep < 4) p11UpdateStep(p11CurrentStep + 1);
-      if (direction === 'right' && dx > 0 && p11CurrentStep > 1) p11UpdateStep(p11CurrentStep - 1);
-    }, { passive: true });
-  }
-
-  addSwipe(zoneL, 'right'); // bord gauche → swipe droite = retour
-  addSwipe(zoneR, 'left');  // bord droit  → swipe gauche = suivant
-}
+// Navigation entre étapes : uniquement via flèches ‹ › dans le stepper
 
 // Init au chargement
 function p11TryInit() {
