@@ -934,6 +934,39 @@
       display: flex; flex-direction: column; gap: 10px; margin-top: 1.5rem;
     }
   }
+
+  /* ── PROTO11 : classes manquantes step 3 ── */
+  .size-choices { display: flex; flex-direction: column; gap: 8px; }
+  .size-choice {
+    background: var(--bg2); border: 0.5px solid var(--border);
+    padding: 1rem; cursor: pointer; transition: border-color .15s;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .size-choice.active { border-color: #F5C400; background: #1a1500; }
+  .size-choice.active .sc-choice-title { color: #F5C400; }
+  .sc-choice-icon { font-size: 22px; color: #F5C400; flex-shrink: 0; }
+  .sc-choice-title { font-size: 14px; font-weight: 500; color: var(--text1); }
+  .sc-choice-desc { font-size: 12px; color: var(--text2); margin-top: 2px; }
+  .size-note { font-size: 12px; color: var(--text3); font-style: italic; line-height: 1.5; margin-bottom: 1rem; }
+  .validate-btn {
+    background: #F5C400; color: #1a1a00; border: none;
+    padding: 12px 24px; font-size: 14px; font-weight: 600; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .validate-btn:hover { opacity: .85; }
+  .dims-summary {
+    margin-top: 1rem; padding: 1rem; background: #1a1500; border: 0.5px solid #F5C400;
+    font-size: 13px; color: #f2f2f2; display: none; line-height: 1.8;
+  }
+  .dims-summary.show { display: block; }
+  .lbl-opt { font-size: 10px; color: var(--text3); font-style: italic; margin-left: 4px; }
+  .lbl-info { cursor: pointer; color: #F5C400; font-size: 13px; margin-left: 4px; }
+  .size-tooltip {
+    display: none; font-size: 11px; color: var(--text2);
+    background: var(--bg2); border: 0.5px solid var(--border);
+    padding: 10px 12px; margin-bottom: 8px; line-height: 1.6;
+  }
+  .size-tooltip.show { display: block; }
 </style>
   <!-- Google Analytics GA4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-KGZDWLZ7JZ"></script>
@@ -3327,6 +3360,13 @@ document.addEventListener('fullscreenchange', () => {
   if (icon) icon.className = document.fullscreenElement ? 'ti ti-minimize' : 'ti ti-maximize';
 });
 
+
+// Tooltips proto11
+function toggleTooltip(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle('show');
+}
+
 // ══ PROTO11 : PARCOURS MOBILE ══════════════════════════════════════════════
 let p11CurrentStep = 1;
 let p11SizeMode = null;
@@ -3397,7 +3437,7 @@ function p11RenderModels() {
   grid.className = 'model-grid';
   grid.innerHTML = MODELS.map(m => {
     const sel = m.id === selModel;
-    return '<div class="model-card' + (sel ? ' selected' : '') + '" onclick="p11SelectModel(\'' + m.id + '\')">' +
+    return '<div class="model-card' + (sel ? ' sel' : '') + '" onclick="p11SelectModel(\'' + m.id + '\')">' +
       '<img class="mc-photo" src="' + (m.photo||'') + '" alt="' + m.name + '">' +
       '<div class="mc-body">' +
         '<div class="mc-badge">' + m.badge + '</div>' +
@@ -3433,35 +3473,77 @@ function p11RenderPosts() {
       const sel = selOpts[p.id] === o.id;
       const diff = locked ? (curPrice!==0 ? '−'+Math.abs(curPrice).toLocaleString('fr-FR')+' €' : 'inclus') : (o.price===curPrice ? '±0 €' : (o.price>curPrice ? '+' : '')+(o.price-curPrice).toLocaleString('fr-FR')+' €');
       const pc = locked ? (curPrice!==0?'neg':'incl') : (o.price<curPrice?'neg':o.price>curPrice?'pos':'zero');
-      return '<div class="opt-list-item' + (sel?' sel':'') + (locked?' locked':'') + '" onclick="p11SelectOpt(\'' + p.id + '\',\'' + o.id + '\')">' +
-        '<div class="oli-name">' + o.name + (o.desc?'<br><span class="oli-desc">'+o.desc+'</span>':'') + '</div>' +
-        '<div class="oli-price ' + pc + '">' + diff + '</div>' +
+      return '<div class="opt-item' + (sel?' sel':'') + '" onclick="p11SelectOpt(\'' + p.id + '\',\'' + o.id + '\')">' +
+        '<div class="opt-radio"><div class="radio-dot"></div></div>' +
+        '<div class="oi-info">' +
+          '<div class="oi-name">' + o.name + (locked ? '<span class="incl-badge"><i class="ti ti-lock" style="font-size:9px"></i> inclus</span>' : '') + '</div>' +
+          (o.desc ? '<div class="oi-desc">' + o.desc + '</div>' : '') +
+        '</div>' +
+        '<div class="oi-meta"><div class="oi-price' + (diff.startsWith('-')?' negative':'') + '">' + diff + '</div></div>' +
       '</div>';
     }).join('');
-    return '<div class="post-hdr" onclick="p11TogglePost(\'' + p.id + '\')">' +
-      '<i class="ti ' + (icons[p.id]||'ti-point') + ' ph-icon"></i>' +
-      '<div class="ph-name">' + p.name + '</div>' +
-      '<div class="ph-sel">' + (selOpt?selOpt.name:'—') + '</div>' +
-      '<i class="ti ti-chevron-down ph-arr' + (isOpen?' open':'') + '"></i></div>' +
-      '<div class="post-body' + (isOpen?' open':'') + '"><div class="opt-list">' + optHtml + '</div></div>';
+    return '<div class="post-block" data-post-id="' + p.id + '">' +
+      '<div class="post-hdr" onclick="p11TogglePost(\'' + p.id + '\')">' +
+        '<i class="ti ' + (icons[p.id]||'ti-point') + ' ph-icon"></i>' +
+        '<span class="ph-name">' + p.name + '</span>' +
+        (selOpt ? '<span class="ph-sel">' + selOpt.name + '</span>' : '<span class="ph-pending">choisir →</span>') +
+        '<i class="ti ti-chevron-down ph-chev' + (isOpen?' open':'') + '"></i>' +
+      '</div>' +
+      '<div class="post-opts' + (isOpen?' open':'') + '">' +
+        '<div class="opt-list">' + optHtml + '</div>' +
+      '</div>' +
+    '</div>';
   }).join('');
   p11UpdateTotal();
 }
 
 function p11SelectOpt(postId, optId) {
   const opt = optionsFor(postId, selModel).find(o => o.id === optId);
-  if (!opt || isLocked(opt, selModel)) return;
+  if (!opt) return;
+  if (isLocked(opt, selModel)) return; // inclus, rien à faire
   selOpts[postId] = optId;
-  if (opt.incompat) {
-    opt.incompat.forEach(id => {
-      POST_META.forEach(p => {
-        if (selOpts[p.id] === id) {
-          const fb = optionsFor(p.id, selModel).find(o => isLocked(o, selModel));
-          if (fb) selOpts[p.id] = fb.id;
-        }
-      });
-    });
+
+  // Transmission VTT : gestion des freins
+  if (postId === 'transmission' && selModel === 'vtt_enduro') {
+    const isSramVtt = optId && optId.startsWith('trans_vtt_sr_');
+    if (isSramVtt) {
+      if (!selOpts['frein'] || selOpts['frein'] === 'frein_all') selOpts['frein'] = 'frein_vtt_sr_db8';
+    } else {
+      if (!selOpts['frein'] || ['frein_vtt_sr_db8','frein_vtt_sr_mvs','frein_vtt_sr_mvu'].includes(selOpts['frein'])) selOpts['frein'] = 'frein_all';
+    }
   }
+
+  // Réinitialiser power si on change de transmission
+  if (postId === 'transmission') {
+    const currentPwr = selOpts['power'];
+    if (currentPwr && currentPwr !== 'pwr_all') {
+      const pwrRule = FORCE_SELECT.find(r => r.if_selected === currentPwr && r.force.transmission);
+      if (!pwrRule || pwrRule.force.transmission !== optId) selOpts['power'] = 'pwr_all';
+    }
+  }
+
+  // Sélections forcées (power → transmission, cintre plat ↔ CUES FLAT)
+  FORCE_SELECT.forEach(rule => {
+    if (rule.if_selected === optId) {
+      Object.entries(rule.force).forEach(([forcePost, forceId]) => {
+        const available = optionsFor(forcePost, selModel);
+        if (available.find(o => o.id === forceId)) selOpts[forcePost] = forceId;
+      });
+    }
+  });
+
+  // Effacer les sélections incompatibles dans les autres postes
+  POST_META.forEach(p => {
+    if (p.id === postId) return;
+    if (!selOpts[p.id]) return;
+    const allIncompat = POST_META.reduce((acc, pp) => {
+      if (!selOpts[pp.id]) return acc;
+      const o = ALL_OPTIONS[pp.id]?.find(x => x.id === selOpts[pp.id]);
+      return o ? acc.concat(o.incompat) : acc;
+    }, []);
+    if (allIncompat.includes(selOpts[p.id])) selOpts[p.id] = null;
+  });
+
   p11RenderPosts();
 }
 
