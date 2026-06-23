@@ -1050,7 +1050,7 @@
     <button id="header-contact-btn" onclick="openContactDrawer()" style="display:none;align-items:center;gap:6px;background:#F5C400;border:none;color:#1a1a00;padding:7px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font);">
       <i class="ti ti-headset" style="font-size:14px;"></i> Aide - Contact
     </button>
-    <span style="font-size:10px;font-weight:500;background:#F5C400;color:#1a1a00;padding:2px 8px;letter-spacing:.06em;" id="proto-badge">PROTO11</span>
+    <span style="font-size:10px;font-weight:500;background:#F5C400;color:#1a1a00;padding:2px 8px;letter-spacing:.06em;" id="proto-badge">PROTO12</span>
   </div>
   <button id="btn-fullscreen" onclick="toggleFullscreen()" title="Plein écran"><i class="ti ti-maximize" id="fs-icon"></i></button>
 </header>
@@ -3668,7 +3668,7 @@ function p11RenderPresets() {
       '<div style="margin-top:6px;color:#666;font-size:11px;">Tout reste modifiable après sélection.</div>' +
     '</div>' +
     '<div class="preset-btns">' +
-      ['Ti2','Ti1','Signature'].map(decl =>
+      ['Signature','Ti1','Ti2'].map(decl =>
         '<button class="preset-btn' + (window._activePreset===decl?' active':'') + '" onclick="p11LoadPreset(\'' + decl + '\')">' + decl + '</button>'
       ).join('') +
     '</div>';
@@ -3873,7 +3873,7 @@ function p11UpdateTotal() {
     Object.keys(selOpts).forEach(postId => {
       if (selOpts[postId] && preset[postId] !== selOpts[postId]) count++;
     });
-    const modifText = count === 0 ? '' : count + ' personnalisation' + (count > 1 ? 's' : '') + ' ↳ ' + window._activePreset;
+    const modifText = count === 0 ? '' : '● ' + count + ' personnalisation' + (count > 1 ? 's' : '') + ' ↳ ' + window._activePreset;
     const modifEl = document.getElementById('p11-modif-count');
     if (modifEl) { modifEl.textContent = modifText; modifEl.style.display = count > 0 ? 'block' : 'none'; }
     const stripModif = document.getElementById('p11-strip-modif');
