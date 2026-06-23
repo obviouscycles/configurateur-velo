@@ -3993,20 +3993,42 @@ function p11Reset() {
 
 // Navigation entre étapes : uniquement via flèches ‹ › dans le stepper
 
-// Init au chargement
+// Init au chargement — une seule fois
+let p11Initialized = false;
+
 function p11TryInit() {
   if (window.innerWidth < 768) {
-    document.getElementById('p11-container').style.display = 'block';
-    p11Init();
+    if (!p11Initialized) {
+      p11Initialized = true;
+      document.getElementById('p11-container').style.display = 'block';
+      p11Init();
+    }
+  } else {
+    // Repassé en desktop : reset le flag pour permettre un re-init si on revient mobile
+    if (p11Initialized) {
+      p11Initialized = false;
+      document.getElementById('p11-container').style.display = 'none';
+    }
   }
 }
+
 // Appel immédiat ET sur DOMContentLoaded pour être sûr
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', p11TryInit);
 } else {
   p11TryInit();
 }
-window.addEventListener('resize', p11TryInit);
+
+// Resize : utiliser un debounce et vérifier que la largeur a vraiment changé
+// (le clavier iOS change la HAUTEUR, pas la largeur — on ignore les changements de hauteur)
+let p11LastWidth = window.innerWidth;
+window.addEventListener('resize', () => {
+  const newWidth = window.innerWidth;
+  if (newWidth !== p11LastWidth) {
+    p11LastWidth = newWidth;
+    p11TryInit();
+  }
+});
 </script>
 
 <a class="back-btn back-link" href="https://www.obviouscycles.com/velos-titane/" title="Retour au site"><i class="ti ti-arrow-left"></i> Retour au site</a>
