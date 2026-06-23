@@ -967,6 +967,63 @@
     padding: 10px 12px; margin-bottom: 8px; line-height: 1.6;
   }
   .size-tooltip.show { display: block; }
+
+  /* ── PROTO11 : cartes modèles mobile ── */
+  @media (max-width: 767px) {
+    .p11-model-card {
+      border: 0.5px solid #444;
+      background: #1e1e1e;
+      cursor: pointer;
+      overflow: hidden;
+      transition: border-color .15s;
+      display: flex; flex-direction: column;
+    }
+    .p11-model-card:hover { border-color: #666; }
+    .p11-model-card.sel {
+      border: 2px solid #F5C400;
+      background: #1a1500;
+    }
+    .p11-model-card .mc-photo { width:100%; height:110px; object-fit:cover; display:block; }
+    .p11-model-card .mc-text { padding:10px 12px; display:flex; flex-direction:column; gap:3px; }
+    .p11-model-card .mc-badge { font-size:10px; color:#888; text-transform:uppercase; letter-spacing:.06em; }
+    .p11-model-card .mc-name { font-size:14px; font-weight:500; color:#f2f2f2; }
+    .p11-model-card.sel .mc-name { color:#FFF8D6; }
+    .p11-model-card .mc-desc { font-size:11px; color:#aaa; line-height:1.35; margin-top:2px; }
+    .p11-model-card.sel .mc-desc { color:#c8b870; }
+    .p11-model-card .mc-price { font-size:11px; color:#888; margin-top:4px; }
+    .p11-model-card.sel .mc-price { color:#F5C400; }
+  }
+
+  /* FAB au-dessus du bandeau bas */
+  @media (max-width: 767px) {
+    #fab-contact {
+      bottom: 76px !important;
+    }
+  }
+
+  /* ── PROTO11 : step 3 dark mode ── */
+  @media (max-width: 767px) {
+    #p11-s3 .size-choice { background: #1e1e1e; border-color: #333; color: #f2f2f2; }
+    #p11-s3 .size-choice .sc-choice-title { color: #f2f2f2; }
+    #p11-s3 .size-choice .sc-choice-desc { color: #888; }
+    #p11-s3 .size-choice.active { background: #1a1500; border-color: #F5C400; }
+    #p11-s3 .size-note { color: #666; }
+    #p11-s3 .size-panel { background: transparent; border: none; }
+    #p11-s3 .size-panel.open { background: transparent; }
+    #p11-s3 .size-field label { color: #888; }
+    #p11-s3 .size-input { background: #1e1e1e; border-color: #333; color: #f2f2f2; }
+    #p11-s3 .size-btn { background: #F5C400; color: #1a1a00; border: none; }
+    #p11-s3 .validate-btn { background: #F5C400; color: #1a1a00; }
+    #p11-s3 .size-result { background: #0d0d0d; border-color: #333; }
+    #p11-s3 .dims-summary { background: #1a1500; border-color: #F5C400; color: #f2f2f2; }
+    #p11-s3 .size-overlap { background: #1a1200; border-color: #F5C400; }
+    #p11-s3 .size-overlap-btn { background: #1e1e1e; border-color: #555; color: #f2f2f2; }
+    #p11-s3 .size-select { background: #1e1e1e; border-color: #333; color: #f2f2f2; }
+    #p11-s3 .size-tooltip { background: #1a1a1a; border-color: #333; color: #aaa; }
+    #p11-s3 .dims-grid .dim-single { background: #1e1e1e; border-color: #333; color: #888; }
+    #p11-s3 .dim-field label { color: #888; }
+    #p11-s3 .dim-note { color: #555; }
+  }
 </style>
   <!-- Google Analytics GA4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-KGZDWLZ7JZ"></script>
@@ -1022,7 +1079,7 @@
     <div class="p11-step-label" id="p11-step-label">Choisir votre modèle</div>
 
     <!-- Étape 1 -->
-    <div class="p11-step active" id="p11-s1">
+    <div class="p11-step active" id="p11-s1" style="background:#111;">
       <div style="padding:1.5rem 1rem 0;">
         <div class="step-label" style="color:#888;">Étape 1 sur 4</div>
         <p class="section-title" style="color:#F5C400;margin-bottom:1.25rem;">Choisir votre modèle</p>
@@ -1035,7 +1092,7 @@
     <div class="p11-step" id="p11-s2">
       <div style="padding:1.5rem 1rem 0;">
         <div class="step-label" style="color:#888;">Étape 2 sur 4</div>
-        <p class="section-title" style="color:#111;margin-bottom:1rem;">Configurer vos composants</p>
+        <p class="section-title" style="color:#f2f2f2;margin-bottom:1rem;">Configurer vos composants</p>
         <div id="p11-posts-list"></div>
       </div>
       <div id="p11-recap-inline">
@@ -1058,7 +1115,7 @@
     </div>
 
     <!-- Étape 3 -->
-    <div class="p11-step" id="p11-s3">
+    <div class="p11-step" id="p11-s3" style="background:#111;">
       <div style="padding:1.5rem 1rem 0;">
         <div class="step-label" style="color:#888;">Étape 3 sur 4</div>
         <p class="section-title" style="color:#f2f2f2;margin-bottom:1.5rem;">Votre taille</p>
@@ -1114,7 +1171,7 @@
     </div>
 
     <!-- Étape 4 -->
-    <div class="p11-step" id="p11-s4">
+    <div class="p11-step" id="p11-s4" style="background:#111;">
       <div style="padding:1.5rem 1rem 0;">
         <div class="step-label" style="color:#888;">Étape 4 sur 4</div>
         <p class="section-title" style="color:#f2f2f2;margin-bottom:1rem;">Votre configuration</p>
@@ -3437,14 +3494,35 @@ function p11RenderModels() {
   grid.className = 'model-grid';
   grid.innerHTML = MODELS.map(m => {
     const sel = m.id === selModel;
-    return '<div class="model-card' + (sel ? ' sel' : '') + '" onclick="p11SelectModel(\'' + m.id + '\')">' +
-      '<img class="mc-photo" src="' + (m.photo||'') + '" alt="' + m.name + '">' +
-      '<div class="mc-body">' +
-        '<div class="mc-badge">' + m.badge + '</div>' +
-        '<div class="mc-name">' + m.name + ' titane</div>' +
-        '<div class="mc-price">' + m.basePrice.toLocaleString('fr-FR') + ' €</div>' +
-      '</div></div>';
+    return '<div class="p11-model-card' + (sel ? ' sel' : '') + '" onclick="p11SelectModel(\'' + m.id + '\')">' +
+      '<img class="mc-photo" src="' + (m.photo||'') + '" alt="' + m.name + '" loading="lazy">' +
+      '<div class="mc-text">' +
+        '<span class="mc-badge">' + m.badge + '</span>' +
+        '<span class="mc-name">' + m.name + '</span>' +
+        '<span class="mc-desc">' + m.desc + '</span>' +
+        '<span class="mc-price">à partir de ' + (m.basePrice + (m.assembly||0)).toLocaleString('fr-FR') + ' €</span>' +
+      '</div>' +
+    '</div>';
   }).join('');
+  // Presets bar
+  p11RenderPresets();
+}
+
+function p11RenderPresets() {
+  const bar = document.getElementById('p11-preset-bar');
+  if (!bar || !selModel || !PRESETS[selModel]) { if(bar) bar.style.display='none'; return; }
+  bar.style.display = 'block';
+  bar.innerHTML = '<div class="preset-label">3 suggestions pour démarrer — tout reste modifiable</div>' +
+    '<div class="preset-btns">' +
+      ['Signature','Ti1','Ti2'].map(decl =>
+        '<button class="preset-btn' + (window._activePreset===decl?' active':'') + '" onclick="p11LoadPreset(\'' + decl + '\')">' + decl + '</button>'
+      ).join('') +
+    '</div>';
+}
+
+function p11LoadPreset(decl) {
+  loadPreset(decl);
+  p11RenderModels();
 }
 
 function p11SelectModel(id) {
@@ -3452,6 +3530,7 @@ function p11SelectModel(id) {
   const preset = PRESETS[id] && PRESETS[id]['Ti1'];
   if (preset) { window._activePreset = 'Ti1'; selOpts = {...preset}; }
   p11RenderModels();
+  p11RenderPresets();
   // Activer bouton next
   const btn = document.getElementById('p11-next-btn');
   if (btn) btn.style.opacity = '1';
@@ -3468,20 +3547,58 @@ function p11RenderPosts() {
     const selOpt = opts.find(o => o.id === selOpts[p.id]);
     const isOpen = openPost === p.id;
     const curPrice = selOpt && !isLocked(selOpt, selModel) ? selOpt.price : 0;
-    const optHtml = opts.map(o => {
-      const locked = isLocked(o, selModel);
-      const sel = selOpts[p.id] === o.id;
-      const diff = locked ? (curPrice!==0 ? '−'+Math.abs(curPrice).toLocaleString('fr-FR')+' €' : 'inclus') : (o.price===curPrice ? '±0 €' : (o.price>curPrice ? '+' : '')+(o.price-curPrice).toLocaleString('fr-FR')+' €');
-      const pc = locked ? (curPrice!==0?'neg':'incl') : (o.price<curPrice?'neg':o.price>curPrice?'pos':'zero');
-      return '<div class="opt-item' + (sel?' sel':'') + '" onclick="p11SelectOpt(\'' + p.id + '\',\'' + o.id + '\')">' +
-        '<div class="opt-radio"><div class="radio-dot"></div></div>' +
-        '<div class="oi-info">' +
-          '<div class="oi-name">' + o.name + (locked ? '<span class="incl-badge"><i class="ti ti-lock" style="font-size:9px"></i> inclus</span>' : '') + '</div>' +
-          (o.desc ? '<div class="oi-desc">' + o.desc + '</div>' : '') +
-        '</div>' +
-        '<div class="oi-meta"><div class="oi-price' + (diff.startsWith('-')?' negative':'') + '">' + diff + '</div></div>' +
-      '</div>';
-    }).join('');
+    const hasPhotos = opts.some(o => o.image && o.image.length > 0 && o.image !== 'assets/no_option.png');
+
+    const optHtml = hasPhotos
+      ? '<div class="opt-photo-grid">' + opts.map(o => {
+          const locked = isLocked(o, selModel);
+          const sel = selOpts[p.id] === o.id;
+          const rec = isRecommended(o, selModel);
+          let diff, pc;
+          if (locked) {
+            diff = curPrice!==0 ? '−'+Math.abs(curPrice).toLocaleString('fr-FR')+' €' : '';
+            pc = curPrice!==0?'neg':'incl';
+          } else {
+            const d = o.price - curPrice;
+            diff = sel ? '±0 €' : d===0 ? '±0 €' : (d>0?'+':'')+d.toLocaleString('fr-FR')+' €';
+            pc = d<0?'neg':d>0?'pos':'zero';
+          }
+          const imgHTML = o.image && o.image !== 'assets/no_option.png'
+            ? '<img src="' + o.image + '" alt="' + o.name + '" loading="lazy" onerror="this.style.display=\'none\'">'
+            : '<div class="opc-img-placeholder"><i class="ti ti-photo"></i></div>';
+          return '<div class="opt-photo-card' + (sel?' sel':'') + '" onclick="p11SelectOpt(\'' + p.id + '\',\'' + o.id + '\')">' +
+            '<div class="opc-check"><i class="ti ti-check"></i></div>' +
+            '<div class="opc-img-wrap">' + imgHTML + '</div>' +
+            '<div class="opc-body">' +
+              (rec ? '<div class="opc-badges"><span class="opc-badge-rec"><i class="ti ti-star" style="font-size:8px"></i> Recommandé</span></div>' : '') +
+              '<div class="opc-name">' + o.name + '</div>' +
+              (o.desc ? '<div class="opc-desc">' + o.desc + '</div>' : '') +
+              (diff ? '<div class="opc-price' + (pc==='neg'?' negative':'') + '">' + diff + '</div>' : '') +
+            '</div>' +
+          '</div>';
+        }).join('') + '</div>'
+      : '<div class="opt-list">' + opts.map(o => {
+          const locked = isLocked(o, selModel);
+          const sel = selOpts[p.id] === o.id;
+          let diff, diffNeg;
+          if (locked) {
+            diff = curPrice!==0 ? '−'+Math.abs(curPrice).toLocaleString('fr-FR')+' €' : '—';
+            diffNeg = false;
+          } else {
+            const d = o.price - curPrice;
+            diff = sel ? '±0 €' : d===0 ? '±0 €' : (d>0?'+':'')+d.toLocaleString('fr-FR')+' €';
+            diffNeg = d < 0;
+          }
+          return '<div class="opt-item' + (sel?' sel':'') + '" onclick="p11SelectOpt(\'' + p.id + '\',\'' + o.id + '\')">' +
+            '<div class="opt-radio"><div class="radio-dot"></div></div>' +
+            '<div class="oi-info">' +
+              '<div class="oi-name">' + o.name + '</div>' +
+              (o.desc ? '<div class="oi-desc">' + o.desc + '</div>' : '') +
+            '</div>' +
+            '<div class="oi-meta"><div class="oi-price' + (diffNeg?' negative':'') + '">' + diff + '</div></div>' +
+          '</div>';
+        }).join('') + '</div>';
+
     return '<div class="post-block" data-post-id="' + p.id + '">' +
       '<div class="post-hdr" onclick="p11TogglePost(\'' + p.id + '\')">' +
         '<i class="ti ' + (icons[p.id]||'ti-point') + ' ph-icon"></i>' +
@@ -3489,9 +3606,7 @@ function p11RenderPosts() {
         (selOpt ? '<span class="ph-sel">' + selOpt.name + '</span>' : '<span class="ph-pending">choisir →</span>') +
         '<i class="ti ti-chevron-down ph-chev' + (isOpen?' open':'') + '"></i>' +
       '</div>' +
-      '<div class="post-opts' + (isOpen?' open':'') + '">' +
-        '<div class="opt-list">' + optHtml + '</div>' +
-      '</div>' +
+      '<div class="post-opts' + (isOpen?' open':'') + '">' + optHtml + '</div>' +
     '</div>';
   }).join('');
   p11UpdateTotal();
@@ -3500,7 +3615,7 @@ function p11RenderPosts() {
 function p11SelectOpt(postId, optId) {
   const opt = optionsFor(postId, selModel).find(o => o.id === optId);
   if (!opt) return;
-  if (isLocked(opt, selModel)) return; // inclus, rien à faire
+  if (isLocked(opt, selModel)) { p11RenderPosts(); return; } // inclus : juste re-render
   selOpts[postId] = optId;
 
   // Transmission VTT : gestion des freins
@@ -3707,6 +3822,47 @@ function p11Reset() {
   document.getElementById('p11-dims-summary')?.classList.remove('show');
   p11UpdateStep(1);
 }
+
+
+// ─── SWIPE HORIZONTAL ENTRE ÉTAPES ────────────────────────────────
+(function() {
+  let touchStartX = 0, touchStartY = 0, touchStartTime = 0;
+  let isSwiping = false;
+
+  document.addEventListener('touchstart', e => {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+    touchStartTime = Date.now();
+    isSwiping = false;
+  }, { passive: true });
+
+  document.addEventListener('touchmove', e => {
+    const dx = Math.abs(e.touches[0].clientX - touchStartX);
+    const dy = Math.abs(e.touches[0].clientY - touchStartY);
+    if (dx > dy && dx > 10) isSwiping = true;
+  }, { passive: true });
+
+  document.addEventListener('touchend', e => {
+    if (!isSwiping) return;
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    const dy = Math.abs(e.changedTouches[0].clientY - touchStartY);
+    const dt = Date.now() - touchStartTime;
+    if (Math.abs(dx) < 50 || dy > 80 || dt > 500) return;
+    // Vérifier qu'on est bien dans p11-container
+    const cont = document.getElementById('p11-container');
+    if (!cont || cont.style.display === 'none') return;
+    // Ne pas swiper si on était sur un input ou textarea
+    const tag = e.target.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+    if (dx < 0) {
+      // Swipe gauche → étape suivante
+      if (p11CurrentStep < 4) p11UpdateStep(p11CurrentStep + 1);
+    } else {
+      // Swipe droite → étape précédente
+      if (p11CurrentStep > 1) p11UpdateStep(p11CurrentStep - 1);
+    }
+  }, { passive: true });
+})();
 
 // Init au chargement
 function p11TryInit() {
