@@ -1151,7 +1151,7 @@
 
   /* ── Étape 2 : split 50/50 modèle|composants ── */
   #dt-s2-inner {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+    display: grid; grid-template-columns: 280px 1fr; gap: 0;
     height: 100%; min-height: 0;
   }
   #dt-s2-left {
@@ -1221,8 +1221,6 @@
   .dtr-btn-main:hover { opacity: .88; }
   .dtr-btn-sec { background: none; border: 0.5px solid #333; color: #666; padding: 8px 14px; font-size: 11px; cursor: pointer; font-family: var(--font); display: flex; align-items: center; justify-content: center; gap: 5px; }
   .dtr-btn-sec:hover { border-color: #555; color: #aaa; }
-  #dt-change-model-btn { display: none; margin-top: 8px; }
-  #dt-change-model-btn button { width: 100%; background: none; border: 0.5px solid #F5C400; color: #F5C400; padding: 8px; font-size: 11px; cursor: pointer; font-family: var(--font); display: flex; align-items: center; justify-content: center; gap: 5px; }
 
   /* Masquer anciens éléments desktop */
   #view-config, #bottom-row, #view-size, #view-saved { display: none !important; }
@@ -1250,7 +1248,7 @@
     }
     #dt-s1 .model-card:hover { background: #2a2a2a !important; border-color: #555 !important; }
     #dt-s1 .model-card.sel {
-      background: #2a2200 !important;
+      background: #2a2a2a !important;
       border: 2px solid #F5C400 !important;
     }
     #dt-s1 .mc-photo { background: #1e1e1e; }
@@ -1834,9 +1832,7 @@
     <div class="dt-step-content active" id="dt-s1">
       <div class="dt-step-body">
         <p class="section-title" style="color:#f2f2f2;margin-bottom:1.5rem;">Choisissez votre modèle</p>
-        <div id="dt-change-model-btn">
-          <button onclick="dtShowAllModels()"><i class="ti ti-grid-dots"></i> Choisir un autre vélo</button>
-        </div>
+      
         <div class="model-grid" id="dt-model-grid"></div>
       </div>
       <div class="dt-step-footer">
@@ -1867,20 +1863,14 @@
 
     <!-- ÉTAPE 3 : Taille -->
     <div class="dt-step-content" id="dt-s3">
-      <div id="dt-s3-inner">
-        <div id="dt-s3-left">
-          <p class="section-title" style="color:#f2f2f2;margin-bottom:1rem;">Laissez-vous guider</p>
-          <div id="dt-s3-guide"></div>
-        </div>
-        <div id="dt-s3-right">
-          <p class="section-title" style="color:#f2f2f2;margin-bottom:1rem;">Je connais mes dimensions</p>
-          <div id="dt-s3-manual"></div>
-        </div>
-      </div>
+      <!-- Ligne 1 : 2 cartes de choix côte à côte -->
+      <div id="dt-s3-cards" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;padding:2rem 2rem 0;"></div>
+      <!-- Ligne 2 : panel actif -->
+      <div id="dt-s3-panel" style="padding:0 2rem;margin-top:1rem;"></div>
       <p style="font-size:13px;color:#aaa;margin:1.25rem 2rem 0;line-height:1.6;text-align:center;">
         Vous n'avez pas toutes les informations ? Nous vous recontacterons de toute façon pour affiner et valider vos cotes.
       </p>
-      <div id="dt-s3-result" style="display:none;margin:1rem 2rem 0;padding:1rem;background:#1a1500;border:0.5px solid #F5C400;font-size:13px;color:#f2f2f2;line-height:1.8;"></div>
+      <div id="dt-s3-result" style="display:none;margin:1rem 2rem 0;padding:1rem;background:#1e1e1e;border:0.5px solid #333;font-size:13px;color:#f2f2f2;line-height:1.8;"></div>
       <div class="dt-step-footer">
         <button class="dt-btn-back" onclick="dtGo(2)"><i class="ti ti-chevron-left"></i> Retour</button>
         <button class="dt-btn-next" id="dt-next-3" onclick="dtGo(4)">
@@ -3111,8 +3101,7 @@ function dtRender() {
   if (next3lbl) next3lbl.textContent = window.sizeValidated ? 'Voir votre récap' : 'Continuer sans taille';
 
   // Bouton "changer de vélo" dans le récap — visible après reset
-  const cmb = el('dt-change-model-btn');
-  if (cmb) cmb.style.display = (n === 1 && window._singleModel) ? 'block' : 'none';
+
 
   // Rendu spécifique
   if (n === 1) dtRenderS1();
@@ -3211,6 +3200,7 @@ function dtLoadPreset(decl) {
 
 
 function dtUpdateSavedBadge() {
+  loadSaved(); // sync avec localStorage
   const cnt = document.getElementById('dt-saved-count');
   if (!cnt) return;
   const n = savedConfigs ? savedConfigs.length : 0;
@@ -3219,27 +3209,28 @@ function dtUpdateSavedBadge() {
 }
 
 function dtShowSaved() {
-  loadSaved();
-  renderSaved();
+  loadSaved(); // sync localStorage → savedConfigs
   dtStep = 4;
   document.body.classList.add('dt-step-4');
   const inner = document.getElementById('dt-s4-inner');
   if (!inner) return;
-  // Construire directement le HTML des configs
-  if (!savedConfigs || savedConfigs.length === 0) {
-    inner.innerHTML = '<p style="color:#666;font-size:14px;padding:2rem 0;">Aucune configuration sauvegardée.</p>';
+  
+  const configs = savedConfigs || [];
+  if (configs.length === 0) {
+    inner.innerHTML = '<div style="padding:2rem 0;"><p class="section-title" style="color:#f2f2f2;margin-bottom:1rem;">Mes configurations</p><p style="color:#666;font-size:14px;">Aucune configuration sauvegardée.<br><span style="font-size:12px;color:#444;">Utilisez le bouton \"Sauvegarder\" pour en enregistrer une.</span></p></div>';
   } else {
-    inner.innerHTML = '<p class="section-title" style="color:#f2f2f2;margin-bottom:1.5rem;">Mes configurations</p>' +
-      savedConfigs.map(c => {
-        const model = MODELS.find(m => m.id === c.selModel || m.id === c.model);
+    inner.innerHTML = '<p class="section-title" style="color:#f2f2f2;margin-bottom:1.5rem;">Mes configurations (' + configs.length + ')</p>' +
+      configs.map(c => {
+        const model = MODELS.find(m => m.id === (c.selModel || c.model));
+        const cid = (c.id || '').replace(/'/g, "\\'");
         return '<div style="display:flex;align-items:center;gap:1rem;padding:1rem;background:#1e1e1e;border:0.5px solid #333;margin-bottom:8px;">' +
-          (model && model.photo ? '<img src="'+model.photo+'" style="width:60px;height:40px;object-fit:cover;flex-shrink:0;">' : '') +
-          '<div style="flex:1;">' +
-            '<div style="font-size:14px;font-weight:500;color:#f2f2f2;">'+c.name+'</div>' +
-            '<div style="font-size:11px;color:#666;">'+(model?model.name:'')+(c.preset?' · '+c.preset:'')+(c.date?' · '+c.date:'')+'</div>' +
+          (model && model.photo ? '<img src="' + model.photo + '" style="width:60px;height:40px;object-fit:cover;flex-shrink:0;border:0.5px solid #222;">' : '') +
+          '<div style="flex:1;min-width:0;">' +
+            '<div style="font-size:14px;font-weight:500;color:#f2f2f2;margin-bottom:2px;">' + c.name + '</div>' +
+            '<div style="font-size:11px;color:#666;">' + (model ? model.name : '') + (c.preset ? ' · ' + c.preset : '') + (c.date ? ' · ' + c.date : '') + '</div>' +
           '</div>' +
-          '<button onclick="dtLoadSaved(\'' + c.id + '\')" style="background:#F5C400;border:none;color:#1a1a00;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font);">Charger</button>' +
-          '<button onclick="dtDeleteSaved(\'' + c.id + '\')" style="background:none;border:0.5px solid #444;color:#666;padding:7px 10px;font-size:12px;cursor:pointer;margin-left:4px;font-family:var(--font);">✕</button>' +
+          '<button onclick="dtLoadSaved(\'' + cid + '\')" style="background:#F5C400;border:none;color:#1a1a00;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font);">Charger</button>' +
+          '<button onclick="dtDeleteSaved(\'' + cid + '\')" style="background:none;border:0.5px solid #444;color:#666;padding:7px 10px;font-size:12px;cursor:pointer;margin-left:4px;font-family:var(--font);">✕</button>' +
         '</div>';
       }).join('');
   }
@@ -3402,41 +3393,103 @@ function dtTogglePost(postId) {
 
 // ── Étape 3 : taille ──
 function dtRenderS3() {
-  const left  = document.getElementById('dt-s3-guide');
-  const right = document.getElementById('dt-s3-manual');
-  if (!left || !right) return;
+  const cardsZone = document.getElementById('dt-s3-cards');
+  const panelZone = document.getElementById('dt-s3-panel');
+  if (!cardsZone || !panelZone) return;
 
-  // Déplacer physiquement (pas cloner) pour que calcSize() fonctionne avec les vrais IDs
-  const cardGuide   = document.getElementById('card-guide');
-  const panelGuide  = document.getElementById('panel-guide');
-  const cardManual  = document.getElementById('card-manual');
-  const panelManual = document.getElementById('panel-manual');
+  // Déplacer les cartes dans la zone cartes
+  const cardGuide  = document.getElementById('card-guide');
+  const cardManual = document.getElementById('card-manual');
+  cardsZone.innerHTML = '';
+  if (cardGuide)  { cardGuide.style.cursor='pointer'; cardGuide.onclick=()=>dtToggleSizeMode('guide');  cardsZone.appendChild(cardGuide); }
+  if (cardManual) { cardManual.style.cursor='pointer'; cardManual.onclick=()=>dtToggleSizeMode('manual'); cardsZone.appendChild(cardManual); }
 
-  left.innerHTML = '';
-  right.innerHTML = '';
+  // Panel vide au départ
+  panelZone.innerHTML = '';
 
-  if (cardGuide)  { cardGuide.style.cursor = 'pointer'; cardGuide.onclick = () => dtToggleSizeMode('guide'); left.appendChild(cardGuide); }
-  if (panelGuide) { panelGuide.classList.add('open'); left.appendChild(panelGuide); }
-  if (cardManual) { cardManual.style.cursor = 'pointer'; cardManual.onclick = () => dtToggleSizeMode('manual'); right.appendChild(cardManual); }
-  if (panelManual) {
-    if (typeof buildDimsGrid === 'function') buildDimsGrid();
-    right.appendChild(panelManual);
+  // Hook sur calcSize pour capturer le résultat et mettre à jour le bouton
+  const _orig = window.calcSize;
+  window.calcSize = function() {
+    if (_orig) _orig();
+    setTimeout(dtCheckSizeResult, 400);
+  };
+  const _origChoose = window.chooseUsage;
+  window.chooseUsage = function(u) {
+    if (_origChoose) _origChoose(u);
+    setTimeout(dtCheckSizeResult, 200);
+  };
+  const _origBuild = window.buildDimsGrid;
+  window.buildDimsGrid = function() {
+    if (_origBuild) _origBuild();
+  };
+  const _origValidate = window.validateDims;
+  window.validateDims = function() {
+    if (_origValidate) _origValidate();
+    window.sizeValidated = true;
+    setTimeout(dtCheckSizeResult, 100);
+  };
+}
+
+function dtCheckSizeResult() {
+  // Lire le résultat depuis les divs originaux
+  const guideResult  = document.getElementById('guide-result');
+  const dimsResult   = document.getElementById('dims-summary');
+  const resultEl = document.getElementById('dt-s3-result');
+  if (!resultEl) return;
+
+  let html = '';
+  // Guide result
+  if (guideResult && guideResult.classList.contains('show')) {
+    const main = document.getElementById('guide-result-main');
+    const sub  = document.getElementById('guide-result-sub');
+    if (main && main.textContent) {
+      html = '✅ ' + main.innerHTML + (sub ? '<br><span style="font-size:12px;color:#aaa;">' + sub.innerHTML + '</span>' : '');
+      window.sizeValidated = true;
+    }
+  }
+  // Manual result
+  if (!html && dimsResult && dimsResult.classList.contains('show')) {
+    html = '✅ <strong style="color:#F5C400;">Dimensions enregistrées</strong><br>' + dimsResult.innerHTML;
+    window.sizeValidated = true;
+  }
+  // Build from selSize
+  if (!html && window.sizeValidated) {
+    const parts = [];
+    if (selSize.taille)        parts.push('<strong>Taille :</strong> ' + selSize.taille);
+    if (selSize.manivelle)     parts.push('<strong>Manivelle :</strong> ' + selSize.manivelle + ' mm');
+    if (selSize.potence)       parts.push('<strong>Potence :</strong> ' + selSize.potence + ' mm');
+    if (selSize.cintre)        parts.push('<strong>Cintre :</strong> ' + selSize.cintre + ' mm');
+    if (parts.length) html = '✅ <strong style="color:#F5C400;">Dimensions</strong> : ' + parts.join(' · ');
+  }
+
+  if (html) {
+    resultEl.innerHTML = html;
+    resultEl.style.display = 'block';
+    const lbl = document.getElementById('dt-next-3-lbl');
+    if (lbl) lbl.textContent = 'Votre configuration →';
   }
 }
 
 function dtToggleSizeMode(mode) {
-  // Activer la carte choisie dans le split desktop
-  const guideCard  = document.getElementById('dt-card-guide');
-  const manualCard = document.getElementById('dt-card-manual');
-  const guidePanel  = document.getElementById('dt-panel-guide');
-  const manualPanel = document.getElementById('dt-panel-manual');
-  if (guideCard)  guideCard.classList.toggle('active', mode === 'guide');
-  if (manualCard) manualCard.classList.toggle('active', mode === 'manual');
-  if (guidePanel)  guidePanel.classList.toggle('open', mode === 'guide');
-  if (manualPanel) manualPanel.classList.toggle('open', mode === 'manual');
-  window.sizeValidated = false;
-  const lbl = document.getElementById('dt-next-3-lbl');
-  if (lbl) lbl.textContent = 'Continuer sans taille';
+  const panelZone = document.getElementById('dt-s3-panel');
+  const cardGuide  = document.getElementById('card-guide');
+  const cardManual = document.getElementById('card-manual');
+  if (cardGuide)  cardGuide.classList.toggle('active',  mode === 'guide');
+  if (cardManual) cardManual.classList.toggle('active', mode === 'manual');
+
+  if (!panelZone) return;
+  panelZone.innerHTML = '';
+
+  if (mode === 'guide') {
+    const panelGuide = document.getElementById('panel-guide');
+    if (panelGuide) { panelGuide.classList.add('open'); panelZone.appendChild(panelGuide); }
+  } else {
+    const panelManual = document.getElementById('panel-manual');
+    if (panelManual) {
+      if (typeof buildDimsGrid === 'function') buildDimsGrid();
+      panelManual.classList.add('open'); panelZone.appendChild(panelManual);
+    }
+  }
 }
 
 // ── Étape 4 : récap plein écran ──
@@ -3554,11 +3607,30 @@ function dtModifCount() {
 }
 
 function dtQuickSave() {
+  if (!selModel) { alert('Sélectionnez d\'abord un modèle.'); return; }
   const name = prompt('Nom de cette configuration :', 'Ma config');
   if (!name || !name.trim()) return;
-  const saved = JSON.parse(localStorage.getItem('velo_configs') || '[]');
-  saved.push({ name: name.trim(), model: selModel, opts: {...selOpts}, size: {...selSize}, date: new Date().toLocaleDateString('fr-FR'), preset: window._activePreset });
-  localStorage.setItem('velo_configs', JSON.stringify(saved));
+  // Utiliser le système de sauvegarde existant de proto12
+  const entry = {
+    id: Date.now().toString(),
+    name: name.trim(),
+    selModel,
+    selOpts: {...selOpts},
+    selSize: {...selSize},
+    preset: window._activePreset,
+    date: new Date().toLocaleDateString('fr-FR')
+  };
+  savedConfigs.unshift(entry);
+  persistSaved();
+  loadSaved(); // recharger pour sync
+  dtUpdateSavedBadge();
+  // Feedback visuel
+  const btn = document.getElementById('dtr-btn-save');
+  if (btn) {
+    const orig = btn.innerHTML;
+    btn.innerHTML = '<i class="ti ti-check" style="color:#F5C400;"></i> Sauvegardé';
+    setTimeout(() => { btn.innerHTML = orig; }, 1500);
+  }
 }
 
 function dtReset() {
