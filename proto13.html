@@ -1247,6 +1247,21 @@
   /* Masquer anciens éléments desktop */
   #view-config, #bottom-row, #view-size, #view-saved { display: none !important; }
 }
+
+  /* ── PROTO13 : masquer le HTML desktop sur mobile ── */
+  @media (max-width: 767px) {
+    #dt-stepper, #dt-main, #dt-recap { display: none !important; }
+  }
+
+  @media (min-width: 768px) {
+    #dt-s1 .mc-body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 4px; }
+    #dt-s1 .mc-badge { font-size: 10px; color: #666; text-transform: uppercase; letter-spacing: .08em; display: block; }
+    #dt-s1 .mc-name { font-size: 18px; font-weight: 600; color: #f2f2f2; display: block; }
+    #dt-s1 .model-card.sel .mc-name { color: #FFF8D6; }
+    #dt-s1 .mc-desc { font-size: 12px; color: #888; line-height: 1.5; display: block; margin-top: 2px; }
+    #dt-s1 .mc-price { font-size: 12px; color: #666; display: block; margin-top: 4px; }
+    #dt-s1 .model-card.sel .mc-price { color: #F5C400; }
+  }
 </style>
   <!-- Google Analytics GA4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-KGZDWLZ7JZ"></script>
@@ -1271,11 +1286,13 @@
       <i class="ti ti-headset" style="font-size:14px;"></i> Aide - Contact
     </button>
     <span style="font-size:10px;font-weight:500;background:#F5C400;color:#1a1a00;padding:2px 8px;letter-spacing:.06em;" id="proto-badge">PROTO13</span>
-    <a id="dt-header-back" href="https://www.obviouscycles.com/velos-titane/" style="display:none;">
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <a id="dt-header-back" href="https://www.obviouscycles.com/velos-titane/" style="display:none;align-items:center;gap:6px;color:#666;font-size:12px;text-decoration:none;border:0.5px solid #333;padding:6px 12px;transition:color .15s,border-color .15s;" onmouseover="this.style.color='#ccc';this.style.borderColor='#555'" onmouseout="this.style.color='#666';this.style.borderColor='#333'">
       <i class="ti ti-arrow-left"></i> Retour au site
     </a>
+    <button id="btn-fullscreen" onclick="toggleFullscreen()" title="Plein écran"><i class="ti ti-maximize" id="fs-icon"></i></button>
   </div>
-  <button id="btn-fullscreen" onclick="toggleFullscreen()" title="Plein écran"><i class="ti ti-maximize" id="fs-icon"></i></button>
 </header>
 
 <main class="main">
@@ -1858,9 +1875,7 @@
       <button class="dtr-btn-main" onclick="openOrderModal()"><i class="ti ti-send"></i> Demander votre devis</button>
       <button class="dtr-btn-sec" onclick="dtQuickSave()"><i class="ti ti-bookmark"></i> Sauvegarder</button>
       <button class="dtr-btn-sec" onclick="dtReset()"><i class="ti ti-refresh"></i> Nouvelle configuration</button>
-      <div id="dt-change-model-btn-recap" style="display:none;">
-        <button class="dtr-btn-sec" onclick="dtShowAllModels()" style="width:100%;"><i class="ti ti-grid-dots"></i> Choisir un autre vélo</button>
-      </div>
+
     </div>
   </aside>
 
@@ -3055,9 +3070,7 @@ function dtRender() {
 
   // Bouton "changer de vélo" dans le récap — visible après reset
   const cmb = el('dt-change-model-btn');
-  const cmbR = el('dt-change-model-btn-recap');
   if (cmb) cmb.style.display = (n === 1 && window._singleModel) ? 'block' : 'none';
-  if (cmbR) cmbR.style.display = window._singleModel ? 'block' : 'none';
 
   // Rendu spécifique
   if (n === 1) dtRenderS1();
@@ -3113,7 +3126,6 @@ function dtSelectModel(id) {
   window._singleModel = id; window._activePreset = null;
   const preset = PRESETS[id] && PRESETS[id]['Ti1'];
   if (preset) { window._activePreset = 'Ti1'; selOpts = {...preset}; }
-  // Appliquer FORCE_SELECT
   Object.keys(selOpts).forEach(pid => {
     const optId = selOpts[pid]; if (!optId) return;
     FORCE_SELECT.forEach(rule => {
@@ -3121,10 +3133,8 @@ function dtSelectModel(id) {
         Object.entries(rule.force).forEach(([fp,fid]) => { if (!selOpts[fp]) selOpts[fp]=fid; });
     });
   });
-  dtRender();
-  // Activer le bouton suivant
-  const next1 = document.getElementById('dt-next-1');
-  if (next1) next1.disabled = false;
+  // Passer directement à l'étape 2
+  dtStep = 2; dtRender();
 }
 
 function dtLoadPreset(decl) {
@@ -3266,21 +3276,92 @@ function dtTogglePost(postId) {
 
 // ── Étape 3 : taille ──
 function dtRenderS3() {
-  // Guide (gauche) — cloner depuis view-size
-  const guidePanel = document.getElementById('size-guide-section');
-  const manualPanel = document.getElementById('size-manual-section');
+  // Injecter le contenu depuis view-size (section "Votre taille" de proto12)
+  const vsize = document.getElementById('view-size');
   const left = document.getElementById('dt-s3-guide');
   const right = document.getElementById('dt-s3-manual');
-  if (left && guidePanel) left.innerHTML = guidePanel.innerHTML;
-  if (right && manualPanel) right.innerHTML = manualPanel.innerHTML;
-  // Reconstruire dims grid
-  if (document.getElementById('dt-dims-grid')) {
-    p11BuildDimsGrid && p11BuildDimsGrid();
-    // Copier le résultat
-    const src = document.getElementById('p11-dims-grid');
-    const dst = document.getElementById('dt-dims-grid');
-    if (src && dst) dst.innerHTML = src.innerHTML;
+  if (!vsize || !left || !right) return;
+
+  // Guide section : size-cards + guide panel
+  const sizeCards = vsize.querySelector('.size-cards');
+  const guidePanel = vsize.querySelector('#panel-guide');
+  const guideCard  = vsize.querySelector('#card-guide');
+  const guideCardClone = guideCard ? guideCard.cloneNode(true) : null;
+  const guidePanelClone = guidePanel ? guidePanel.cloneNode(true) : null;
+
+  left.innerHTML = '';
+  // Carte "Laissez-vous guider"
+  if (guideCardClone) {
+    guideCardClone.id = 'dt-card-guide';
+    guideCardClone.onclick = function() { dtToggleSizeMode('guide'); };
+    left.appendChild(guideCardClone);
   }
+  if (guidePanelClone) {
+    guidePanelClone.id = 'dt-panel-guide';
+    left.appendChild(guidePanelClone);
+  }
+
+  // Manual section
+  const manualCard  = vsize.querySelector('#card-manual');
+  const manualPanel = vsize.querySelector('#panel-manual');
+  const manualCardClone  = manualCard  ? manualCard.cloneNode(true)  : null;
+  const manualPanelClone = manualPanel ? manualPanel.cloneNode(true) : null;
+
+  right.innerHTML = '';
+  if (manualCardClone) {
+    manualCardClone.id = 'dt-card-manual';
+    manualCardClone.onclick = function() { dtToggleSizeMode('manual'); };
+    right.appendChild(manualCardClone);
+  }
+  if (manualPanelClone) {
+    manualPanelClone.id = 'dt-panel-manual';
+    // Reconstruire la grille de dimensions
+    const dimsGrid = manualPanelClone.querySelector('.dims-grid');
+    if (dimsGrid) {
+      // Récupérer depuis p11 dims grid
+      const src = document.getElementById('p11-dims-grid');
+      if (src && src.innerHTML) dimsGrid.innerHTML = src.innerHTML;
+      else {
+        // Forcer la construction
+        if (typeof p11BuildDimsGrid === 'function') {
+          p11BuildDimsGrid();
+          const src2 = document.getElementById('p11-dims-grid');
+          if (src2) dimsGrid.innerHTML = src2.innerHTML;
+        }
+      }
+    }
+    right.appendChild(manualPanelClone);
+  }
+
+  // Fallback si aucun élément trouvé : afficher view-size directement dans le split
+  if (!guideCardClone && !manualCardClone) {
+    const clone = vsize.cloneNode(true);
+    clone.style.display = 'block';
+    left.innerHTML = ''; right.innerHTML = '';
+    // Remettre les size-cards dans left et le reste dans right
+    const sc = clone.querySelector('.size-cards');
+    if (sc) {
+      left.appendChild(sc);
+      right.appendChild(clone);
+    } else {
+      left.appendChild(clone);
+    }
+  }
+}
+
+function dtToggleSizeMode(mode) {
+  // Activer la carte choisie dans le split desktop
+  const guideCard  = document.getElementById('dt-card-guide');
+  const manualCard = document.getElementById('dt-card-manual');
+  const guidePanel  = document.getElementById('dt-panel-guide');
+  const manualPanel = document.getElementById('dt-panel-manual');
+  if (guideCard)  guideCard.classList.toggle('active', mode === 'guide');
+  if (manualCard) manualCard.classList.toggle('active', mode === 'manual');
+  if (guidePanel)  guidePanel.classList.toggle('open', mode === 'guide');
+  if (manualPanel) manualPanel.classList.toggle('open', mode === 'manual');
+  window.sizeValidated = false;
+  const lbl = document.getElementById('dt-next-3-lbl');
+  if (lbl) lbl.textContent = 'Continuer sans taille';
 }
 
 // ── Étape 4 : récap plein écran ──
@@ -3302,7 +3383,7 @@ function dtRenderS4() {
         '<div style="font-size:20px;font-weight:500;color:#f2f2f2;margin-bottom:4px;">'+model.name+'</div>' +
         (window._activePreset ? '<div style="font-size:11px;color:#666;margin-bottom:.75rem;">'+window._activePreset+'</div>' : '<div style="min-height:1.4em;"></div>') +
         '<div style="font-size:28px;font-weight:700;color:#F5C400;margin-bottom:.5rem;">'+price.toLocaleString('fr-FR')+' €</div>' +
-        (mc > 0 ? '<div style="font-size:11px;color:#888;display:flex;align-items:center;gap:5px;margin-bottom:1rem;"><span style="width:6px;height:6px;border-radius:50%;background:#F5C400;display:inline-block;"></span>'+mc+' personnalisation'+(mc>1?'s':'')+' · '+window._activePreset+'</div>' : '') +
+        (mc > 0 ? '<div style="font-size:13px;color:#F5C400;display:flex;align-items:center;gap:6px;margin-bottom:1rem;font-weight:500;"><span style="width:7px;height:7px;border-radius:50%;background:#F5C400;display:inline-block;flex-shrink:0;"></span>'+mc+' personnalisation'+(mc>1?'s':'')+' · '+window._activePreset+'</div>' : '') +
         '<div style="display:flex;flex-direction:column;gap:8px;margin-top:1rem;">' +
           '<button class="dtr-btn-main" onclick="openOrderModal()"><i class="ti ti-send"></i> Demander votre devis</button>' +
           '<button class="dtr-btn-sec" onclick="dtQuickSave()"><i class="ti ti-bookmark"></i> Sauvegarder</button>' +
@@ -3316,13 +3397,13 @@ function dtRenderS4() {
           const opt = (typeof ALL_OPTIONS !== 'undefined' && ALL_OPTIONS[p.id]) ? ALL_OPTIONS[p.id].find(o => o.id === selOpts[p.id]) : null;
           if (!opt) return '';
           const isModified = !!(window._activePreset && preset && Object.keys(preset).length && preset[p.id] !== selOpts[p.id]);
-          return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:0.5px solid #1a1a1a;">' +
-            '<div style="font-size:11px;color:'+(isModified?'#aaa':'#555')+';">' +
-              '<i class="ti '+(icons[p.id]||'ti-point')+'" style="font-size:9px;margin-right:6px;color:#F5C400;"></i>' +
+          return '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:0.5px solid #1e1e1e;">' +
+            '<div style="font-size:13px;color:'+(isModified?'#ccc':'#666')+';display:flex;align-items:center;gap:8px;">' +
+              '<i class="ti '+(icons[p.id]||'ti-point')+'" style="font-size:11px;color:#F5C400;"></i>' +
               p.name +
-              (isModified ? '<span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#F5C400;margin-left:5px;vertical-align:middle;"></span>' : '') +
+              (isModified ? '<span style="width:6px;height:6px;border-radius:50%;background:#F5C400;display:inline-block;"></span>' : '') +
             '</div>' +
-            '<div style="font-size:12px;color:'+(isModified?'#F5C400':'#888')+';">'+opt.name+'</div>' +
+            '<div style="font-size:13px;font-weight:500;color:'+(isModified?'#F5C400':'#999')+';">'+opt.name+'</div>' +
           '</div>';
         }).join('') +
       '</div>' +
@@ -3387,10 +3468,14 @@ function dtQuickSave() {
 }
 
 function dtReset() {
+  // Garder le modèle actuel, réinitialiser le reste
   selOpts = {}; selSize = {}; window.sizeValidated = false; openPost = null;
+  window._activePreset = null;
+  // Recharger Ti1 par défaut
   if (selModel && PRESETS[selModel] && PRESETS[selModel]['Ti1']) {
     window._activePreset = 'Ti1'; selOpts = {...PRESETS[selModel]['Ti1']};
   }
+  // window._singleModel reste défini → bouton "choisir un autre vélo" visible
   dtStep = 1; document.body.classList.remove('dt-step-4');
   dtRender();
 }
