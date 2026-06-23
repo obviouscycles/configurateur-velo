@@ -1030,13 +1030,13 @@
   /* ── PROTO13B : stepper progression sidebar desktop ── */
   @media (min-width: 768px) {
     #sidebar-stepper {
-      display: none;
-      margin-bottom: 1.5rem;
+      display: block;
+      margin-bottom: 0;
       padding: 1rem 1.25rem;
       background: #111;
       border: 0.5px solid #222;
     }
-    #sidebar-stepper.visible { display: block; }
+    /* sidebar-stepper toujours visible sur desktop */
     .ss-title {
       font-size: 10px; color: #555; text-transform: uppercase;
       letter-spacing: .08em; margin-bottom: 12px;
@@ -1315,6 +1315,11 @@
     <div class="change-model-btn" id="change-model-btn">
       <a href="#" onclick="openChangeModelModal();return false;"><i class="ti ti-grid-dots"></i> Changer de modèle</a>
     </div>
+    <!-- ── PROTO13B : stepper progression ── -->
+    <div id="sidebar-stepper" style="margin-top:1.5rem;">
+      <div class="ss-title">Votre parcours</div>
+      <div class="ss-steps" id="ss-steps"></div>
+    </div>
     </div>
 
     <div id="posts-section" style="display:none;border:1.5px solid #111111;padding:1.5rem;">
@@ -1332,11 +1337,6 @@
 
     <!-- Résumé -->
     <div id="recap-col">
-      <!-- ── PROTO13B : stepper progression ── -->
-      <div id="sidebar-stepper">
-        <div class="ss-title">Votre parcours</div>
-        <div class="ss-steps" id="ss-steps"></div>
-      </div>
       <div id="recap-header">
         <div class="step-label">En résumé</div>
         <p class="section-title" style="color:#f2f2f2;margin-bottom:1rem;">Votre configuration</p>
@@ -2867,8 +2867,7 @@ function updateSidebarStepper() {
   const allOpts  = hasModel && POST_META.every(p => selOpts[p.id]);
   const hasSize  = !!window.sizeValidated;
 
-  if (!hasModel) { stepper.classList.remove('visible'); return; }
-  stepper.classList.add('visible');
+  if (!hasModel) { stepsEl.innerHTML = ''; return; }
 
   // Déterminer l'étape active courante
   // desktop n'a pas de step number — on déduit depuis l'onglet actif
@@ -2909,7 +2908,7 @@ function updateSidebarStepper() {
     },
     {
       label: 'Demander votre devis',
-      detail: allOpts ? 'Prêt à envoyer' : 'Complétez les composants d'abord',
+      detail: allOpts ? 'Prêt à envoyer' : 'Complétez les composants',
       done: false,
       active: false,
       cta: allOpts,

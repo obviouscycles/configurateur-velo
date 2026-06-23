@@ -2636,6 +2636,7 @@ function loadPreset(decl) {
   document.getElementById('posts-section').style.display = 'block';
   renderPosts();
   updateRecap(); updateFloatingPrice();
+  updateDesktopPriceBar();
   // Pas de scroll — on reste en haut de page
 }
 
@@ -2845,7 +2846,7 @@ function updateDesktopPriceBar() {
   bar.classList.add('visible');
   // Modèle
   const dpbModel = document.getElementById('dpb-model');
-  if (dpbModel) dpbModel.textContent = model.name;
+  if (dpbModel) dpbModel.textContent = model.name + (window._activePreset ? ' · ' + window._activePreset : '');
   // Prix
   const { price } = computeTotals(selModel, selOpts);
   const dpbPrice = document.getElementById('dpb-price');
