@@ -1068,8 +1068,12 @@
   </div>
 
   <!-- ══ PROTO11 : PARCOURS MOBILE ══════════════════════════════════════════ -->
-  <div id="p11-container" style="display:none">
+  <div id="p11-container" style="display:none;position:relative;">
+    <!-- Zones de swipe sur les bords — ne recouvrent pas le contenu central -->
+    <div id="p11-swipe-left"  style="position:fixed;top:56px;left:0;width:28px;bottom:60px;z-index:900;touch-action:pan-y;"></div>
+    <div id="p11-swipe-right" style="position:fixed;top:56px;right:0;width:28px;bottom:60px;z-index:900;touch-action:pan-y;"></div>
     <div class="p11-stepper">
+      <button id="p11-back-btn" onclick="if(p11CurrentStep>1)p11UpdateStep(p11CurrentStep-1)" style="background:none;border:none;color:#555;font-size:18px;padding:0 8px 0 0;cursor:pointer;line-height:1;flex-shrink:0;"><i class="ti ti-chevron-left"></i></button>
       <div class="p11-step-dot active" id="p11-dot-1"></div>
       <div class="p11-step-line"></div>
       <div class="p11-step-dot" id="p11-dot-2"></div>
@@ -1077,6 +1081,7 @@
       <div class="p11-step-dot" id="p11-dot-3"></div>
       <div class="p11-step-line"></div>
       <div class="p11-step-dot" id="p11-dot-4"></div>
+      <button id="p11-fwd-btn" onclick="p11Next()" style="background:none;border:none;color:#555;font-size:18px;padding:0 0 0 8px;cursor:pointer;line-height:1;flex-shrink:0;"><i class="ti ti-chevron-right"></i></button>
     </div>
     <div class="p11-step-label" id="p11-step-label">Choisir votre modèle</div>
 
@@ -3457,12 +3462,16 @@ function p11Init() {
 
 function p11UpdateStep(n) {
   p11CurrentStep = n;
-  // Dots
+  // Dots + flèches nav
   for (let i=1; i<=4; i++) {
     const dot = document.getElementById('p11-dot-' + i);
     if (!dot) continue;
     dot.className = 'p11-step-dot' + (i === n ? ' active' : i < n ? ' done' : '');
   }
+  const backBtn = document.getElementById('p11-back-btn');
+  const fwdBtn  = document.getElementById('p11-fwd-btn');
+  if (backBtn) backBtn.style.color = n > 1 ? '#F5C400' : '#333';
+  if (fwdBtn)  fwdBtn.style.color  = n < 4 ? '#F5C400' : '#333';
   // Label
   const lbl = document.getElementById('p11-step-label');
   if (lbl) lbl.textContent = P11_LABELS[n-1];
@@ -3558,6 +3567,10 @@ function p11LoadPreset(decl) {
   // Activer le bouton next (un modèle est sélectionné)
   const btn = document.getElementById('p11-next-btn');
   if (btn) btn.style.opacity = '1';
+  // Mettre à jour le prix affiché
+  p11UpdateTotal();
+  const priceStrip = document.getElementById('p11-price-strip');
+  if (priceStrip && selModel) priceStrip.style.display = 'flex';
 }
 
 function p11SelectModel(id) {
@@ -3982,36 +3995,31 @@ function p11Reset() {
 }
 
 
-// ─── SWIPE HORIZONTAL ENTRE ÉTAPES ────────────────────────────────
-// Attaché sur p11-container uniquement, après son init
+// ─── NAVIGATION ENTRE ÉTAPES : swipe sur zones bord + flèches stepper ──────
 function p11InitSwipe() {
-  const cont = document.getElementById('p11-container');
-  if (!cont) return;
+  // Zone de swipe gauche (bord gauche 28px)
+  const zoneL = document.getElementById('p11-swipe-left');
+  // Zone de swipe droite (bord droit 28px)
+  const zoneR = document.getElementById('p11-swipe-right');
 
-  let startX = 0, startY = 0, blocked = false;
+  function addSwipe(el, direction) {
+    if (!el) return;
+    let sx = 0, sy = 0;
+    el.addEventListener('touchstart', e => {
+      sx = e.touches[0].clientX;
+      sy = e.touches[0].clientY;
+    }, { passive: true });
+    el.addEventListener('touchend', e => {
+      const dx = e.changedTouches[0].clientX - sx;
+      const dy = Math.abs(e.changedTouches[0].clientY - sy);
+      if (Math.abs(dx) < 30 || dy > 60) return; // pas un swipe
+      if (direction === 'left'  && dx < 0 && p11CurrentStep < 4) p11UpdateStep(p11CurrentStep + 1);
+      if (direction === 'right' && dx > 0 && p11CurrentStep > 1) p11UpdateStep(p11CurrentStep - 1);
+    }, { passive: true });
+  }
 
-  cont.addEventListener('touchstart', e => {
-    startX = e.touches[0].clientX;
-    startY = e.touches[0].clientY;
-    // Bloquer si le touch est dans/sur un élément interactif (closest est natif)
-    blocked = !!(e.target.closest('input, textarea, select, button, a, [contenteditable]'));
-  }, { passive: true });
-
-  cont.addEventListener('touchend', e => {
-    if (blocked) return;
-    // Bloquer si un champ a le focus (clavier iOS ouvert)
-    const af = document.activeElement;
-    if (af && af.closest('input, textarea, select')) return;
-
-    const dx = e.changedTouches[0].clientX - startX;
-    const dy = Math.abs(e.changedTouches[0].clientY - startY);
-
-    // Swipe horizontal net : au moins 70px, ratio H/V > 2
-    if (Math.abs(dx) < 70 || dy > Math.abs(dx) / 2) return;
-
-    if (dx < 0 && p11CurrentStep < 4) p11UpdateStep(p11CurrentStep + 1);
-    else if (dx > 0 && p11CurrentStep > 1) p11UpdateStep(p11CurrentStep - 1);
-  }, { passive: true });
+  addSwipe(zoneL, 'right'); // bord gauche → swipe droite = retour
+  addSwipe(zoneR, 'left');  // bord droit  → swipe gauche = suivant
 }
 
 // Init au chargement
