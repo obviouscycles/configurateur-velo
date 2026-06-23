@@ -1288,6 +1288,17 @@
     #dt-s2-left .mc-text { padding: 14px 16px 0 16px !important; }
     #dt-s2-left .preset-bar { padding: 10px 16px 16px !important; background: #161616 !important; }
   }
+
+  @media (min-width: 768px) {
+    #dt-s3-guide .size-result,
+    #dt-s3-guide #guide-result {
+      background: #1e1e1e !important;
+      border-color: #333 !important;
+    }
+    #dt-s3-manual .dims-summary { background: #1e1e1e !important; border-color: #333 !important; }
+    #dt-s3-guide .size-panel { background: transparent !important; border: none !important; }
+    #dt-s3-manual .size-panel { background: transparent !important; border: none !important; }
+  }
 </style>
   <!-- Google Analytics GA4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-KGZDWLZ7JZ"></script>
@@ -1810,8 +1821,8 @@
       <div><div class="dts-label">Devis</div><div class="dts-detail" id="dts-d4"></div></div>
     </div>
     <div style="margin-top:auto;padding-top:1.5rem;border-top:0.5px solid #1e1e1e;">
-      <button onclick="dtShowSaved()" style="width:100%;background:none;border:0.5px solid #333;color:#666;padding:8px;font-size:11px;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:6px;transition:border-color .15s,color .15s;" onmouseover="this.style.color='#aaa';this.style.borderColor='#555'" onmouseout="this.style.color='#666';this.style.borderColor='#333'">
-        <i class="ti ti-bookmark" style="font-size:13px;"></i> Mes configurations
+      <button id="dt-saved-btn" onclick="dtShowSaved()" style="width:100%;background:none;border:0.5px solid #333;color:#666;padding:8px;font-size:11px;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:6px;transition:border-color .15s,color .15s;" onmouseover="this.style.color='#aaa';this.style.borderColor='#555'" onmouseout="this.style.color='#666';this.style.borderColor='#333'">
+        <i class="ti ti-bookmark" style="font-size:13px;"></i> Mes configurations <span id="dt-saved-count" style="background:#F5C400;color:#1a1a00;font-size:9px;font-weight:700;padding:1px 5px;border-radius:10px;display:none;"></span>
       </button>
     </div>
   </nav>
@@ -1903,8 +1914,8 @@
     <hr class="dtr-sep" id="dtr-sep" style="display:none;">
     <div class="dtr-rows" id="dtr-rows"></div>
     <div class="dtr-actions">
-      <button class="dtr-btn-main" onclick="openOrderModal()"><i class="ti ti-send"></i> Demander votre devis</button>
-      <button class="dtr-btn-sec" onclick="dtQuickSave()"><i class="ti ti-bookmark"></i> Sauvegarder</button>
+      <button class="dtr-btn-main" id="dtr-btn-devis" onclick="openOrderModal()" style="opacity:.3;pointer-events:none;"><i class="ti ti-send"></i> Demander votre devis</button>
+      <button class="dtr-btn-sec" id="dtr-btn-save" onclick="dtQuickSave()" style="opacity:.3;pointer-events:none;"><i class="ti ti-bookmark"></i> Sauvegarder</button>
       <button class="dtr-btn-sec" onclick="dtReset()"><i class="ti ti-refresh"></i> Nouvelle configuration</button>
 
     </div>
@@ -3139,17 +3150,28 @@ function dtRenderS1() {
 }
 
 function dtPresetBar(modelId) {
+  const infoPopupId = 'dt-preset-info-' + modelId;
   return '<div class="preset-bar" onclick="event.stopPropagation()">' +
-    '<div class="preset-label">3 suggestions pour démarrer</div>' +
+    '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
+      '<div class="preset-label" style="margin-bottom:0;">3 suggestions pour démarrer</div>' +
+      '<button onclick="toggleDtPresetInfo(\'' + infoPopupId + '\')" style="background:none;border:none;color:#888;font-size:15px;cursor:pointer;padding:0;line-height:1;" title="En savoir plus"><i class="ti ti-info-circle"></i></button>' +
+    '</div>' +
+    '<div id="' + infoPopupId + '" style="display:none;font-size:12px;color:#aaa;background:#111;border:0.5px solid #333;padding:10px 12px;margin-bottom:10px;line-height:1.7;">' +
+      Object.entries(PRESET_DESCS_DT).map(([k,v]) =>
+        '<div><span style="color:#F5C400;font-weight:600;">' + k + '</span> — ' + v + '</div>'
+      ).join('') +
+      '<div style="font-size:11px;color:#555;margin-top:4px;">Tout reste modifiable.</div>' +
+    '</div>' +
     '<div class="preset-btns">' +
     ['Signature','Ti1','Ti2'].map(decl =>
-      '<div class="preset-btn-wrap">' +
-        '<button class="preset-btn-main ' + (window._activePreset===decl?'active':'') + '" onclick="dtLoadPreset(\'' + decl + '\')">' + decl + '</button>' +
-        '<button class="preset-btn-info" onclick="togglePresetInfoDt(\'' + decl + '\',this)"><i class="ti ti-info-circle"></i></button>' +
-        '<div class="preset-info-popup" data-decl="' + decl + '"><strong>' + decl + '</strong>' + (PRESET_DESCS_DT[decl]||'') + '</div>' +
-      '</div>'
+      '<button class="preset-btn' + (window._activePreset===decl?' active':'') + '" onclick="dtLoadPreset(\'' + decl + '\')">' + decl + '</button>'
     ).join('') +
     '</div></div>';
+}
+
+function toggleDtPresetInfo(id) {
+  const el = document.getElementById(id);
+  if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
 }
 
 function dtSelectModel(id) {
@@ -3163,6 +3185,11 @@ function dtSelectModel(id) {
       if (rule.if_selected === optId)
         Object.entries(rule.force).forEach(([fp,fid]) => { if (!selOpts[fp]) selOpts[fp]=fid; });
     });
+  });
+  // Activer les boutons du récap
+  ['dtr-btn-devis','dtr-btn-save'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.style.opacity = '1'; el.style.pointerEvents = 'auto'; }
   });
   // Passer directement à l'étape 2
   dtStep = 2; dtRender();
@@ -3183,22 +3210,38 @@ function dtLoadPreset(decl) {
 }
 
 
+function dtUpdateSavedBadge() {
+  const cnt = document.getElementById('dt-saved-count');
+  if (!cnt) return;
+  const n = savedConfigs ? savedConfigs.length : 0;
+  if (n > 0) { cnt.textContent = n; cnt.style.display = 'inline-block'; }
+  else cnt.style.display = 'none';
+}
+
 function dtShowSaved() {
-  // Afficher les configurations sauvegardées dans l'étape 4
-  if (typeof loadSaved === 'function') loadSaved();
-  if (typeof renderSaved === 'function') renderSaved();
+  loadSaved();
+  renderSaved();
   dtStep = 4;
   document.body.classList.add('dt-step-4');
   const inner = document.getElementById('dt-s4-inner');
   if (!inner) return;
-  const saved = document.getElementById('view-saved');
-  if (saved) {
-    const clone = saved.cloneNode(true);
-    clone.style.display = 'block';
-    inner.innerHTML = '';
-    inner.appendChild(clone);
-    // Rafraîchir le rendu des configs sauvegardées
-    if (typeof renderSaved === 'function') renderSaved();
+  // Construire directement le HTML des configs
+  if (!savedConfigs || savedConfigs.length === 0) {
+    inner.innerHTML = '<p style="color:#666;font-size:14px;padding:2rem 0;">Aucune configuration sauvegardée.</p>';
+  } else {
+    inner.innerHTML = '<p class="section-title" style="color:#f2f2f2;margin-bottom:1.5rem;">Mes configurations</p>' +
+      savedConfigs.map(c => {
+        const model = MODELS.find(m => m.id === c.selModel || m.id === c.model);
+        return '<div style="display:flex;align-items:center;gap:1rem;padding:1rem;background:#1e1e1e;border:0.5px solid #333;margin-bottom:8px;">' +
+          (model && model.photo ? '<img src="'+model.photo+'" style="width:60px;height:40px;object-fit:cover;flex-shrink:0;">' : '') +
+          '<div style="flex:1;">' +
+            '<div style="font-size:14px;font-weight:500;color:#f2f2f2;">'+c.name+'</div>' +
+            '<div style="font-size:11px;color:#666;">'+(model?model.name:'')+(c.preset?' · '+c.preset:'')+(c.date?' · '+c.date:'')+'</div>' +
+          '</div>' +
+          '<button onclick="dtLoadSaved(\'' + c.id + '\')" style="background:#F5C400;border:none;color:#1a1a00;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font);">Charger</button>' +
+          '<button onclick="dtDeleteSaved(\'' + c.id + '\')" style="background:none;border:0.5px solid #444;color:#666;padding:7px 10px;font-size:12px;cursor:pointer;margin-left:4px;font-family:var(--font);">✕</button>' +
+        '</div>';
+      }).join('');
   }
   // Mettre à jour stepper
   for (let i = 1; i <= 4; i++) {
@@ -3210,6 +3253,26 @@ function dtShowSaved() {
   }
   const main = document.getElementById('dt-main');
   if (main) main.scrollTop = 0;
+}
+
+
+function dtLoadSaved(id) {
+  const cfg = savedConfigs.find(c => c.id === id);
+  if (!cfg) return;
+  selModel = cfg.selModel || cfg.model;
+  selOpts = {...(cfg.selOpts || cfg.opts || {})};
+  selSize = {...(cfg.selSize || cfg.size || {})};
+  window._activePreset = cfg.preset || null;
+  window._singleModel = selModel;
+  window.sizeValidated = !!(cfg.selSize && Object.keys(cfg.selSize).length);
+  dtStep = 1; dtRender();
+}
+
+function dtDeleteSaved(id) {
+  savedConfigs = savedConfigs.filter(c => c.id !== id);
+  persistSaved();
+  dtUpdateSavedBadge();
+  dtShowSaved();
 }
 
 function dtShowAllModels() {
@@ -3339,138 +3402,25 @@ function dtTogglePost(postId) {
 
 // ── Étape 3 : taille ──
 function dtRenderS3() {
-  // Injecter le contenu depuis view-size (section "Votre taille" de proto12)
-  const vsize = document.getElementById('view-size');
-  const left = document.getElementById('dt-s3-guide');
+  const left  = document.getElementById('dt-s3-guide');
   const right = document.getElementById('dt-s3-manual');
-  if (!vsize || !left || !right) return;
+  if (!left || !right) return;
 
-  // Guide section : size-cards + guide panel
-  const sizeCards = vsize.querySelector('.size-cards');
-  const guidePanel = vsize.querySelector('#panel-guide');
-  const guideCard  = vsize.querySelector('#card-guide');
-  const guideCardClone = guideCard ? guideCard.cloneNode(true) : null;
-  const guidePanelClone = guidePanel ? guidePanel.cloneNode(true) : null;
+  // Déplacer physiquement (pas cloner) pour que calcSize() fonctionne avec les vrais IDs
+  const cardGuide   = document.getElementById('card-guide');
+  const panelGuide  = document.getElementById('panel-guide');
+  const cardManual  = document.getElementById('card-manual');
+  const panelManual = document.getElementById('panel-manual');
 
   left.innerHTML = '';
-  // Carte "Laissez-vous guider"
-  if (guideCardClone) {
-    guideCardClone.id = 'dt-card-guide';
-    guideCardClone.onclick = function() { dtToggleSizeMode('guide'); };
-    left.appendChild(guideCardClone);
-  }
-  if (guidePanelClone) {
-    guidePanelClone.id = 'dt-panel-guide';
-    left.appendChild(guidePanelClone);
-  }
-
-  // Manual section
-  const manualCard  = vsize.querySelector('#card-manual');
-  const manualPanel = vsize.querySelector('#panel-manual');
-  const manualCardClone  = manualCard  ? manualCard.cloneNode(true)  : null;
-  const manualPanelClone = manualPanel ? manualPanel.cloneNode(true) : null;
-
   right.innerHTML = '';
-  if (manualCardClone) {
-    manualCardClone.id = 'dt-card-manual';
-    manualCardClone.onclick = function() { dtToggleSizeMode('manual'); };
-    right.appendChild(manualCardClone);
-  }
-  if (manualPanelClone) {
-    manualPanelClone.id = 'dt-panel-manual';
-    // Reconstruire la grille de dimensions
-    const dimsGrid = manualPanelClone.querySelector('.dims-grid');
-    if (dimsGrid) {
-      // Récupérer depuis p11 dims grid
-      const src = document.getElementById('p11-dims-grid');
-      if (src && src.innerHTML) dimsGrid.innerHTML = src.innerHTML;
-      else {
-        // Forcer la construction
-        if (typeof p11BuildDimsGrid === 'function') {
-          p11BuildDimsGrid();
-          const src2 = document.getElementById('p11-dims-grid');
-          if (src2) dimsGrid.innerHTML = src2.innerHTML;
-        }
-      }
-    }
-    right.appendChild(manualPanelClone);
-  }
 
-  // Observer les résultats via MutationObserver sur les div de résultat existants
-  setTimeout(() => {
-    function dtShowSizeResult() {
-      const resultEl = document.getElementById('dt-s3-result');
-      if (!resultEl) return;
-      const parts = [];
-      if (selSize.taille)        parts.push('<strong>Taille cadre :</strong> ' + selSize.taille);
-      if (selSize.manivelle)     parts.push('<strong>Manivelle :</strong> ' + selSize.manivelle + ' mm');
-      if (selSize.potence)       parts.push('<strong>Potence :</strong> ' + selSize.potence + ' mm');
-      if (selSize.cintre)        parts.push('<strong>Cintre :</strong> ' + selSize.cintre + ' mm');
-      if (selSize.plateaux)      parts.push('<strong>Plateau(x) :</strong> ' + selSize.plateaux);
-      if (selSize.section)       parts.push('<strong>Section pneu :</strong> ' + selSize.section);
-      if (selSize.debattement)   parts.push('<strong>Débattement :</strong> ' + selSize.debattement + ' mm');
-      if (selSize.largeur_selle) parts.push('<strong>Largeur selle :</strong> ' + selSize.largeur_selle + ' mm');
-      if (parts.length > 0) {
-        resultEl.innerHTML = '✅ <strong style="color:#F5C400;">Dimensions enregistrées</strong><br>' + parts.join(' &nbsp;·&nbsp; ');
-        resultEl.style.display = 'block';
-        const lbl = document.getElementById('dt-next-3-lbl');
-        if (lbl) lbl.textContent = 'Votre configuration →';
-      }
-    }
-    
-    // Observer les divs résultat de proto12 (guide + manuel)
-    const toObserve = ['size-result','p11-guide-result','dims-summary','p11-dims-summary'];
-    toObserve.forEach(id => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      new MutationObserver(() => {
-        if (el.classList.contains('show') || el.style.display === 'block') {
-          window.sizeValidated = true;
-          setTimeout(dtShowSizeResult, 50);
-        }
-      }).observe(el, { attributes: true, attributeFilter: ['class','style'] });
-    });
-    
-    // Aussi hook sur p11CalcSize et validateDims
-    const _origP11Calc = window.p11CalcSize;
-    window.p11CalcSize = function() {
-      if (_origP11Calc) _origP11Calc();
-      window.sizeValidated = true;
-      setTimeout(dtShowSizeResult, 400);
-    };
-    const _origP11Valid = window.p11ValidateDims;
-    window.p11ValidateDims = function() {
-      if (_origP11Valid) _origP11Valid();
-      window.sizeValidated = true;
-      setTimeout(dtShowSizeResult, 100);
-    };
-    const _origCalcSize = window.calcSize;
-    window.calcSize = function() {
-      if (_origCalcSize) _origCalcSize();
-      window.sizeValidated = true;
-      setTimeout(dtShowSizeResult, 400);
-    };
-    const _origValidateDims = window.validateDims;
-    window.validateDims = function() {
-      if (_origValidateDims) _origValidateDims();
-      window.sizeValidated = true;
-      setTimeout(dtShowSizeResult, 100);
-    };
-  }, 300);
-  
-  // Fallback si aucun élément trouvé : afficher view-size directement dans le split
-  if (!guideCardClone && !manualCardClone) {
-    const clone = vsize.cloneNode(true);
-    clone.style.display = 'block';
-    left.innerHTML = ''; right.innerHTML = '';
-    // Remettre les size-cards dans left et le reste dans right
-    const sc = clone.querySelector('.size-cards');
-    if (sc) {
-      left.appendChild(sc);
-      right.appendChild(clone);
-    } else {
-      left.appendChild(clone);
-    }
+  if (cardGuide)  { cardGuide.style.cursor = 'pointer'; cardGuide.onclick = () => dtToggleSizeMode('guide'); left.appendChild(cardGuide); }
+  if (panelGuide) { panelGuide.classList.add('open'); left.appendChild(panelGuide); }
+  if (cardManual) { cardManual.style.cursor = 'pointer'; cardManual.onclick = () => dtToggleSizeMode('manual'); right.appendChild(cardManual); }
+  if (panelManual) {
+    if (typeof buildDimsGrid === 'function') buildDimsGrid();
+    right.appendChild(panelManual);
   }
 }
 
@@ -3612,14 +3562,16 @@ function dtQuickSave() {
 }
 
 function dtReset() {
-  // Garder le modèle actuel, réinitialiser le reste
+  // Garder le modèle ET _singleModel — réinitialiser uniquement les options
+  const keptModel = selModel;
   selOpts = {}; selSize = {}; window.sizeValidated = false; openPost = null;
   window._activePreset = null;
+  selModel = keptModel; // on garde le modèle
+  window._singleModel = keptModel; // bouton "choisir un autre vélo" visible
   // Recharger Ti1 par défaut
   if (selModel && PRESETS[selModel] && PRESETS[selModel]['Ti1']) {
     window._activePreset = 'Ti1'; selOpts = {...PRESETS[selModel]['Ti1']};
   }
-  // window._singleModel reste défini → bouton "choisir un autre vélo" visible
   dtStep = 1; document.body.classList.remove('dt-step-4');
   dtRender();
 }
