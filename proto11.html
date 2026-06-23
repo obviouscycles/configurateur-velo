@@ -3521,8 +3521,26 @@ function p11RenderPresets() {
 }
 
 function p11LoadPreset(decl) {
-  loadPreset(decl);
-  p11RenderModels();
+  const preset = PRESETS[selModel] && PRESETS[selModel][decl];
+  if (!preset) return;
+  window._activePreset = decl;
+  selOpts = {...preset};
+  // Appliquer FORCE_SELECT
+  Object.keys(selOpts).forEach(postId => {
+    const optId = selOpts[postId];
+    if (!optId) return;
+    FORCE_SELECT.forEach(rule => {
+      if (rule.if_selected === optId) {
+        Object.entries(rule.force).forEach(([fp, fid]) => {
+          if (!selOpts[fp]) selOpts[fp] = fid;
+        });
+      }
+    });
+  });
+  p11RenderModels();   // met à jour la surbrillance des boutons preset
+  // Activer le bouton next (un modèle est sélectionné)
+  const btn = document.getElementById('p11-next-btn');
+  if (btn) btn.style.opacity = '1';
 }
 
 function p11SelectModel(id) {
@@ -3615,7 +3633,6 @@ function p11RenderPosts() {
 function p11SelectOpt(postId, optId) {
   const opt = optionsFor(postId, selModel).find(o => o.id === optId);
   if (!opt) return;
-  if (isLocked(opt, selModel)) { p11RenderPosts(); return; } // inclus : juste re-render
   selOpts[postId] = optId;
 
   // Transmission VTT : gestion des freins
