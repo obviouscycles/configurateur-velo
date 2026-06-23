@@ -894,19 +894,17 @@
       padding: 6px 1rem 4px; letter-spacing: .06em; text-transform: uppercase;
     }
 
-    /* Bouton "Étape suivante" flottant en bas */
+    /* Bouton "Étape suivante" dans la barre fixe */
     #p11-next-btn {
-      position: fixed; bottom: 0; left: 0; right: 0;
       background: #F5C400; color: #1a1a00;
       padding: 14px 1rem; font-size: 15px; font-weight: 700;
-      text-align: center; cursor: pointer; z-index: 990;
-      display: none; align-items: center; justify-content: center; gap: 8px;
-      border: none;
+      text-align: center; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      border: none; width: 100%;
     }
-    .p11-step.active ~ #p11-next-btn { display: flex; }
 
-    /* Padding bas pour ne pas cacher le contenu sous le bouton fixe */
-    .p11-step.active { padding-bottom: 80px; }
+    /* Padding bas pour ne pas cacher le contenu sous la barre fixe */
+    .p11-step.p11-active { padding-bottom: 110px; }
 
     /* Étape 2 : récap intégré sous les postes */
     #p11-recap-inline {
@@ -1018,6 +1016,13 @@
     #p11-s3 .dim-field label { color: #888; }
     #p11-s3 .dim-note { color: #555; }
   }
+
+  /* ── Header contact btn mobile ── */
+  @media (max-width: 767px) {
+    #header-contact-btn { display: flex !important; }
+    #fab-contact { display: none !important; }
+    #proto-badge { display: none; }
+  }
 </style>
   <!-- Google Analytics GA4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-KGZDWLZ7JZ"></script>
@@ -1037,9 +1042,12 @@
       <span>OBVIOUS-ON-DEMAND</span>
     </a>
   </div>
-  <div style="display:flex;align-items:center;gap:10px;">
-    <div style="font-size:12px;color:#ffffff;opacity:.7">Montage à la carte</div>
-    <span style="font-size:10px;font-weight:500;background:#F5C400;color:#1a1a00;padding:2px 8px;letter-spacing:.06em;">PROTO11</span>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <!-- Bouton Aide & Contact : mobile uniquement dans le header -->
+    <button id="header-contact-btn" onclick="openContactDrawer()" style="display:none;align-items:center;gap:6px;background:#F5C400;border:none;color:#1a1a00;padding:7px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font);">
+      <i class="ti ti-headset" style="font-size:14px;"></i> Aide
+    </button>
+    <span style="font-size:10px;font-weight:500;background:#F5C400;color:#1a1a00;padding:2px 8px;letter-spacing:.06em;" id="proto-badge">PROTO11</span>
   </div>
   <button id="btn-fullscreen" onclick="toggleFullscreen()" title="Plein écran"><i class="ti ti-maximize" id="fs-icon"></i></button>
 </header>
@@ -1186,11 +1194,17 @@
       </div>
     </div>
 
-    <!-- Bouton next fixe -->
-    <button id="p11-next-btn" onclick="p11Next()">
-      <span id="p11-next-label">Configurer vos composants</span>
-      <i class="ti ti-arrow-right"></i>
-    </button>
+    <!-- Bouton next fixe + prix -->
+    <div id="p11-bottom-bar" style="position:fixed;bottom:0;left:0;right:0;z-index:990;display:none;">
+      <div id="p11-price-strip" style="display:none;background:#1a1a1a;border-top:0.5px solid #333;padding:6px 1rem;display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-size:10px;color:#666;text-transform:uppercase;letter-spacing:.08em;">Prix total</span>
+        <span id="p11-strip-price" style="font-size:16px;font-weight:700;color:#F5C400;letter-spacing:-.02em;">—</span>
+      </div>
+      <button id="p11-next-btn" onclick="p11Next()" style="position:static;display:flex;width:100%;">
+        <span id="p11-next-label">Configurer vos composants</span>
+        <i class="ti ti-arrow-right"></i>
+      </button>
+    </div>
   </div><!-- /p11-container -->
 
   <!-- VUE CONFIGURATEUR -->
@@ -3458,14 +3472,18 @@ function p11UpdateStep(n) {
   const step = document.getElementById('p11-s' + n);
   if (step) { step.classList.add('p11-active'); step.style.display = 'block'; }
   // Bouton next
+  const bar = document.getElementById('p11-bottom-bar');
   const btn = document.getElementById('p11-next-btn');
   const nextLbl = document.getElementById('p11-next-label');
+  const priceStrip = document.getElementById('p11-price-strip');
   if (n === 4) {
-    btn.style.display = 'none';
+    if (bar) bar.style.display = 'none';
   } else {
-    btn.style.display = 'flex';
+    if (bar) bar.style.display = 'block';
     if (nextLbl) nextLbl.textContent = P11_NEXT_LABELS[n-1];
   }
+  // Afficher le prix uniquement sur étape 2 et 3 (config + taille)
+  if (priceStrip) priceStrip.style.display = (n >= 2 && selModel) ? 'flex' : 'none';
   // Step 1 : désactiver next si pas de modèle
   if (n === 1) btn.style.opacity = selModel ? '1' : '.4';
   // Step 2 : construire les postes
@@ -3476,7 +3494,7 @@ function p11UpdateStep(n) {
   if (n === 4) p11RenderFinalRecap();
   // FAB : 20px si étape 4 (pas de bandeau), 76px sinon (au-dessus du bandeau)
   const fab = document.getElementById('fab-contact');
-  if (fab && window.innerWidth < 768) fab.style.bottom = (n === 4 ? '20px' : '76px');
+  // FAB now hidden on mobile (replaced by header button)
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -3685,10 +3703,15 @@ function p11TogglePost(id) {
 }
 
 function p11UpdateTotal() {
-  const el = document.getElementById('p11-total-val');
-  if (!el || !selModel) return;
+  if (!selModel) return;
   const {price} = computeTotals(selModel, selOpts);
-  el.textContent = price.toLocaleString('fr-FR') + ' €';
+  const formatted = price.toLocaleString('fr-FR') + ' €';
+  const el = document.getElementById('p11-total-val');
+  if (el) el.textContent = formatted;
+  const strip = document.getElementById('p11-strip-price');
+  if (strip) strip.textContent = formatted;
+  const stripBar = document.getElementById('p11-price-strip');
+  if (stripBar && selModel) stripBar.style.display = 'flex';
 }
 
 function p11ToggleSave() {
@@ -3959,43 +3982,50 @@ function p11Reset() {
 // ─── SWIPE HORIZONTAL ENTRE ÉTAPES ────────────────────────────────
 (function() {
   let touchStartX = 0, touchStartY = 0, touchStartTime = 0;
-  let isSwiping = false;
-  let touchStartTag = '';  // capturer la target AU DÉPART du touch
+  let swipeBlocked = false;  // true si le touch démarre sur/dans un champ
+
+  function isInteractive(el) {
+    // Remonte jusqu'à 5 niveaux pour détecter input/select/textarea/button
+    let node = el;
+    for (let i = 0; i < 5; i++) {
+      if (!node) break;
+      const tag = node.tagName ? node.tagName.toUpperCase() : '';
+      if (['INPUT','TEXTAREA','SELECT','BUTTON','A'].includes(tag)) return true;
+      // Aussi bloquer si contenteditable
+      if (node.getAttribute && node.getAttribute('contenteditable')) return true;
+      node = node.parentElement;
+    }
+    return false;
+  }
 
   document.addEventListener('touchstart', e => {
     touchStartX = e.touches[0].clientX;
     touchStartY = e.touches[0].clientY;
     touchStartTime = Date.now();
-    isSwiping = false;
-    // Mémoriser le type d'élément touché au départ
-    touchStartTag = e.target ? e.target.tagName.toUpperCase() : '';
-  }, { passive: true });
-
-  document.addEventListener('touchmove', e => {
-    const dx = Math.abs(e.touches[0].clientX - touchStartX);
-    const dy = Math.abs(e.touches[0].clientY - touchStartY);
-    if (dx > dy && dx > 10) isSwiping = true;
+    swipeBlocked = isInteractive(e.target);
   }, { passive: true });
 
   document.addEventListener('touchend', e => {
-    if (!isSwiping) return;
-    const dx = e.changedTouches[0].clientX - touchStartX;
-    const dy = Math.abs(e.changedTouches[0].clientY - touchStartY);
-    const dt = Date.now() - touchStartTime;
-    if (Math.abs(dx) < 50 || dy > 80 || dt > 500) return;
+    if (swipeBlocked) return;
+    // Vérifier qu'un input a le focus (clavier ouvert) — blocage additionnel
+    const active = document.activeElement;
+    if (active && ['INPUT','TEXTAREA','SELECT'].includes(active.tagName.toUpperCase())) return;
     // Vérifier qu'on est bien dans p11-container
     const cont = document.getElementById('p11-container');
     if (!cont || cont.style.display === 'none') return;
-    // Ne pas swiper si le touch a DÉMARRÉ sur un input/select/textarea/button
-    if (['INPUT','TEXTAREA','SELECT','BUTTON'].includes(touchStartTag)) return;
-    // Ne pas swiper si un input a le focus (clavier ouvert)
-    const active = document.activeElement;
-    if (active && ['INPUT','TEXTAREA','SELECT'].includes(active.tagName.toUpperCase())) return;
+
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    const dy = Math.abs(e.changedTouches[0].clientY - touchStartY);
+    const dt = Date.now() - touchStartTime;
+
+    // Seuils stricts : horizontal net (dx > 2*dy), distance minimum 70px, temps max 400ms
+    if (Math.abs(dx) < 70) return;
+    if (dy > Math.abs(dx) * 0.5) return;  // trop vertical
+    if (dt > 400) return;
+
     if (dx < 0) {
-      // Swipe gauche → étape suivante
       if (p11CurrentStep < 4) p11UpdateStep(p11CurrentStep + 1);
     } else {
-      // Swipe droite → étape précédente
       if (p11CurrentStep > 1) p11UpdateStep(p11CurrentStep - 1);
     }
   }, { passive: true });
