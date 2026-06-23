@@ -567,6 +567,7 @@
   }
   /* Mobile : barre pleine largeur */
   @media (max-width: 767px) {
+    #view-config { display: none !important; }
     #floating-price {
       display: block;
       left: 0;
@@ -1135,7 +1136,7 @@
     }
     .dtr-thumb { width: 100%; height: 85px; object-fit: cover; display: block; margin-bottom: .75rem; border: 0.5px solid #222; }
     .dtr-model-name { font-size: 13px; font-weight: 500; color: #f2f2f2; margin-bottom: 2px; }
-    .dtr-preset { font-size: 10px; color: #666; margin-bottom: .75rem; }
+    .dtr-preset { font-size: 10px; color: #666; margin-bottom: .75rem; min-height: 1.2em; }
     .dtr-price { font-size: 22px; font-weight: 700; color: #F5C400; letter-spacing: -.02em; margin-bottom: 4px; }
     .dtr-modif { font-size: 11px; color: #444; margin-bottom: 1rem; display: none; align-items: center; gap: 5px; }
     .dtr-modif.show { display: flex; }
@@ -1198,8 +1199,97 @@
     #dt-s4-left { flex: 1; }
     #dt-s4-right { width: 240px; flex-shrink: 0; }
 
-    /* Retour au site ne doit pas chevaucher les boutons */
-    #fab-contact { bottom: 80px !important; }
+    /* Retour au site : masqué sur desktop (dans le header) */
+    a.back-btn.back-link { display: none !important; }
+    #fab-contact { bottom: 20px; }
+  }
+
+  @media (min-width: 768px) {
+    #header-back-link { display: flex !important; }
+  }
+
+  @media (min-width: 768px) {
+    #dt-content #step1-wrap .section-title { color: #f2f2f2 !important; margin-bottom: 1.5rem !important; font-size: 20px; }
+    #dt-content .model-grid,
+    #dt-content .model-grid.single {
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 16px !important;
+      max-width: 100% !important;
+    }
+    #dt-content .model-card {
+      border-radius: 0 !important;
+      border-color: #2a2a2a !important;
+      background: #111 !important;
+    }
+    #dt-content .model-card:hover { border-color: #555 !important; }
+    #dt-content .model-card.sel { border-color: #F5C400 !important; border-width: 2px !important; background: #1a1500 !important; }
+    #dt-content .model-card .mc-photo { height: 200px !important; object-fit: cover !important; }
+    #dt-content .model-card .mc-name { font-size: 16px !important; color: #f2f2f2 !important; }
+    #dt-content .model-card.sel .mc-name { color: #FFF8D6 !important; }
+    #dt-content .model-card .mc-desc { font-size: 12px !important; color: #888 !important; }
+    #dt-content .model-card .mc-price { font-size: 12px !important; color: #666 !important; }
+    #dt-content .model-card.sel .mc-price { color: #F5C400 !important; }
+    #dt-content .preset-bar { background: #0d0d0d !important; border: 0.5px solid #222 !important; margin: 0 !important; padding: 10px 12px !important; border-top: none !important; }
+  }
+
+  @media (min-width: 768px) {
+    #dt-s2-wrap {
+      grid-template-columns: 1fr 1.8fr !important;
+      min-height: 60vh;
+    }
+    #dt-s2-model {
+      position: sticky !important;
+      top: 0;
+      align-self: start;
+    }
+    #dt-s2-model .mc-photo {
+      width: 100% !important;
+      height: 220px !important;
+      object-fit: cover !important;
+    }
+    #dt-s2-model .mc-text {
+      padding: 14px 16px !important;
+      background: #111 !important;
+      border: 0.5px solid #222 !important;
+      border-top: none !important;
+    }
+    #dt-s2-model .mc-name { font-size: 16px !important; color: #f2f2f2 !important; }
+    #dt-s2-model .mc-desc { font-size: 12px !important; color: #888 !important; }
+  }
+
+  @media (min-width: 768px) {
+    #dt-content #view-size {
+      display: block !important;
+      background: none !important;
+      padding: 0 !important;
+    }
+    #dt-content #view-size > div {
+      background: none !important;
+      padding: 0 !important;
+    }
+    #dt-content #view-size .size-cards {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (min-width: 768px) {
+    #dt-content #bottom-row {
+      display: flex !important;
+      flex-direction: column !important;
+      width: 100% !important;
+    }
+    #dt-content #recap-col {
+      display: block !important;
+      width: 100% !important;
+      background: none !important;
+      padding: 0 !important;
+    }
+    #dt-content #btns-tab1 {
+      display: block !important;
+    }
+    #dt-content #btns-tab2 { display: none !important; }
+    #dt-content #contact-hint { display: none !important; }
+    #dt-content #size-right-col { display: none !important; }
   }
 </style>
   <!-- Google Analytics GA4 -->
@@ -1226,6 +1316,7 @@
       <i class="ti ti-headset" style="font-size:14px;"></i> Aide - Contact
     </button>
     <span style="font-size:10px;font-weight:500;background:#F5C400;color:#1a1a00;padding:2px 8px;letter-spacing:.06em;" id="proto-badge">PROTO13</span>
+    <a id="header-back-link" href="https://www.obviouscycles.com/velos-titane/" title="Retour au site" style="display:none;align-items:center;gap:6px;color:#666;font-size:12px;text-decoration:none;border:0.5px solid #333;padding:6px 10px;transition:color .15s,border-color .15s;" onmouseover="this.style.color='#ccc';this.style.borderColor='#555';" onmouseout="this.style.color='#666';this.style.borderColor='#333';"><i class="ti ti-arrow-left"></i> Retour au site</a>
   </div>
   <button id="btn-fullscreen" onclick="toggleFullscreen()" title="Plein écran"><i class="ti ti-maximize" id="fs-icon"></i></button>
 </header>
@@ -1462,6 +1553,9 @@
     <div id="step1-wrap" style="background:#111111;padding:1.5rem;margin-bottom:1.5rem;">
       <div class="step-label" style="color:#888;">Étape 1 sur 2</div>
       <p class="section-title" style="color:#f2f2f2;">Choisissez votre modèle de base</p>
+      <div id="dt-change-model-btn" style="display:none;margin-bottom:1rem;">
+        <button onclick="dtShowAllModels()" style="background:none;border:0.5px solid #F5C400;color:#F5C400;padding:8px 16px;font-size:12px;cursor:pointer;font-family:var(--font);display:flex;align-items:center;gap:6px;"><i class="ti ti-grid-dots"></i> Choisir un autre modèle</button>
+      </div>
       <div class="model-grid" id="model-grid"></div>
     <div class="change-model-btn" id="change-model-btn">
       <a href="#" onclick="openChangeModelModal();return false;"><i class="ti ti-grid-dots"></i> Changer de modèle</a>
@@ -2940,6 +3034,16 @@ function dtRenderStep2Model() {
     '</div>' : '');
 }
 
+
+function dtShowAllModels() {
+  window._singleModel = null;
+  window._activePreset = null;
+  selModel = null; selOpts = {};
+  renderModels();
+  dtCurrentStep = 1;
+  dtRender();
+}
+
 function dtModifCount() {
   if (!selModel || !window._activePreset || !PRESETS[selModel] || !PRESETS[selModel][window._activePreset]) return 0;
   const preset = PRESETS[selModel][window._activePreset];
@@ -2976,6 +3080,12 @@ function dtRender() {
   if (d3) d3.textContent = window.sizeValidated ? 'Enregistrée ✓' : 'Optionnel';
 
   // Sections contenu
+  // Bouton "Choisir un autre modèle" si on est en mode single (après recommencer)
+  if (n === 1 && window.innerWidth >= 768) {
+    const changeWrap = document.getElementById('dt-change-model-btn');
+    if (changeWrap) changeWrap.style.display = window._singleModel ? 'block' : 'none';
+  }
+
   const sects = {
     1: document.getElementById('step1-wrap'),
     2: document.getElementById('posts-section'),
@@ -3049,9 +3159,11 @@ function dtUpdateRecap() {
   const preset = (window._activePreset && PRESETS[selModel]) ? PRESETS[selModel][window._activePreset] : {};
   const icons = {fourche:'ti-git-fork',roues:'ti-circle',pneus:'ti-circle-dotted',transmission:'ti-settings',power:'ti-activity',frein:'ti-hand-stop',pilotage:'ti-adjustments-horizontal',selle:'ti-armchair',tige:'ti-arrows-vertical',pedales:'ti-rotate-clockwise'};
   rows.innerHTML = POST_META.map(p => {
-    const opt = ALL_OPTIONS[p.id] && ALL_OPTIONS[p.id].find(o => o.id === selOpts[p.id]);
+    const opts = (typeof ALL_OPTIONS !== 'undefined' && ALL_OPTIONS[p.id]) ? ALL_OPTIONS[p.id] : [];
+    const opt = opts.find(o => o.id === selOpts[p.id]);
     if (!opt) return '';
-    const mod = !!(window._activePreset && preset && Object.keys(preset).length > 0 && preset[p.id] !== selOpts[p.id]);
+    const presetVal = (window._activePreset && preset) ? preset[p.id] : null;
+    const mod = !!(presetVal && presetVal !== selOpts[p.id]);
     return '<div class="dtr-row'+(mod?' mod':'')+'">'+
       '<span class="dtr-row-lbl"><i class="ti '+(icons[p.id]||'ti-point')+'" style="font-size:8px;margin-right:3px;"></i>'+p.name+(mod?'<span style="display:inline-block;width:4px;height:4px;border-radius:50%;background:#F5C400;margin-left:3px;vertical-align:middle;"></span>':'')+'</span>'+
       '<span class="dtr-row-val">'+opt.name+'</span>'+
