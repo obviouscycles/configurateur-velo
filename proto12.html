@@ -1087,7 +1087,7 @@
         </div>
         <button id="p11-fwd-btn" onclick="p11Next()" style="background:none;border:none;color:#333;font-size:18px;padding:0 0 0 10px;cursor:pointer;line-height:1;flex-shrink:0;"><i class="ti ti-chevron-right"></i></button>
       </div>
-      <div style="display:flex;justify-content:space-between;padding:0 28px;">
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);padding:0 28px;text-align:center;">
         <span id="p11-sl-1" style="font-size:9px;color:#F5C400;letter-spacing:.05em;text-transform:uppercase;">Modèle</span>
         <span id="p11-sl-2" style="font-size:9px;color:#444;letter-spacing:.05em;text-transform:uppercase;">Composants</span>
         <span id="p11-sl-3" style="font-size:9px;color:#444;letter-spacing:.05em;text-transform:uppercase;">Taille</span>
@@ -1998,8 +1998,8 @@ function renderPosts() {
               '<div class="opc-check"><i class="ti ti-check"></i></div>' +
               '<div class="opc-img-wrap">' + imgHTML + '</div>' +
               '<div class="opc-body">' +
-                ((locked || rec) ? '<div class="opc-badges">' +
-                  (locked ? '<span class="opc-badge-incl"><i class="ti ti-lock" style="font-size:8px"></i> inclus</span>' : '') +
+                ((locked || rec || isPresetDefault(p.id, o.id)) ? '<div class="opc-badges">' +
+                  (isPresetDefault(p.id, o.id) ? '<span class="opc-badge-incl">inclus</span>' : locked ? '<span class="opc-badge-incl"><i class="ti ti-lock" style="font-size:8px"></i> inclus</span>' : '') +
                   (rec ? '<span class="opc-badge-rec"><i class="ti ti-star" style="font-size:8px"></i> Recommandé</span>' : '') +
                 '</div>' : '') +
                 '<div class="opc-name">' + o.name + '</div>' +
@@ -2031,7 +2031,7 @@ function renderPosts() {
               '<div class="opt-radio"><div class="radio-dot"></div></div>' +
               '<div class="oi-info">' +
                 '<div class="oi-name">' + o.name +
-                  (isLocked(o, selModel) ? '<span class="incl-badge"><i class="ti ti-lock" style="font-size:9px"></i> inclus</span>' : '') +
+                  (isPresetDefault(p.id, o.id) ? '<span class="incl-badge">inclus</span>' : isLocked(o, selModel) ? '<span class="incl-badge"><i class="ti ti-lock" style="font-size:9px"></i> inclus</span>' : '') +
                   (rec ? '<span class="rec-badge"><i class="ti ti-star-filled" style="font-size:9px"></i> Recommandé</span>' : '') +
                 '</div>' +
                 '<div class="oi-desc">' + o.desc + '</div>' +
@@ -3880,6 +3880,9 @@ function p11CalcSize() {
     let info = 'Stature ' + t.stature_min + '–' + t.stature_max + ' cm';
     if (acro && selSize.cintre) info += ' · Cintre : <span style="color:#F5C400">' + selSize.cintre + ' mm</span>';
     sub.innerHTML = info;
+  // Mettre à jour le bouton "Continuer sans taille" → "Voir votre configuration"
+  const _nextLbl = document.getElementById('p11-next-label');
+  if (_nextLbl && p11CurrentStep === 3) _nextLbl.textContent = 'Voir votre configuration';
     return;
   }
   p11OverlapTailles = matches;
@@ -3902,6 +3905,9 @@ function p11ChooseUsage(usage) {
   if (acroRaw) calcCintreFromAcro(Math.round(acroRaw*10));
   document.getElementById('p11-result-main').innerHTML =
     'Taille recommandée : <span style="color:#F5C400">' + chosen.taille + '</span> <span style="font-size:12px;color:#888">(' + (usage==='sport'?'sportif':'confort') + ')</span>';
+  // Mettre à jour le bouton "Continuer sans taille" → "Voir votre configuration"
+  const _nextLbl = document.getElementById('p11-next-label');
+  if (_nextLbl && p11CurrentStep === 3) _nextLbl.textContent = 'Voir votre configuration';
 }
 
 function p11BuildDimsGrid() {
@@ -4062,13 +4068,12 @@ function p11RenderFinalRecap() {
     const opt = optionsFor(p.id, selModel).find(o=>o.id===selOpts[p.id]);
     if (!opt) return;
     const locked = isLocked(opt, selModel);
-    html += '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:0.5px solid #1a1a1a;cursor:pointer;" onclick="p11GoToPost(\'' + p.id + '\')">' +
+    html += '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:0.5px solid #1a1a1a;">' +
       '<i class="ti ' + (icons[p.id]||'ti-point') + '" style="color:#F5C400;font-size:14px;width:18px;"></i>' +
       '<div style="flex:1;">' +
         '<div style="font-size:10px;color:#666;text-transform:uppercase;letter-spacing:.06em;">' + p.name + '</div>' +
         '<div style="font-size:13px;color:#f2f2f2;">' + opt.name + '</div>' +
       '</div>' +
-      '<i class="ti ti-pencil" style="color:#333;font-size:12px;"></i>' +
     '</div>';
   });
   // Taille si définie
@@ -4114,18 +4119,26 @@ function p11QuickSave() {
 }
 
 function p11Reset() {
-  selOpts = {}; selSize = {}; window.sizeValidated = false;
+  // Tout remettre à zéro — y compris le modèle
+  selModel = null; selOpts = {}; selSize = {}; window.sizeValidated = false;
   openPost = null; p11SizeMode = null; p11OverlapTailles = null;
-  if (selModel && PRESETS[selModel] && PRESETS[selModel]['Ti1']) {
-    selOpts = {...PRESETS[selModel]['Ti1']};
-  }
-  // Vider les champs
+  window._activePreset = null;
+  // Vider les champs taille
   ['p11-guide-stature','p11-guide-ej','p11-guide-acro'].forEach(id => {
     const el = document.getElementById(id); if (el) el.value = '';
   });
   document.getElementById('p11-guide-result')?.classList.remove('show');
-  document.getElementById('p11-overlap').style.display = 'none';
+  const ovEl = document.getElementById('p11-overlap');
+  if (ovEl) ovEl.style.display = 'none';
   document.getElementById('p11-dims-summary')?.classList.remove('show');
+  // Masquer le bandeau prix (plus de modèle)
+  const bar = document.getElementById('p11-bottom-bar');
+  if (bar) bar.style.display = 'none';
+  const strip = document.getElementById('p11-price-strip');
+  if (strip) strip.style.display = 'none';
+  // Re-rendre la grille modèles (tout décoché)
+  p11RenderModels();
+  p11RenderPresets();
   p11UpdateStep(1);
 }
 
