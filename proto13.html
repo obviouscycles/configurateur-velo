@@ -567,7 +567,6 @@
   }
   /* Mobile : barre pleine largeur */
   @media (max-width: 767px) {
-    #view-config { display: none !important; }
     #floating-price {
       display: block;
       left: 0;
@@ -1054,243 +1053,200 @@
   }
   .preset-info-popup strong { color: #F5C400; display: block; margin-bottom: 3px; font-size: 11px; }
 
-  /* ══ PROTO13 : layout 3 colonnes desktop ══════════════════════
-     [Stepper 180px] | [Contenu flex] | [Récap 240px]
-     Mobile INCHANGÉ
-  ═══════════════════════════════════════════════════════════════ */
-  @media (min-width: 768px) {
-    .tab-bar { display: none !important; }
-    .main {
-      max-width: 100% !important; padding: 0 !important;
-      display: flex !important; flex-direction: row !important;
-      align-items: stretch !important; min-height: calc(100vh - 56px);
-    }
-    /* Stepper gauche */
-    #dt-stepper {
-      width: 190px; flex-shrink: 0; background: #0d0d0d;
-      border-right: 0.5px solid #1e1e1e;
-      padding: 2rem 1.25rem; box-sizing: border-box;
-      position: sticky; top: 56px; height: calc(100vh - 56px);
-      overflow-y: auto; display: flex; flex-direction: column;
-    }
-    .dt-step {
-      display: flex; align-items: flex-start; gap: 10px;
-      padding: 10px 0; cursor: pointer; position: relative;
-    }
-    .dt-step:not(:last-child)::after {
-      content: ''; position: absolute; left: 10px; top: 30px;
-      width: 1px; height: calc(100% - 10px); background: #1e1e1e;
-    }
-    .dt-step.active::after { background: #2a2000; }
-    .dt-dot {
-      width: 20px; height: 20px; border-radius: 50%;
-      border: 1.5px solid #2a2a2a; background: #0d0d0d;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 10px; color: #444; flex-shrink: 0;
-      transition: all .2s; margin-top: 2px;
-    }
-    .dt-step.done .dt-dot { background: #1a1500; border-color: #F5C400; color: #F5C400; }
-    .dt-step.active .dt-dot { background: #F5C400; border-color: #F5C400; color: #1a1a00; font-weight: 700; }
-    .dt-label { font-size: 12px; font-weight: 500; color: #333; transition: color .2s; line-height: 1.3; }
-    .dt-step.done .dt-label { color: #666; }
-    .dt-step.active .dt-label { color: #f2f2f2; }
-    .dt-detail { font-size: 10px; color: #2a2a2a; margin-top: 2px; line-height: 1.4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 130px; }
-    .dt-step.done .dt-detail { color: #444; }
-    .dt-step.active .dt-detail { color: #666; }
-    .dt-modif { display: flex; align-items: center; gap: 4px; font-size: 10px; color: #F5C400; margin-top: 3px; }
-    .dt-modif-dot { width:5px;height:5px;border-radius:50%;background:#F5C400;flex-shrink:0; }
-    /* Contenu central */
-    #dt-content {
-      flex: 1; min-width: 0; padding: 2rem 2.5rem 5rem;
-      overflow-y: auto; box-sizing: border-box;
-    }
-    /* Sections étapes — toutes cachées sauf active */
-    .dt-section { display: none; }
-    .dt-section.active { display: block; }
-    /* Bouton navigation bas */
-    #dt-next-wrap {
-      margin-top: 2rem; padding-top: 1.25rem;
-      border-top: 0.5px solid #1e1e1e;
-      display: flex; justify-content: space-between; align-items: center;
-    }
-    .dt-next-btn {
-      background: #F5C400; border: none; color: #1a1a00;
-      padding: 12px 28px; font-size: 14px; font-weight: 700;
-      cursor: pointer; font-family: var(--font);
-      display: flex; align-items: center; gap: 8px;
-    }
-    .dt-next-btn:disabled { opacity: .3; cursor: default; }
-    .dt-back-btn {
-      background: none; border: 0.5px solid #333; color: #666;
-      padding: 10px 18px; font-size: 13px; cursor: pointer;
-      font-family: var(--font); display: flex; align-items: center; gap: 6px;
-    }
-    .dt-back-btn:hover { border-color: #555; color: #aaa; }
-    /* Récap droit */
-    #dt-recap {
-      width: 240px; flex-shrink: 0; background: #0d0d0d;
-      border-left: 0.5px solid #1e1e1e;
-      padding: 1.5rem 1.25rem; box-sizing: border-box;
-      position: sticky; top: 56px; height: calc(100vh - 56px);
-      overflow-y: auto; display: flex; flex-direction: column;
-    }
-    .dtr-thumb { width: 100%; height: 85px; object-fit: cover; display: block; margin-bottom: .75rem; border: 0.5px solid #222; }
-    .dtr-model-name { font-size: 13px; font-weight: 500; color: #f2f2f2; margin-bottom: 2px; }
-    .dtr-preset { font-size: 10px; color: #666; margin-bottom: .75rem; min-height: 1.2em; }
-    .dtr-price { font-size: 22px; font-weight: 700; color: #F5C400; letter-spacing: -.02em; margin-bottom: 4px; }
-    .dtr-modif { font-size: 11px; color: #444; margin-bottom: 1rem; display: none; align-items: center; gap: 5px; }
-    .dtr-modif.show { display: flex; }
-    .dtr-modif-dot { width:6px;height:6px;border-radius:50%;background:#F5C400;flex-shrink:0; }
-    .dtr-sep { border: none; border-top: 0.5px solid #1e1e1e; margin: .5rem 0; }
-    .dtr-row { display: flex; justify-content: space-between; font-size: 10px; padding: 3px 0; border-bottom: 0.5px solid #111; gap: 4px; }
-    .dtr-row-lbl { color: #444; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
-    .dtr-row-val { color: #777; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100px; }
-    .dtr-row.mod .dtr-row-lbl { color: #888; }
-    .dtr-row.mod .dtr-row-val { color: #F5C400; }
-    .dtr-actions { margin-top: auto; padding-top: 1rem; display: flex; flex-direction: column; gap: 8px; }
-    .dtr-btn-main { background: #F5C400; border: none; color: #1a1a00; padding: 10px 14px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: var(--font); display: flex; align-items: center; justify-content: center; gap: 6px; }
-    .dtr-btn-sec { background: none; border: 0.5px solid #333; color: #666; padding: 8px 14px; font-size: 11px; cursor: pointer; font-family: var(--font); display: flex; align-items: center; justify-content: center; gap: 5px; }
-    .dtr-btn-sec:hover { border-color: #555; color: #aaa; }
-    /* Masquer anciens éléments desktop */
-    #recap-col, #contact-hint, #contact-hint-size, #size-right-col,
-    #floating-price, .change-model-btn, #btns-tab1, #btns-tab2,
-    .prog-wrap, #step1-wrap .step-label { display: none !important; }
+/* ════════════════════════════════════════════════════════════════
+   PROTO13 — LAYOUT DESKTOP 3 COLONNES
+   Stepper gauche | Contenu central | Récap droit
+   Mobile : INCHANGÉ (tout sous min-width:768px)
+════════════════════════════════════════════════════════════════ */
+@media (min-width: 768px) {
+
+  /* Masquer tout l'ancien desktop */
+  .tab-bar, #floating-price, .change-model-btn,
+  #btns-tab1, #btns-tab2, #contact-hint, #contact-hint-size,
+  #size-right-col, .prog-wrap, .step-label,
+  .back-btn.back-link { display: none !important; }
+
+  /* Retour au site dans le header */
+  #dt-header-back {
+    display: flex !important;
+    align-items: center; gap: 6px;
+    color: #666; font-size: 12px; text-decoration: none;
+    border: 0.5px solid #333; padding: 6px 12px;
+    transition: color .15s, border-color .15s;
+  }
+  #dt-header-back:hover { color: #ccc; border-color: #555; }
+
+  /* Réinitialiser le main */
+  .main {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: grid !important;
+    grid-template-columns: 180px 1fr 260px !important;
+    grid-template-rows: 1fr !important;
+    min-height: calc(100vh - 56px) !important;
+    align-items: stretch !important;
   }
 
-  @media (min-width: 768px) {
-    /* Étape 1 proto13 : 4 cartes pleine largeur */
-    #dt-content #step1-wrap {
-      background: none !important; padding: 0 !important; margin: 0 !important;
-    }
-    #dt-content #step1-wrap .section-title { color: #f2f2f2; margin-bottom: 1.25rem; }
-    #dt-content .model-grid {
-      grid-template-columns: repeat(4, 1fr) !important;
-    }
-    #dt-content .model-grid.single {
-      grid-template-columns: repeat(4, 1fr) !important;
-    }
-
-    /* Étape 2 proto13 : single card gauche + composants droite */
-    #dt-s2-wrap {
-      display: grid;
-      grid-template-columns: 260px 1fr;
-      gap: 1.5rem;
-      align-items: start;
-    }
-    #dt-s2-model {
-      position: sticky; top: 0;
-    }
-    #dt-s2-model .mc-photo { width: 100%; height: auto; aspect-ratio: 4/3; object-fit: cover; display: block; }
-    #dt-s2-model .mc-text { padding: 10px 12px; background: #111; border: 0.5px solid #222; }
-    #dt-s2-model .mc-badge { font-size: 10px; color: #666; text-transform: uppercase; letter-spacing: .08em; display: block; margin-bottom: 3px; }
-    #dt-s2-model .mc-name { font-size: 15px; font-weight: 500; color: #f2f2f2; display: block; margin-bottom: 3px; }
-    #dt-s2-model .mc-desc { font-size: 12px; color: #888; line-height: 1.4; display: block; margin-bottom: 6px; }
-    #dt-s2-model .mc-price { font-size: 11px; color: #666; display: block; }
-    #dt-s2-model .preset-bar { background: #0d0d0d; border: 0.5px solid #222; padding: 10px 12px; margin-top: 8px; }
-    #dt-s2-model .preset-label { font-size: 10px; color: #555; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; }
-
-    /* Étape 3 taille : afficher normalement */
-    #dt-content #view-size { display: block !important; }
-
-    /* Étape 4 : contenu centré étiré + recap intégré */
-    #dt-s4-wrap {
-      display: flex; gap: 1.5rem; align-items: start;
-    }
-    #dt-s4-left { flex: 1; }
-    #dt-s4-right { width: 240px; flex-shrink: 0; }
-
-    /* Retour au site : masqué sur desktop (dans le header) */
-    a.back-btn.back-link { display: none !important; }
-    #fab-contact { bottom: 20px; }
+  /* ── Colonne gauche : stepper ── */
+  #dt-stepper {
+    grid-column: 1;
+    background: #0d0d0d;
+    border-right: 0.5px solid #1e1e1e;
+    padding: 2rem 1.25rem;
+    position: sticky; top: 56px;
+    height: calc(100vh - 56px);
+    overflow-y: auto;
+    box-sizing: border-box;
+    display: flex; flex-direction: column; gap: 0;
   }
-
-  @media (min-width: 768px) {
-    #header-back-link { display: flex !important; }
+  .dts-step {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 10px 0; cursor: pointer; position: relative;
+    user-select: none;
   }
-
-  @media (min-width: 768px) {
-    #dt-content #step1-wrap .section-title { color: #f2f2f2 !important; margin-bottom: 1.5rem !important; font-size: 20px; }
-    #dt-content .model-grid,
-    #dt-content .model-grid.single {
-      grid-template-columns: repeat(2, 1fr) !important;
-      gap: 16px !important;
-      max-width: 100% !important;
-    }
-    #dt-content .model-card {
-      border-radius: 0 !important;
-      border-color: #2a2a2a !important;
-      background: #111 !important;
-    }
-    #dt-content .model-card:hover { border-color: #555 !important; }
-    #dt-content .model-card.sel { border-color: #F5C400 !important; border-width: 2px !important; background: #1a1500 !important; }
-    #dt-content .model-card .mc-photo { height: 200px !important; object-fit: cover !important; }
-    #dt-content .model-card .mc-name { font-size: 16px !important; color: #f2f2f2 !important; }
-    #dt-content .model-card.sel .mc-name { color: #FFF8D6 !important; }
-    #dt-content .model-card .mc-desc { font-size: 12px !important; color: #888 !important; }
-    #dt-content .model-card .mc-price { font-size: 12px !important; color: #666 !important; }
-    #dt-content .model-card.sel .mc-price { color: #F5C400 !important; }
-    #dt-content .preset-bar { background: #0d0d0d !important; border: 0.5px solid #222 !important; margin: 0 !important; padding: 10px 12px !important; border-top: none !important; }
+  .dts-step:not(:last-child)::after {
+    content: ''; position: absolute; left: 10px; top: 30px;
+    width: 1px; height: calc(100% - 10px); background: #1e1e1e;
   }
-
-  @media (min-width: 768px) {
-    #dt-s2-wrap {
-      grid-template-columns: 1fr 1.8fr !important;
-      min-height: 60vh;
-    }
-    #dt-s2-model {
-      position: sticky !important;
-      top: 0;
-      align-self: start;
-    }
-    #dt-s2-model .mc-photo {
-      width: 100% !important;
-      height: 220px !important;
-      object-fit: cover !important;
-    }
-    #dt-s2-model .mc-text {
-      padding: 14px 16px !important;
-      background: #111 !important;
-      border: 0.5px solid #222 !important;
-      border-top: none !important;
-    }
-    #dt-s2-model .mc-name { font-size: 16px !important; color: #f2f2f2 !important; }
-    #dt-s2-model .mc-desc { font-size: 12px !important; color: #888 !important; }
+  .dts-step.active::after { background: #2a2000; }
+  .dts-dot {
+    width: 20px; height: 20px; border-radius: 50%;
+    border: 1.5px solid #2a2a2a; background: #0d0d0d;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; color: #444; flex-shrink: 0; margin-top: 2px;
+    transition: all .2s;
   }
+  .dts-step.done  .dts-dot { background: #1a1500; border-color: #F5C400; color: #F5C400; }
+  .dts-step.active .dts-dot { background: #F5C400; border-color: #F5C400; color: #1a1a00; font-weight: 700; }
+  .dts-label { font-size: 12px; font-weight: 500; color: #333; transition: color .2s; line-height: 1.3; }
+  .dts-step.done  .dts-label { color: #666; }
+  .dts-step.active .dts-label { color: #f2f2f2; }
+  .dts-detail { font-size: 10px; color: #2a2a2a; margin-top: 2px; line-height: 1.4; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 128px; }
+  .dts-step.done  .dts-detail { color: #444; }
+  .dts-step.active .dts-detail { color: #666; }
+  .dts-modif { display: flex; align-items: center; gap: 4px; font-size: 10px; color: #F5C400; margin-top: 3px; }
+  .dts-modif-dot { width: 5px; height: 5px; border-radius: 50%; background: #F5C400; flex-shrink: 0; }
 
-  @media (min-width: 768px) {
-    #dt-content #view-size {
-      display: block !important;
-      background: none !important;
-      padding: 0 !important;
-    }
-    #dt-content #view-size > div {
-      background: none !important;
-      padding: 0 !important;
-    }
-    #dt-content #view-size .size-cards {
-      grid-template-columns: 1fr 1fr;
-    }
+  /* ── Colonne centrale : contenu ── */
+  #dt-main {
+    grid-column: 2;
+    overflow-y: auto;
+    display: flex; flex-direction: column;
+    background: #111;
   }
+  .dt-step-content { display: none; flex: 1; flex-direction: column; }
+  .dt-step-content.active { display: flex; }
+  .dt-step-body { flex: 1; padding: 2rem; overflow-y: auto; }
+  .dt-step-footer {
+    border-top: 0.5px solid #1e1e1e;
+    padding: 1rem 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    background: #0d0d0d; flex-shrink: 0;
+  }
+  .dt-btn-next {
+    background: #F5C400; border: none; color: #1a1a00;
+    padding: 12px 28px; font-size: 14px; font-weight: 700;
+    cursor: pointer; font-family: var(--font);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .dt-btn-next:disabled { opacity: .3; cursor: default; }
+  .dt-btn-back {
+    background: none; border: 0.5px solid #333; color: #666;
+    padding: 10px 18px; font-size: 13px; cursor: pointer;
+    font-family: var(--font); display: flex; align-items: center; gap: 6px;
+  }
+  .dt-btn-back:hover { border-color: #555; color: #aaa; }
 
-  @media (min-width: 768px) {
-    #dt-content #bottom-row {
-      display: flex !important;
-      flex-direction: column !important;
-      width: 100% !important;
-    }
-    #dt-content #recap-col {
-      display: block !important;
-      width: 100% !important;
-      background: none !important;
-      padding: 0 !important;
-    }
-    #dt-content #btns-tab1 {
-      display: block !important;
-    }
-    #dt-content #btns-tab2 { display: none !important; }
-    #dt-content #contact-hint { display: none !important; }
-    #dt-content #size-right-col { display: none !important; }
+  /* ── Étape 1 : grille modèles 2×2 ── */
+  #dt-s1 .model-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 16px !important; max-width: 100% !important;
   }
+  #dt-s1 .model-card { cursor: pointer; }
+  #dt-s1 .mc-photo { height: 200px !important; object-fit: cover !important; }
+  #dt-s1 .mc-name { font-size: 16px !important; }
+  #dt-s1 .preset-bar { background: #0d0d0d !important; border: 0.5px solid #222 !important; border-top: none !important; padding: 10px 12px !important; margin: 0 !important; }
+
+  /* ── Étape 2 : split 50/50 modèle|composants ── */
+  #dt-s2-inner {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+    height: 100%; min-height: 0;
+  }
+  #dt-s2-left {
+    border-right: 0.5px solid #1e1e1e;
+    overflow-y: auto; padding: 2rem;
+    position: sticky; top: 0;
+  }
+  #dt-s2-left .mc-photo { width: 100%; height: 220px; object-fit: cover; display: block; }
+  #dt-s2-left .mc-text { padding: 14px 0 0; }
+  #dt-s2-left .mc-badge { display: block; font-size: 10px; color: #666; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 4px; }
+  #dt-s2-left .mc-name { display: block; font-size: 18px; font-weight: 500; color: #f2f2f2; margin-bottom: 4px; }
+  #dt-s2-left .mc-desc { display: block; font-size: 12px; color: #888; line-height: 1.5; margin-bottom: 8px; }
+  #dt-s2-left .mc-price { display: block; font-size: 12px; color: #666; }
+  #dt-s2-left .preset-bar { margin-top: 16px; padding: 12px; background: #0d0d0d; border: 0.5px solid #222; }
+  #dt-s2-right { overflow-y: auto; padding: 2rem; }
+
+  /* ── Étape 3 : split 50/50 guidé|dimensions ── */
+  #dt-s3-inner {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;
+    padding: 2rem;
+  }
+  #dt-s3-left, #dt-s3-right { min-width: 0; }
+  #dt-s3-left .size-card  { margin-bottom: 12px; }
+  #dt-s3-left .size-panel { margin-top: 12px; }
+  #dt-s3-right .size-card { margin-bottom: 12px; }
+  #dt-s3-right .size-panel { margin-top: 12px; }
+
+  /* ── Étape 4 : récap pleine largeur (centre + droite fusionnés) ── */
+  #dt-s4-content .main {
+    grid-template-columns: 180px 1fr !important;
+  }
+  /* Quand on est à l'étape 4, le récap droit disparaît et le contenu s'étire */
+  body.dt-step-4 #dt-recap { display: none !important; }
+  body.dt-step-4 .main { grid-template-columns: 180px 1fr !important; }
+  #dt-s4-inner { padding: 2rem; }
+  #dt-s4-inner #recap-col { display: block !important; width: 100% !important; background: none !important; padding: 0 !important; }
+  #dt-s4-inner #btns-tab1 { display: block !important; }
+
+  /* ── Colonne droite : récap sticky ── */
+  #dt-recap {
+    grid-column: 3;
+    background: #0d0d0d;
+    border-left: 0.5px solid #1e1e1e;
+    padding: 1.5rem 1.25rem;
+    position: sticky; top: 56px;
+    height: calc(100vh - 56px);
+    overflow-y: auto;
+    box-sizing: border-box;
+    display: flex; flex-direction: column;
+  }
+  .dtr-thumb { width: 100%; height: 80px; object-fit: cover; display: block; margin-bottom: .75rem; border: 0.5px solid #222; }
+  .dtr-model { font-size: 13px; font-weight: 500; color: #f2f2f2; margin-bottom: 2px; }
+  .dtr-preset { font-size: 10px; color: #666; margin-bottom: .5rem; min-height: 1.2em; }
+  .dtr-price { font-size: 22px; font-weight: 700; color: #F5C400; letter-spacing: -.02em; margin-bottom: 4px; }
+  .dtr-modif { font-size: 11px; color: #444; margin-bottom: .75rem; display: none; align-items: center; gap: 5px; }
+  .dtr-modif.show { display: flex; }
+  .dtr-modif-dot { width: 6px; height: 6px; border-radius: 50%; background: #F5C400; flex-shrink: 0; }
+  .dtr-sep { border: none; border-top: 0.5px solid #1e1e1e; margin: .5rem 0; }
+  .dtr-rows { flex: 1; overflow-y: auto; min-height: 0; }
+  .dtr-row { display: flex; justify-content: space-between; font-size: 10px; padding: 3px 0; border-bottom: 0.5px solid #111; gap: 4px; }
+  .dtr-lbl { color: #444; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+  .dtr-val { color: #777; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100px; }
+  .dtr-row.mod .dtr-lbl { color: #888; }
+  .dtr-row.mod .dtr-val { color: #F5C400; }
+  .dtr-actions { padding-top: 1rem; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+  .dtr-btn-main { background: #F5C400; border: none; color: #1a1a00; padding: 10px 14px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: var(--font); display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .dtr-btn-main:hover { opacity: .88; }
+  .dtr-btn-sec { background: none; border: 0.5px solid #333; color: #666; padding: 8px 14px; font-size: 11px; cursor: pointer; font-family: var(--font); display: flex; align-items: center; justify-content: center; gap: 5px; }
+  .dtr-btn-sec:hover { border-color: #555; color: #aaa; }
+  #dt-change-model-btn { display: none; margin-top: 8px; }
+  #dt-change-model-btn button { width: 100%; background: none; border: 0.5px solid #F5C400; color: #F5C400; padding: 8px; font-size: 11px; cursor: pointer; font-family: var(--font); display: flex; align-items: center; justify-content: center; gap: 5px; }
+
+  /* Masquer anciens éléments desktop */
+  #view-config, #bottom-row, #view-size, #view-saved { display: none !important; }
+}
 </style>
   <!-- Google Analytics GA4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-KGZDWLZ7JZ"></script>
@@ -1311,53 +1267,18 @@
     </a>
   </div>
   <div style="display:flex;align-items:center;gap:8px;">
-    <!-- Bouton Aide & Contact : mobile uniquement dans le header -->
     <button id="header-contact-btn" onclick="openContactDrawer()" style="display:none;align-items:center;gap:6px;background:#F5C400;border:none;color:#1a1a00;padding:7px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font);">
       <i class="ti ti-headset" style="font-size:14px;"></i> Aide - Contact
     </button>
     <span style="font-size:10px;font-weight:500;background:#F5C400;color:#1a1a00;padding:2px 8px;letter-spacing:.06em;" id="proto-badge">PROTO13</span>
-    <a id="header-back-link" href="https://www.obviouscycles.com/velos-titane/" title="Retour au site" style="display:none;align-items:center;gap:6px;color:#666;font-size:12px;text-decoration:none;border:0.5px solid #333;padding:6px 10px;transition:color .15s,border-color .15s;" onmouseover="this.style.color='#ccc';this.style.borderColor='#555';" onmouseout="this.style.color='#666';this.style.borderColor='#333';"><i class="ti ti-arrow-left"></i> Retour au site</a>
+    <a id="dt-header-back" href="https://www.obviouscycles.com/velos-titane/" style="display:none;">
+      <i class="ti ti-arrow-left"></i> Retour au site
+    </a>
   </div>
   <button id="btn-fullscreen" onclick="toggleFullscreen()" title="Plein écran"><i class="ti ti-maximize" id="fs-icon"></i></button>
 </header>
 
 <main class="main">
-
-  <!-- ══ PROTO13 : STEPPER GAUCHE ═══════════════════════════ -->
-  <nav id="dt-stepper">
-    <div class="dt-step active" id="dt-s1" onclick="dtGoTo(1)">
-      <div class="dt-dot" id="dt-dot-1">1</div>
-      <div>
-        <div class="dt-label">Modèle</div>
-        <div class="dt-detail" id="dt-d1"></div>
-      </div>
-    </div>
-    <div class="dt-step" id="dt-s2" onclick="dtGoTo(2)">
-      <div class="dt-dot" id="dt-dot-2">2</div>
-      <div>
-        <div class="dt-label">Composants</div>
-        <div class="dt-detail" id="dt-d2"></div>
-        <div class="dt-modif" id="dt-modif" style="display:none;"><span class="dt-modif-dot"></span><span id="dt-modif-text"></span></div>
-      </div>
-    </div>
-    <div class="dt-step" id="dt-s3" onclick="dtGoTo(3)">
-      <div class="dt-dot" id="dt-dot-3">3</div>
-      <div>
-        <div class="dt-label">Taille</div>
-        <div class="dt-detail" id="dt-d3">Optionnel</div>
-      </div>
-    </div>
-    <div class="dt-step" id="dt-s4" onclick="dtGoTo(4)">
-      <div class="dt-dot" id="dt-dot-4">→</div>
-      <div>
-        <div class="dt-label">Devis</div>
-        <div class="dt-detail" id="dt-d4"></div>
-      </div>
-    </div>
-  </nav>
-  <!-- ══ PROTO13 : CONTENU CENTRAL ═══════════════════════════ -->
-  <div id="dt-content">
-
 
   <div class="tab-bar">
     <div class="tab active" id="tab-config" onclick="switchTab('config')">
@@ -1553,30 +1474,24 @@
     <div id="step1-wrap" style="background:#111111;padding:1.5rem;margin-bottom:1.5rem;">
       <div class="step-label" style="color:#888;">Étape 1 sur 2</div>
       <p class="section-title" style="color:#f2f2f2;">Choisissez votre modèle de base</p>
-      <div id="dt-change-model-btn" style="display:none;margin-bottom:1rem;">
-        <button onclick="dtShowAllModels()" style="background:none;border:0.5px solid #F5C400;color:#F5C400;padding:8px 16px;font-size:12px;cursor:pointer;font-family:var(--font);display:flex;align-items:center;gap:6px;"><i class="ti ti-grid-dots"></i> Choisir un autre modèle</button>
-      </div>
       <div class="model-grid" id="model-grid"></div>
     <div class="change-model-btn" id="change-model-btn">
       <a href="#" onclick="openChangeModelModal();return false;"><i class="ti ti-grid-dots"></i> Changer de modèle</a>
     </div>
     </div>
 
-    <div id="posts-section" style="display:none;">
-      <div id="dt-s2-wrap">
-        <div id="dt-s2-model">
-          <!-- Rempli par dtRenderStep2Model() -->
-        </div>
-        <div id="dt-s2-posts">
-          <div id="posts-list"></div>
-        </div>
+    <div id="posts-section" style="display:none;border:1.5px solid #111111;padding:1.5rem;">
+      <div class="prog-wrap">
+        <div class="step-label" style="color:#888;">Étape 2 sur 2</div>
+        <p class="section-title" style="color:#111111;margin-bottom:.5rem;">Configurer vos composants</p>
       </div>
+      <div id="posts-list"></div>
     </div>
 
   </div>
 
-  <!-- LIGNE 3 : RÉSUMÉ -->
-  <div id="bottom-row" style="display:none;flex-direction:column;">
+  <!-- LIGNE 3 : RÉSUMÉ (70%) + CONTACT (30%) -->
+  <div id="bottom-row" style="display:none">
 
     <!-- Résumé -->
     <div id="recap-col">
@@ -1826,28 +1741,129 @@
     <div id="saved-list"></div>
   </div>
 
-  <!-- Navigation bas -->
-  <div id="dt-next-wrap">
-    <button class="dt-back-btn" id="dt-back" onclick="dtBack()" style="display:none;"><i class="ti ti-chevron-left"></i> Retour</button>
-    <button class="dt-next-btn" id="dt-next" onclick="dtNext()" disabled><span id="dt-next-label">Configurer les composants</span> <i class="ti ti-arrow-right"></i></button>
-  </div>
-  </div><!-- /dt-content -->
 
-  <!-- ══ PROTO13 : RÉCAP DROIT ════════════════════════════════ -->
+  <!-- ════════════════════════════════════════════════════════════
+       PROTO13 — LAYOUT DESKTOP (masqué sur mobile)
+  ═════════════════════════════════════════════════════════════ -->
+
+  <!-- Stepper gauche -->
+  <nav id="dt-stepper">
+    <div class="dts-step active" id="dts-1" onclick="dtGo(1)">
+      <div class="dts-dot" id="dts-dot-1">1</div>
+      <div><div class="dts-label">Modèle</div><div class="dts-detail" id="dts-d1"></div></div>
+    </div>
+    <div class="dts-step" id="dts-2" onclick="dtGo(2)">
+      <div class="dts-dot" id="dts-dot-2">2</div>
+      <div>
+        <div class="dts-label">Composants</div>
+        <div class="dts-detail" id="dts-d2"></div>
+        <div class="dts-modif" id="dts-modif" style="display:none;"><span class="dts-modif-dot"></span><span id="dts-modif-txt"></span></div>
+      </div>
+    </div>
+    <div class="dts-step" id="dts-3" onclick="dtGo(3)">
+      <div class="dts-dot" id="dts-dot-3">3</div>
+      <div><div class="dts-label">Taille</div><div class="dts-detail" id="dts-d3">Optionnel</div></div>
+    </div>
+    <div class="dts-step" id="dts-4" onclick="dtGo(4)">
+      <div class="dts-dot" id="dts-dot-4">→</div>
+      <div><div class="dts-label">Devis</div><div class="dts-detail" id="dts-d4"></div></div>
+    </div>
+  </nav>
+
+  <!-- Contenu central -->
+  <div id="dt-main">
+
+    <!-- ÉTAPE 1 : Modèle -->
+    <div class="dt-step-content active" id="dt-s1">
+      <div class="dt-step-body">
+        <p class="section-title" style="color:#f2f2f2;margin-bottom:1.5rem;">Choisissez votre modèle</p>
+        <div id="dt-change-model-btn">
+          <button onclick="dtShowAllModels()"><i class="ti ti-grid-dots"></i> Choisir un autre vélo</button>
+        </div>
+        <div class="model-grid" id="dt-model-grid"></div>
+      </div>
+      <div class="dt-step-footer">
+        <span style="font-size:13px;color:#555;">Sélectionnez un modèle pour continuer</span>
+        <button class="dt-btn-next" id="dt-next-1" onclick="dtGo(2)" disabled>
+          Configurer les composants <i class="ti ti-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- ÉTAPE 2 : Composants -->
+    <div class="dt-step-content" id="dt-s2">
+      <div id="dt-s2-inner">
+        <div id="dt-s2-left">
+          <!-- Rempli par dtRenderS2() -->
+        </div>
+        <div id="dt-s2-right">
+          <div id="dt-posts-list"></div>
+        </div>
+      </div>
+      <div class="dt-step-footer">
+        <button class="dt-btn-back" onclick="dtGo(1)"><i class="ti ti-chevron-left"></i> Retour</button>
+        <button class="dt-btn-next" onclick="dtGo(3)">
+          Choisir votre taille <i class="ti ti-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- ÉTAPE 3 : Taille -->
+    <div class="dt-step-content" id="dt-s3">
+      <div id="dt-s3-inner">
+        <div id="dt-s3-left">
+          <!-- Laissez-vous guider -->
+          <p class="section-title" style="color:#f2f2f2;margin-bottom:1rem;">Laissez-vous guider</p>
+          <div id="dt-s3-guide"></div>
+        </div>
+        <div id="dt-s3-right">
+          <!-- Je connais mes dimensions -->
+          <p class="section-title" style="color:#f2f2f2;margin-bottom:1rem;">Je connais mes dimensions</p>
+          <div id="dt-s3-manual"></div>
+        </div>
+      </div>
+      <div class="dt-step-footer">
+        <button class="dt-btn-back" onclick="dtGo(2)"><i class="ti ti-chevron-left"></i> Retour</button>
+        <button class="dt-btn-next" id="dt-next-3" onclick="dtGo(4)">
+          <span id="dt-next-3-lbl">Continuer sans taille</span> <i class="ti ti-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- ÉTAPE 4 : Récap devis -->
+    <div class="dt-step-content" id="dt-s4">
+      <div id="dt-s4-inner" class="dt-step-body">
+        <!-- Rempli par dtRenderS4() -->
+      </div>
+      <div class="dt-step-footer">
+        <button class="dt-btn-back" onclick="dtGo(3)"><i class="ti ti-chevron-left"></i> Retour</button>
+        <button class="dt-btn-next" onclick="openOrderModal()">
+          <i class="ti ti-send"></i> Demander votre devis
+        </button>
+      </div>
+    </div>
+
+  </div><!-- /dt-main -->
+
+  <!-- Récap droit -->
   <aside id="dt-recap">
     <img id="dtr-thumb" class="dtr-thumb" src="" alt="" style="display:none;">
-    <div id="dtr-model-name" class="dtr-model-name" style="display:none;"></div>
+    <div id="dtr-model" class="dtr-model" style="display:none;"></div>
     <div id="dtr-preset" class="dtr-preset"></div>
     <div id="dtr-price" class="dtr-price" style="display:none;"></div>
-    <div class="dtr-modif" id="dtr-modif"><span class="dtr-modif-dot"></span><span id="dtr-modif-text"></span></div>
+    <div class="dtr-modif" id="dtr-modif"><span class="dtr-modif-dot"></span><span id="dtr-modif-txt"></span></div>
     <hr class="dtr-sep" id="dtr-sep" style="display:none;">
-    <div id="dtr-rows" style="flex:1;overflow-y:auto;min-height:0;"></div>
-    <div class="dtr-actions" id="dtr-actions" style="display:none;">
+    <div class="dtr-rows" id="dtr-rows"></div>
+    <div class="dtr-actions">
       <button class="dtr-btn-main" onclick="openOrderModal()"><i class="ti ti-send"></i> Demander votre devis</button>
-      <button class="dtr-btn-sec" onclick="p11QuickSave()"><i class="ti ti-bookmark"></i> Sauvegarder</button>
-      <button class="dtr-btn-sec" onclick="resetConfig()"><i class="ti ti-refresh"></i> Nouvelle configuration</button>
+      <button class="dtr-btn-sec" onclick="dtQuickSave()"><i class="ti ti-bookmark"></i> Sauvegarder</button>
+      <button class="dtr-btn-sec" onclick="dtReset()"><i class="ti ti-refresh"></i> Nouvelle configuration</button>
+      <div id="dt-change-model-btn-recap" style="display:none;">
+        <button class="dtr-btn-sec" onclick="dtShowAllModels()" style="width:100%;"><i class="ti ti-grid-dots"></i> Choisir un autre vélo</button>
+      </div>
     </div>
   </aside>
+
 </main>
 
 <!-- MODAL COMMANDE -->
@@ -2633,8 +2649,6 @@ function resetConfig() {
   updateRecap(); updateFloatingPrice();
   document.getElementById('posts-section').style.display = 'block';
   window.scrollTo({ top: 0, behavior: 'smooth' });
-  // Proto13 desktop : rester sur étape 2 (on garde le modèle)
-  if (window.innerWidth >= 768) { dtCurrentStep = 2; dtRender(); }
 }
 
 // ─── SAUVEGARDE ───────────────────────────────────────────────────────────────
@@ -2990,60 +3004,372 @@ document.addEventListener('click', () => {
   document.querySelectorAll('.preset-info-popup').forEach(p => p.style.display = 'none');
 });
 
-// ══ PROTO13 : STEPPER DESKTOP ══════════════════════════════════════
-let dtCurrentStep = 1;
-const DT_LABELS = ['Configurer les composants','Choisir votre taille','Voir le récap', null];
+// ════════════════════════════════════════════════════════════════
+// PROTO13 — STEPPER DESKTOP
+// ════════════════════════════════════════════════════════════════
+let dtStep = 1;
 
-function dtGoTo(n) {
+function dtGo(n) {
   if (window.innerWidth < 768) return;
   if (n > 1 && !selModel) return;
-  if (n > 2 && n !== 3) {} // taille toujours accessible
-  dtCurrentStep = n;
+  dtStep = n;
+  document.body.classList.toggle('dt-step-4', n === 4);
   dtRender();
 }
-function dtNext() { if (dtCurrentStep < 4) dtGoTo(dtCurrentStep + 1); }
-function dtBack() { if (dtCurrentStep > 1) dtGoTo(dtCurrentStep - 1); }
 
-
-function dtRenderStep2Model() {
+function dtRender() {
   if (window.innerWidth < 768) return;
-  const container = document.getElementById('dt-s2-model');
-  if (!container) return;
+  const n = dtStep;
+
+  // Stepper
+  for (let i = 1; i <= 4; i++) {
+    const s = document.getElementById('dts-' + i);
+    const d = document.getElementById('dts-dot-' + i);
+    if (!s || !d) continue;
+    s.className = 'dts-step' + (i === n ? ' active' : i < n ? ' done' : '');
+    d.innerHTML = i < n ? '<i class="ti ti-check" style="font-size:9px;"></i>' : i === 4 ? '→' : String(i);
+  }
   const model = MODELS.find(m => m.id === selModel);
-  if (!model) { container.innerHTML = ''; return; }
-  const hasPresets = PRESETS[model.id];
-  container.innerHTML =
-    (model.photo ? '<img class="mc-photo" src="' + model.photo + '" alt="' + model.name + '" loading="lazy">' : '') +
-    '<div class="mc-text">' +
-      '<span class="mc-badge">' + model.badge + '</span>' +
-      '<span class="mc-name">' + model.name + '</span>' +
-      '<span class="mc-desc">' + model.desc + '</span>' +
-      '<span class="mc-price">à partir de ' + (model.basePrice + (model.assembly||0)).toLocaleString('fr-FR') + ' €</span>' +
-    '</div>' +
-    (hasPresets ? '<div class="preset-bar" style="margin-top:8px;" onclick="event.stopPropagation()">' +
-      '<div class="preset-label">3 suggestions — tout reste modifiable</div>' +
-      '<div class="preset-btns">' +
-        ['Signature','Ti1','Ti2'].map(decl =>
-          '<div class="preset-btn-wrap">' +
-            '<button class="preset-btn-main ' + (window._activePreset===decl?'active':'') + '" onclick="loadPreset(\'' + decl + '\')">' + decl + '</button>' +
-            '<button class="preset-btn-info" onclick="togglePresetInfoDt(\'' + decl + '\', this)"><i class="ti ti-info-circle"></i></button>' +
-            '<div class="preset-info-popup" data-decl="' + decl + '"><strong>' + decl + '</strong>' + (PRESET_DESCS_DT[decl]||'') + '</div>' +
-          '</div>'
-        ).join('') +
-      '</div>' +
-    '</div>' : '');
+  const el = (id) => document.getElementById(id);
+  if (el('dts-d1')) el('dts-d1').textContent = model ? model.name : '';
+  if (el('dts-d2')) el('dts-d2').textContent = window._activePreset || (model ? 'Base' : '');
+  if (el('dts-d3')) el('dts-d3').textContent = window.sizeValidated ? 'Enregistrée ✓' : 'Optionnel';
+
+  // Modif count stepper
+  const mc = dtModifCount();
+  if (el('dts-modif')) el('dts-modif').style.display = mc > 0 ? 'flex' : 'none';
+  if (el('dts-modif-txt')) el('dts-modif-txt').textContent = mc + ' perso.';
+
+  // Sections
+  document.querySelectorAll('.dt-step-content').forEach(s => s.classList.remove('active'));
+  const active = document.getElementById('dt-s' + n);
+  if (active) active.classList.add('active');
+
+  // Bouton next step 1
+  const next1 = el('dt-next-1');
+  if (next1) next1.disabled = !selModel;
+
+  // Bouton next step 3
+  const next3lbl = el('dt-next-3-lbl');
+  if (next3lbl) next3lbl.textContent = window.sizeValidated ? 'Voir votre récap' : 'Continuer sans taille';
+
+  // Bouton "changer de vélo" dans le récap — visible après reset
+  const cmb = el('dt-change-model-btn');
+  const cmbR = el('dt-change-model-btn-recap');
+  if (cmb) cmb.style.display = (n === 1 && window._singleModel) ? 'block' : 'none';
+  if (cmbR) cmbR.style.display = window._singleModel ? 'block' : 'none';
+
+  // Rendu spécifique
+  if (n === 1) dtRenderS1();
+  if (n === 2) dtRenderS2();
+  if (n === 3) dtRenderS3();
+  if (n === 4) dtRenderS4();
+
+  // Récap droit (pas à l'étape 4)
+  if (n !== 4) dtRenderRecap();
+
+  // Scroll haut
+  const main = el('dt-main');
+  if (main) main.scrollTop = 0;
 }
 
+// ── Étape 1 : grille modèles ──
+function dtRenderS1() {
+  const grid = document.getElementById('dt-model-grid');
+  if (!grid) return;
+  grid.className = 'model-grid';
+  grid.innerHTML = MODELS.map(m => {
+    const sel = m.id === selModel;
+    const hasPresets = PRESETS[m.id];
+    return '<div class="model-card' + (sel ? ' sel' : '') + '" onclick="dtSelectModel(\'' + m.id + '\')">' +
+      '<img class="mc-photo" src="' + (m.photo||'') + '" alt="' + m.name + '" loading="lazy">' +
+      '<div class="mc-body">' +
+        '<span class="mc-badge">' + m.badge + '</span>' +
+        '<span class="mc-name">' + m.name + '</span>' +
+        '<span class="mc-desc">' + (m.desc||'') + '</span>' +
+        '<span class="mc-price">à partir de ' + (m.basePrice + (m.assembly||0)).toLocaleString('fr-FR') + ' €</span>' +
+      '</div>' +
+      (hasPresets && sel ? dtPresetBar(m.id) : '') +
+    '</div>';
+  }).join('');
+}
+
+function dtPresetBar(modelId) {
+  return '<div class="preset-bar" onclick="event.stopPropagation()">' +
+    '<div class="preset-label">3 suggestions pour démarrer</div>' +
+    '<div class="preset-btns">' +
+    ['Signature','Ti1','Ti2'].map(decl =>
+      '<div class="preset-btn-wrap">' +
+        '<button class="preset-btn-main ' + (window._activePreset===decl?'active':'') + '" onclick="dtLoadPreset(\'' + decl + '\')">' + decl + '</button>' +
+        '<button class="preset-btn-info" onclick="togglePresetInfoDt(\'' + decl + '\',this)"><i class="ti ti-info-circle"></i></button>' +
+        '<div class="preset-info-popup" data-decl="' + decl + '"><strong>' + decl + '</strong>' + (PRESET_DESCS_DT[decl]||'') + '</div>' +
+      '</div>'
+    ).join('') +
+    '</div></div>';
+}
+
+function dtSelectModel(id) {
+  selModel = id; selOpts = {}; openPost = null;
+  window._singleModel = id; window._activePreset = null;
+  const preset = PRESETS[id] && PRESETS[id]['Ti1'];
+  if (preset) { window._activePreset = 'Ti1'; selOpts = {...preset}; }
+  // Appliquer FORCE_SELECT
+  Object.keys(selOpts).forEach(pid => {
+    const optId = selOpts[pid]; if (!optId) return;
+    FORCE_SELECT.forEach(rule => {
+      if (rule.if_selected === optId)
+        Object.entries(rule.force).forEach(([fp,fid]) => { if (!selOpts[fp]) selOpts[fp]=fid; });
+    });
+  });
+  dtRender();
+  // Activer le bouton suivant
+  const next1 = document.getElementById('dt-next-1');
+  if (next1) next1.disabled = false;
+}
+
+function dtLoadPreset(decl) {
+  const preset = PRESETS[selModel] && PRESETS[selModel][decl];
+  if (!preset) return;
+  window._activePreset = decl; selOpts = {...preset};
+  Object.keys(selOpts).forEach(pid => {
+    const optId = selOpts[pid]; if (!optId) return;
+    FORCE_SELECT.forEach(rule => {
+      if (rule.if_selected === optId)
+        Object.entries(rule.force).forEach(([fp,fid]) => { if (!selOpts[fp]) selOpts[fp]=fid; });
+    });
+  });
+  dtRender();
+}
 
 function dtShowAllModels() {
-  window._singleModel = null;
-  window._activePreset = null;
-  selModel = null; selOpts = {};
-  renderModels();
-  dtCurrentStep = 1;
+  window._singleModel = null; window._activePreset = null;
+  selModel = null; selOpts = {}; openPost = null;
+  dtStep = 1;
   dtRender();
 }
 
+// ── Étape 2 : split modèle | composants ──
+function dtRenderS2() {
+  // Left : fiche modèle
+  const left = document.getElementById('dt-s2-left');
+  const model = MODELS.find(m => m.id === selModel);
+  if (left && model) {
+    left.innerHTML =
+      '<img class="mc-photo" src="' + (model.photo||'') + '" alt="' + model.name + '" loading="lazy">' +
+      '<div class="mc-text">' +
+        '<span class="mc-badge">' + model.badge + '</span>' +
+        '<span class="mc-name">' + model.name + '</span>' +
+        '<span class="mc-desc">' + (model.desc||'') + '</span>' +
+        '<span class="mc-price">à partir de ' + (model.basePrice + (model.assembly||0)).toLocaleString('fr-FR') + ' €</span>' +
+      '</div>' +
+      dtPresetBar(model.id);
+  }
+  // Right : composants — réutiliser renderPosts vers dt-posts-list
+  dtRenderPosts();
+}
+
+// Rendu des postes dans dt-posts-list — délégation d'événements pour éviter l'escaping
+function dtRenderPosts() {
+  const container = document.getElementById('dt-posts-list');
+  if (!container || !selModel) return;
+  const icons = {fourche:'ti-git-fork',roues:'ti-circle',pneus:'ti-circle-dotted',transmission:'ti-settings',power:'ti-activity',frein:'ti-hand-stop',pilotage:'ti-adjustments-horizontal',selle:'ti-armchair',tige:'ti-arrows-vertical',pedales:'ti-rotate-clockwise'};
+
+  container.innerHTML = POST_META.map(p => {
+    const opts = optionsFor(p.id, selModel);
+    if (!opts.length) return '';
+    const selOpt = opts.find(o => o.id === selOpts[p.id]);
+    const isOpen = openPost === p.id;
+    const curPrice = selOpt && !isLocked(selOpt, selModel) ? selOpt.price : 0;
+    const hasPhotos = opts.some(o => o.image && o.image.length > 0 && o.image !== 'assets/no_option.png');
+
+    function buildOpt(o) {
+      const sel2 = selOpts[p.id] === o.id;
+      const isDef = isPresetDefault(p.id, o.id);
+      const rec2 = isRecommended(o, selModel);
+      const d = o.price - curPrice;
+      const diff = isDef ? 'inclus' : sel2 ? '±0 €' : d===0 ? '±0 €' : (d>0?'+':'')+d.toLocaleString('fr-FR')+' €';
+      if (hasPhotos) {
+        const imgHtml = (o.image && o.image !== 'assets/no_option.png')
+          ? '<img src="' + o.image + '" alt="" loading="lazy" style="width:100%;height:80px;object-fit:cover;display:block;">'
+          : '<div class="opc-img-placeholder"><i class="ti ti-photo"></i></div>';
+        return '<div class="opt-photo-card' + (sel2?' sel':'') + '" data-pid="' + p.id + '" data-oid="' + o.id + '">' +
+          '<div class="opc-check"><i class="ti ti-check"></i></div>' +
+          '<div class="opc-img-wrap">' + imgHtml + '</div>' +
+          '<div class="opc-body">' +
+          ((rec2||isDef)?'<div class="opc-badges">'+(isDef?'<span class="opc-badge-incl">inclus</span>':'')+(rec2?'<span class="opc-badge-rec"><i class="ti ti-star" style="font-size:8px;"></i> Recommandé</span>':'')+'</div>':'') +
+          '<div class="opc-name">' + o.name + '</div>' +
+          (o.desc?'<div class="opc-desc">'+o.desc+'</div>':'') +
+          '<div class="opc-price' + (d<0?' negative':'') + '">' + diff + '</div>' +
+          '</div></div>';
+      } else {
+        return '<div class="opt-item' + (sel2?' sel':'') + '" data-pid="' + p.id + '" data-oid="' + o.id + '">' +
+          '<div class="opt-radio"><div class="radio-dot"></div></div>' +
+          '<div class="oi-info"><div class="oi-name">' + o.name + (isDef?'<span class="incl-badge">inclus</span>':'') + '</div>' + (o.desc?'<div class="oi-desc">'+o.desc+'</div>':'') + '</div>' +
+          '<div class="oi-meta"><div class="oi-price' + (d<0?' negative':'') + '">' + diff + '</div></div>' +
+          '</div>';
+      }
+    }
+
+    const optHtml = (hasPhotos ? '<div class="opt-photo-grid">' : '<div class="opt-list">') +
+      opts.map(buildOpt).join('') + '</div>';
+
+    return '<div class="post-block" data-post-id="' + p.id + '">' +
+      '<div class="post-hdr" data-toggle="' + p.id + '">' +
+        '<i class="ti ' + (icons[p.id]||'ti-point') + ' ph-icon"></i>' +
+        '<span class="ph-name">' + p.name + '</span>' +
+        (selOpt?'<span class="ph-sel">'+selOpt.name+'</span>':'<span class="ph-pending">choisir →</span>') +
+        '<i class="ti ti-chevron-down ph-chev' + (isOpen?' open':'') + '"></i>' +
+      '</div>' +
+      '<div class="post-opts' + (isOpen?' open':'') + '">' + optHtml + '</div>' +
+    '</div>';
+  }).join('');
+
+  // Délégation d'événements (évite tout problème d'escaping onclick)
+  container.onclick = function(e) {
+    // Clic sur toggle post
+    const hdr = e.target.closest('[data-toggle]');
+    if (hdr) { dtTogglePost(hdr.dataset.toggle); return; }
+    // Clic sur option
+    const opt = e.target.closest('[data-pid][data-oid]');
+    if (opt) { dtSelectOpt(opt.dataset.pid, opt.dataset.oid); return; }
+  };
+
+  dtRenderRecap();
+}
+
+function dtSelectOpt(postId, optId) {
+  const opt = optionsFor(postId, selModel).find(o => o.id === optId);
+  if (!opt) return;
+  if (isLocked(opt, selModel)) return;
+  selOpts[postId] = optId;
+  // FORCE_SELECT
+  FORCE_SELECT.forEach(rule => {
+    if (rule.if_selected === optId)
+      Object.entries(rule.force).forEach(([fp,fid]) => {
+        const av = optionsFor(fp, selModel);
+        if (av.find(o => o.id === fid)) selOpts[fp] = fid;
+      });
+  });
+  dtRenderPosts();
+}
+
+function dtTogglePost(postId) {
+  openPost = openPost === postId ? null : postId;
+  dtRenderPosts();
+  if (openPost) {
+    setTimeout(() => {
+      const el = document.querySelector('#dt-posts-list .post-block[data-post-id="'+postId+'"]');
+      if (el) { const r = document.getElementById('dt-s2-right'); if (r) r.scrollTo({top: el.offsetTop - 56, behavior:'smooth'}); }
+    }, 50);
+  }
+}
+
+// ── Étape 3 : taille ──
+function dtRenderS3() {
+  // Guide (gauche) — cloner depuis view-size
+  const guidePanel = document.getElementById('size-guide-section');
+  const manualPanel = document.getElementById('size-manual-section');
+  const left = document.getElementById('dt-s3-guide');
+  const right = document.getElementById('dt-s3-manual');
+  if (left && guidePanel) left.innerHTML = guidePanel.innerHTML;
+  if (right && manualPanel) right.innerHTML = manualPanel.innerHTML;
+  // Reconstruire dims grid
+  if (document.getElementById('dt-dims-grid')) {
+    p11BuildDimsGrid && p11BuildDimsGrid();
+    // Copier le résultat
+    const src = document.getElementById('p11-dims-grid');
+    const dst = document.getElementById('dt-dims-grid');
+    if (src && dst) dst.innerHTML = src.innerHTML;
+  }
+}
+
+// ── Étape 4 : récap plein écran ──
+function dtRenderS4() {
+  const inner = document.getElementById('dt-s4-inner');
+  if (!inner || !selModel) return;
+  const model = MODELS.find(m => m.id === selModel);
+  const { price } = computeTotals(selModel, selOpts);
+  const preset = (window._activePreset && PRESETS[selModel]) ? PRESETS[selModel][window._activePreset] : {};
+  const icons = {fourche:'ti-git-fork',roues:'ti-circle',pneus:'ti-circle-dotted',transmission:'ti-settings',power:'ti-activity',frein:'ti-hand-stop',pilotage:'ti-adjustments-horizontal',selle:'ti-armchair',tige:'ti-arrows-vertical',pedales:'ti-rotate-clockwise'};
+  const mc = dtModifCount();
+
+  inner.innerHTML =
+    '<div style="display:grid;grid-template-columns:280px 1fr;gap:2rem;align-items:start;">' +
+      // Colonne gauche : photo + infos
+      '<div>' +
+        (model.photo ? '<img src="'+model.photo+'" style="width:100%;height:180px;object-fit:cover;display:block;border:0.5px solid #222;margin-bottom:1rem;">' : '') +
+        '<div style="font-size:11px;color:#666;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">'+model.badge+'</div>' +
+        '<div style="font-size:20px;font-weight:500;color:#f2f2f2;margin-bottom:4px;">'+model.name+'</div>' +
+        (window._activePreset ? '<div style="font-size:11px;color:#666;margin-bottom:.75rem;">'+window._activePreset+'</div>' : '<div style="min-height:1.4em;"></div>') +
+        '<div style="font-size:28px;font-weight:700;color:#F5C400;margin-bottom:.5rem;">'+price.toLocaleString('fr-FR')+' €</div>' +
+        (mc > 0 ? '<div style="font-size:11px;color:#888;display:flex;align-items:center;gap:5px;margin-bottom:1rem;"><span style="width:6px;height:6px;border-radius:50%;background:#F5C400;display:inline-block;"></span>'+mc+' personnalisation'+(mc>1?'s':'')+' · '+window._activePreset+'</div>' : '') +
+        '<div style="display:flex;flex-direction:column;gap:8px;margin-top:1rem;">' +
+          '<button class="dtr-btn-main" onclick="openOrderModal()"><i class="ti ti-send"></i> Demander votre devis</button>' +
+          '<button class="dtr-btn-sec" onclick="dtQuickSave()"><i class="ti ti-bookmark"></i> Sauvegarder</button>' +
+          '<button class="dtr-btn-sec" onclick="dtReset()"><i class="ti ti-refresh"></i> Nouvelle configuration</button>' +
+        '</div>' +
+      '</div>' +
+      // Colonne droite : composants
+      '<div>' +
+        '<div style="font-size:11px;color:#666;text-transform:uppercase;letter-spacing:.08em;margin-bottom:1rem;">Votre configuration</div>' +
+        POST_META.map(p => {
+          const opt = (typeof ALL_OPTIONS !== 'undefined' && ALL_OPTIONS[p.id]) ? ALL_OPTIONS[p.id].find(o => o.id === selOpts[p.id]) : null;
+          if (!opt) return '';
+          const isModified = !!(window._activePreset && preset && Object.keys(preset).length && preset[p.id] !== selOpts[p.id]);
+          return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:0.5px solid #1a1a1a;">' +
+            '<div style="font-size:11px;color:'+(isModified?'#aaa':'#555')+';">' +
+              '<i class="ti '+(icons[p.id]||'ti-point')+'" style="font-size:9px;margin-right:6px;color:#F5C400;"></i>' +
+              p.name +
+              (isModified ? '<span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#F5C400;margin-left:5px;vertical-align:middle;"></span>' : '') +
+            '</div>' +
+            '<div style="font-size:12px;color:'+(isModified?'#F5C400':'#888')+';">'+opt.name+'</div>' +
+          '</div>';
+        }).join('') +
+      '</div>' +
+    '</div>';
+}
+
+// ── Récap droit ──
+function dtRenderRecap() {
+  if (window.innerWidth < 768) return;
+  const model = MODELS.find(m => m.id === selModel);
+  const get = id => document.getElementById(id);
+  if (!model) {
+    [get('dtr-thumb'),get('dtr-model'),get('dtr-price'),get('dtr-sep')].forEach(el => { if(el) el.style.display='none'; });
+    const mod = get('dtr-modif'); if (mod) mod.classList.remove('show');
+    return;
+  }
+  if (get('dtr-thumb')) { get('dtr-thumb').src = model.photo||''; get('dtr-thumb').style.display = model.photo?'block':'none'; }
+  if (get('dtr-model')) { get('dtr-model').textContent = model.name; get('dtr-model').style.display = 'block'; }
+  if (get('dtr-preset')) get('dtr-preset').textContent = window._activePreset || '';
+  const {price} = computeTotals(selModel, selOpts);
+  if (get('dtr-price')) { get('dtr-price').textContent = price.toLocaleString('fr-FR')+' €'; get('dtr-price').style.display = 'block'; }
+  if (get('dtr-sep')) get('dtr-sep').style.display = 'block';
+
+  const mc = dtModifCount();
+  const modifEl = get('dtr-modif');
+  if (modifEl) {
+    if (mc > 0) { get('dtr-modif-txt').textContent = mc+' personnalisation'+(mc>1?'s':'')+' · '+window._activePreset; modifEl.classList.add('show'); }
+    else modifEl.classList.remove('show');
+  }
+
+  const preset = (window._activePreset && PRESETS[selModel]) ? PRESETS[selModel][window._activePreset] : {};
+  const icons = {fourche:'ti-git-fork',roues:'ti-circle',pneus:'ti-circle-dotted',transmission:'ti-settings',power:'ti-activity',frein:'ti-hand-stop',pilotage:'ti-adjustments-horizontal',selle:'ti-armchair',tige:'ti-arrows-vertical',pedales:'ti-rotate-clockwise'};
+  const rows = get('dtr-rows');
+  if (!rows) return;
+  rows.innerHTML = POST_META.map(p => {
+    const opts = (typeof ALL_OPTIONS !== 'undefined' && ALL_OPTIONS[p.id]) ? ALL_OPTIONS[p.id] : [];
+    const opt = opts.find(o => o.id === selOpts[p.id]);
+    if (!opt) return '';
+    const isModified = !!(window._activePreset && preset && Object.keys(preset).length && preset[p.id] !== selOpts[p.id]);
+    return '<div class="dtr-row'+(isModified?' mod':'')+'">' +
+      '<span class="dtr-lbl"><i class="ti '+(icons[p.id]||'ti-point')+'" style="font-size:8px;margin-right:3px;"></i>'+p.name+(isModified?'<span style="display:inline-block;width:4px;height:4px;border-radius:50%;background:#F5C400;margin-left:3px;vertical-align:middle;"></span>':'')+'</span>' +
+      '<span class="dtr-val">'+opt.name+'</span>' +
+    '</div>';
+  }).join('');
+}
+
+// ── Helpers ──
 function dtModifCount() {
   if (!selModel || !window._activePreset || !PRESETS[selModel] || !PRESETS[selModel][window._activePreset]) return 0;
   const preset = PRESETS[selModel][window._activePreset];
@@ -3052,159 +3378,31 @@ function dtModifCount() {
   return c;
 }
 
-function dtRender() {
-  if (window.innerWidth < 768) return;
-  const n = dtCurrentStep;
-  const model = MODELS.find(m => m.id === selModel);
-
-  // Stepper dots + labels
-  for (let i = 1; i <= 4; i++) {
-    const st = document.getElementById('dt-s' + i);
-    const dot = document.getElementById('dt-dot-' + i);
-    if (!st || !dot) continue;
-    st.className = 'dt-step' + (i === n ? ' active' : i < n ? ' done' : '');
-    if (i < n) dot.innerHTML = '<i class="ti ti-check" style="font-size:9px;"></i>';
-    else if (i === 4) dot.textContent = '→';
-    else dot.textContent = String(i);
-  }
-  const d1 = document.getElementById('dt-d1');
-  const d2 = document.getElementById('dt-d2');
-  const d3 = document.getElementById('dt-d3');
-  if (d1) d1.textContent = model ? model.name : '';
-  if (d2) d2.textContent = window._activePreset || (model ? 'Base' : '');
-  const mc = dtModifCount();
-  const dtMod = document.getElementById('dt-modif');
-  const dtModTxt = document.getElementById('dt-modif-text');
-  if (dtMod) dtMod.style.display = mc > 0 ? 'flex' : 'none';
-  if (dtModTxt) dtModTxt.textContent = mc + ' perso.';
-  if (d3) d3.textContent = window.sizeValidated ? 'Enregistrée ✓' : 'Optionnel';
-
-  // Sections contenu
-  // Bouton "Choisir un autre modèle" si on est en mode single (après recommencer)
-  if (n === 1 && window.innerWidth >= 768) {
-    const changeWrap = document.getElementById('dt-change-model-btn');
-    if (changeWrap) changeWrap.style.display = window._singleModel ? 'block' : 'none';
-  }
-
-  const sects = {
-    1: document.getElementById('step1-wrap'),
-    2: document.getElementById('posts-section'),
-    3: document.getElementById('view-size'),
-    4: document.getElementById('bottom-row')
-  };
-  Object.entries(sects).forEach(([i, el]) => {
-    if (!el) return;
-    el.style.display = parseInt(i) === n ? 'block' : 'none';
-  });
-  if (n === 2 && sects[2]) { renderPosts(); dtRenderStep2Model(); }
-  if (n === 4 && sects[4]) {
-    sects[4].style.display = 'flex';
-    sects[4].style.flexDirection = 'column';
-    updateRecap();
-    // Afficher les éléments cachés par CSS
-    const recapCol = document.getElementById('recap-col');
-    if (recapCol) { recapCol.style.display = 'block'; recapCol.style.width = '100%'; }
-    const btns1 = document.getElementById('btns-tab1');
-    if (btns1) btns1.style.display = 'block';
-  }
-
-  // Boutons navigation
-  const nextBtn = document.getElementById('dt-next');
-  const nextLbl = document.getElementById('dt-next-label');
-  const backBtn = document.getElementById('dt-back');
-  if (nextBtn) {
-    nextBtn.style.display = n === 4 ? 'none' : 'flex';
-    nextBtn.disabled = n === 1 && !selModel;
-    if (nextLbl && n < 4) nextLbl.textContent = (n === 3 && !window.sizeValidated) ? 'Continuer sans taille' : DT_LABELS[n - 1];
-  }
-  if (backBtn) backBtn.style.display = n > 1 ? 'flex' : 'none';
-
-  dtUpdateRecap();
-  const cont = document.getElementById('dt-content');
-  if (cont) cont.scrollTop = 0;
+function dtQuickSave() {
+  const name = prompt('Nom de cette configuration :', 'Ma config');
+  if (!name || !name.trim()) return;
+  const saved = JSON.parse(localStorage.getItem('velo_configs') || '[]');
+  saved.push({ name: name.trim(), model: selModel, opts: {...selOpts}, size: {...selSize}, date: new Date().toLocaleDateString('fr-FR'), preset: window._activePreset });
+  localStorage.setItem('velo_configs', JSON.stringify(saved));
 }
 
-function dtUpdateRecap() {
-  if (window.innerWidth < 768) return;
-  const model = MODELS.find(m => m.id === selModel);
-  const thumb = document.getElementById('dtr-thumb');
-  const nameEl = document.getElementById('dtr-model-name');
-  const preEl = document.getElementById('dtr-preset');
-  const priceEl = document.getElementById('dtr-price');
-  const sepEl = document.getElementById('dtr-sep');
-  const actEl = document.getElementById('dtr-actions');
-  const modifEl = document.getElementById('dtr-modif');
-  const modifTxt = document.getElementById('dtr-modif-text');
-
-  if (!model) {
-    [thumb,nameEl,priceEl,sepEl,actEl].forEach(el => { if(el) el.style.display='none'; });
-    if (modifEl) modifEl.classList.remove('show');
-    return;
+function dtReset() {
+  selOpts = {}; selSize = {}; window.sizeValidated = false; openPost = null;
+  if (selModel && PRESETS[selModel] && PRESETS[selModel]['Ti1']) {
+    window._activePreset = 'Ti1'; selOpts = {...PRESETS[selModel]['Ti1']};
   }
-  if (thumb) { thumb.src = model.photo||''; thumb.style.display = model.photo?'block':'none'; }
-  if (nameEl) { nameEl.textContent = model.name; nameEl.style.display = 'block'; }
-  if (preEl) preEl.textContent = window._activePreset || '';
-  const {price} = computeTotals(selModel, selOpts);
-  if (priceEl) { priceEl.textContent = price.toLocaleString('fr-FR')+' €'; priceEl.style.display = 'block'; }
-  if (sepEl) sepEl.style.display = 'block';
-  if (actEl) actEl.style.display = 'flex';
-  const mc = dtModifCount();
-  if (modifEl && modifTxt) {
-    if (mc > 0) { modifTxt.textContent = mc+' personnalisation'+(mc>1?'s':'')+' · '+window._activePreset; modifEl.classList.add('show'); }
-    else modifEl.classList.remove('show');
-  }
-  // Lignes
-  const rows = document.getElementById('dtr-rows');
-  if (!rows) return;
-  const preset = (window._activePreset && PRESETS[selModel]) ? PRESETS[selModel][window._activePreset] : {};
-  const icons = {fourche:'ti-git-fork',roues:'ti-circle',pneus:'ti-circle-dotted',transmission:'ti-settings',power:'ti-activity',frein:'ti-hand-stop',pilotage:'ti-adjustments-horizontal',selle:'ti-armchair',tige:'ti-arrows-vertical',pedales:'ti-rotate-clockwise'};
-  rows.innerHTML = POST_META.map(p => {
-    const opts = (typeof ALL_OPTIONS !== 'undefined' && ALL_OPTIONS[p.id]) ? ALL_OPTIONS[p.id] : [];
-    const opt = opts.find(o => o.id === selOpts[p.id]);
-    if (!opt) return '';
-    const presetVal = (window._activePreset && preset) ? preset[p.id] : null;
-    const mod = !!(presetVal && presetVal !== selOpts[p.id]);
-    return '<div class="dtr-row'+(mod?' mod':'')+'">'+
-      '<span class="dtr-row-lbl"><i class="ti '+(icons[p.id]||'ti-point')+'" style="font-size:8px;margin-right:3px;"></i>'+p.name+(mod?'<span style="display:inline-block;width:4px;height:4px;border-radius:50%;background:#F5C400;margin-left:3px;vertical-align:middle;"></span>':'')+'</span>'+
-      '<span class="dtr-row-val">'+opt.name+'</span>'+
-    '</div>';
-  }).join('');
+  dtStep = 1; document.body.classList.remove('dt-step-4');
+  dtRender();
 }
 
-// Hooks
-const _dtOrigSelectModel = window.selectModel || function(){};
-const _dtOrigLoadPreset  = window.loadPreset  || function(){};
-
-function dtHookSelectModel(id) {
-  // Empêcher le passage en mode single sur desktop proto13
-  const wasSingle = window._singleModel;
-  _dtOrigSelectModel(id);
-  if (window.innerWidth >= 768) {
-    // Rester en grille 4 à l'étape 1 ; passer à l'étape 2 après sélection
-    setTimeout(() => dtGoTo(2), 50);
-  }
-}
-function dtHookLoadPreset(decl) {
-  _dtOrigLoadPreset(decl);
-  if (window.innerWidth >= 768) dtUpdateRecap();
-}
-
+// ── Init ──
 function dtInit() {
   if (window.innerWidth < 768) return;
-  // Override functions
-  window.selectModel = dtHookSelectModel;
-  window.loadPreset  = dtHookLoadPreset;
-  // Hide old chrome
+  // Masquer tout le desktop legacy
+  const hide = ['view-config','bottom-row','view-size','view-saved'];
+  hide.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
   const tb = document.querySelector('.tab-bar');
   if (tb) tb.style.display = 'none';
-  // En desktop proto13 : ne jamais passer en mode single
-  window._singleModel = null;
-  // Init display
-  const steps = {1:'step1-wrap',2:'posts-section',3:'view-size',4:'bottom-row'};
-  Object.entries(steps).forEach(([i,id]) => {
-    const el = document.getElementById(id);
-    if (el) el.style.display = parseInt(i) === 1 ? 'block' : 'none';
-  });
   dtRender();
 }
 
@@ -3362,7 +3560,7 @@ window.addEventListener('beforeunload', () => window.scrollTo(0, 0));
 
 // ─── FENÊTRE PRIX FLOTTANTE ───────────────────────────────────────────────────
 function updateFloatingPrice() {
-  if (window.innerWidth >= 768) dtUpdateRecap();
+  if (window.innerWidth >= 768) dtRenderRecap();
   const fp = document.getElementById('floating-price');
   if (!fp) return;
   const model = MODELS.find(m => m.id === selModel);
