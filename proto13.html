@@ -1155,6 +1155,52 @@
     #floating-price, .change-model-btn, #btns-tab1, #btns-tab2,
     .prog-wrap, #step1-wrap .step-label { display: none !important; }
   }
+
+  @media (min-width: 768px) {
+    /* Étape 1 proto13 : 4 cartes pleine largeur */
+    #dt-content #step1-wrap {
+      background: none !important; padding: 0 !important; margin: 0 !important;
+    }
+    #dt-content #step1-wrap .section-title { color: #f2f2f2; margin-bottom: 1.25rem; }
+    #dt-content .model-grid {
+      grid-template-columns: repeat(4, 1fr) !important;
+    }
+    #dt-content .model-grid.single {
+      grid-template-columns: repeat(4, 1fr) !important;
+    }
+
+    /* Étape 2 proto13 : single card gauche + composants droite */
+    #dt-s2-wrap {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 1.5rem;
+      align-items: start;
+    }
+    #dt-s2-model {
+      position: sticky; top: 0;
+    }
+    #dt-s2-model .mc-photo { width: 100%; height: auto; aspect-ratio: 4/3; object-fit: cover; display: block; }
+    #dt-s2-model .mc-text { padding: 10px 12px; background: #111; border: 0.5px solid #222; }
+    #dt-s2-model .mc-badge { font-size: 10px; color: #666; text-transform: uppercase; letter-spacing: .08em; display: block; margin-bottom: 3px; }
+    #dt-s2-model .mc-name { font-size: 15px; font-weight: 500; color: #f2f2f2; display: block; margin-bottom: 3px; }
+    #dt-s2-model .mc-desc { font-size: 12px; color: #888; line-height: 1.4; display: block; margin-bottom: 6px; }
+    #dt-s2-model .mc-price { font-size: 11px; color: #666; display: block; }
+    #dt-s2-model .preset-bar { background: #0d0d0d; border: 0.5px solid #222; padding: 10px 12px; margin-top: 8px; }
+    #dt-s2-model .preset-label { font-size: 10px; color: #555; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; }
+
+    /* Étape 3 taille : afficher normalement */
+    #dt-content #view-size { display: block !important; }
+
+    /* Étape 4 : contenu centré étiré + recap intégré */
+    #dt-s4-wrap {
+      display: flex; gap: 1.5rem; align-items: start;
+    }
+    #dt-s4-left { flex: 1; }
+    #dt-s4-right { width: 240px; flex-shrink: 0; }
+
+    /* Retour au site ne doit pas chevaucher les boutons */
+    #fab-contact { bottom: 80px !important; }
+  }
 </style>
   <!-- Google Analytics GA4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-KGZDWLZ7JZ"></script>
@@ -1422,18 +1468,21 @@
     </div>
     </div>
 
-    <div id="posts-section" style="display:none;border:1.5px solid #111111;padding:1.5rem;">
-      <div class="prog-wrap">
-        <div class="step-label" style="color:#888;">Étape 2 sur 2</div>
-        <p class="section-title" style="color:#111111;margin-bottom:.5rem;">Configurer vos composants</p>
+    <div id="posts-section" style="display:none;">
+      <div id="dt-s2-wrap">
+        <div id="dt-s2-model">
+          <!-- Rempli par dtRenderStep2Model() -->
+        </div>
+        <div id="dt-s2-posts">
+          <div id="posts-list"></div>
+        </div>
       </div>
-      <div id="posts-list"></div>
     </div>
 
   </div>
 
-  <!-- LIGNE 3 : RÉSUMÉ (70%) + CONTACT (30%) -->
-  <div id="bottom-row" style="display:none">
+  <!-- LIGNE 3 : RÉSUMÉ -->
+  <div id="bottom-row" style="display:none;flex-direction:column;">
 
     <!-- Résumé -->
     <div id="recap-col">
@@ -2490,6 +2539,8 @@ function resetConfig() {
   updateRecap(); updateFloatingPrice();
   document.getElementById('posts-section').style.display = 'block';
   window.scrollTo({ top: 0, behavior: 'smooth' });
+  // Proto13 desktop : rester sur étape 2 (on garde le modèle)
+  if (window.innerWidth >= 768) { dtCurrentStep = 2; dtRender(); }
 }
 
 // ─── SAUVEGARDE ───────────────────────────────────────────────────────────────
@@ -2859,6 +2910,36 @@ function dtGoTo(n) {
 function dtNext() { if (dtCurrentStep < 4) dtGoTo(dtCurrentStep + 1); }
 function dtBack() { if (dtCurrentStep > 1) dtGoTo(dtCurrentStep - 1); }
 
+
+function dtRenderStep2Model() {
+  if (window.innerWidth < 768) return;
+  const container = document.getElementById('dt-s2-model');
+  if (!container) return;
+  const model = MODELS.find(m => m.id === selModel);
+  if (!model) { container.innerHTML = ''; return; }
+  const hasPresets = PRESETS[model.id];
+  container.innerHTML =
+    (model.photo ? '<img class="mc-photo" src="' + model.photo + '" alt="' + model.name + '" loading="lazy">' : '') +
+    '<div class="mc-text">' +
+      '<span class="mc-badge">' + model.badge + '</span>' +
+      '<span class="mc-name">' + model.name + '</span>' +
+      '<span class="mc-desc">' + model.desc + '</span>' +
+      '<span class="mc-price">à partir de ' + (model.basePrice + (model.assembly||0)).toLocaleString('fr-FR') + ' €</span>' +
+    '</div>' +
+    (hasPresets ? '<div class="preset-bar" style="margin-top:8px;" onclick="event.stopPropagation()">' +
+      '<div class="preset-label">3 suggestions — tout reste modifiable</div>' +
+      '<div class="preset-btns">' +
+        ['Signature','Ti1','Ti2'].map(decl =>
+          '<div class="preset-btn-wrap">' +
+            '<button class="preset-btn-main ' + (window._activePreset===decl?'active':'') + '" onclick="loadPreset(\'' + decl + '\')">' + decl + '</button>' +
+            '<button class="preset-btn-info" onclick="togglePresetInfoDt(\'' + decl + '\', this)"><i class="ti ti-info-circle"></i></button>' +
+            '<div class="preset-info-popup" data-decl="' + decl + '"><strong>' + decl + '</strong>' + (PRESET_DESCS_DT[decl]||'') + '</div>' +
+          '</div>'
+        ).join('') +
+      '</div>' +
+    '</div>' : '');
+}
+
 function dtModifCount() {
   if (!selModel || !window._activePreset || !PRESETS[selModel] || !PRESETS[selModel][window._activePreset]) return 0;
   const preset = PRESETS[selModel][window._activePreset];
@@ -2905,8 +2986,17 @@ function dtRender() {
     if (!el) return;
     el.style.display = parseInt(i) === n ? 'block' : 'none';
   });
-  if (n === 2 && sects[2]) renderPosts();
-  if (n === 4 && sects[4]) { sects[4].style.display = 'flex'; updateRecap(); }
+  if (n === 2 && sects[2]) { renderPosts(); dtRenderStep2Model(); }
+  if (n === 4 && sects[4]) {
+    sects[4].style.display = 'flex';
+    sects[4].style.flexDirection = 'column';
+    updateRecap();
+    // Afficher les éléments cachés par CSS
+    const recapCol = document.getElementById('recap-col');
+    if (recapCol) { recapCol.style.display = 'block'; recapCol.style.width = '100%'; }
+    const btns1 = document.getElementById('btns-tab1');
+    if (btns1) btns1.style.display = 'block';
+  }
 
   // Boutons navigation
   const nextBtn = document.getElementById('dt-next');
@@ -2961,7 +3051,7 @@ function dtUpdateRecap() {
   rows.innerHTML = POST_META.map(p => {
     const opt = ALL_OPTIONS[p.id] && ALL_OPTIONS[p.id].find(o => o.id === selOpts[p.id]);
     if (!opt) return '';
-    const mod = preset && preset[p.id] !== selOpts[p.id];
+    const mod = !!(window._activePreset && preset && Object.keys(preset).length > 0 && preset[p.id] !== selOpts[p.id]);
     return '<div class="dtr-row'+(mod?' mod':'')+'">'+
       '<span class="dtr-row-lbl"><i class="ti '+(icons[p.id]||'ti-point')+'" style="font-size:8px;margin-right:3px;"></i>'+p.name+(mod?'<span style="display:inline-block;width:4px;height:4px;border-radius:50%;background:#F5C400;margin-left:3px;vertical-align:middle;"></span>':'')+'</span>'+
       '<span class="dtr-row-val">'+opt.name+'</span>'+
@@ -2974,8 +3064,13 @@ const _dtOrigSelectModel = window.selectModel || function(){};
 const _dtOrigLoadPreset  = window.loadPreset  || function(){};
 
 function dtHookSelectModel(id) {
+  // Empêcher le passage en mode single sur desktop proto13
+  const wasSingle = window._singleModel;
   _dtOrigSelectModel(id);
-  if (window.innerWidth >= 768) { setTimeout(() => dtGoTo(2), 50); }
+  if (window.innerWidth >= 768) {
+    // Rester en grille 4 à l'étape 1 ; passer à l'étape 2 après sélection
+    setTimeout(() => dtGoTo(2), 50);
+  }
 }
 function dtHookLoadPreset(decl) {
   _dtOrigLoadPreset(decl);
@@ -2990,6 +3085,8 @@ function dtInit() {
   // Hide old chrome
   const tb = document.querySelector('.tab-bar');
   if (tb) tb.style.display = 'none';
+  // En desktop proto13 : ne jamais passer en mode single
+  window._singleModel = null;
   // Init display
   const steps = {1:'step1-wrap',2:'posts-section',3:'view-size',4:'bottom-row'};
   Object.entries(steps).forEach(([i,id]) => {
