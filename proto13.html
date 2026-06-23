@@ -442,27 +442,7 @@
   .force-undo i { font-size: 13px; }
 
   /* Bouton retour flottant — PC et tablette uniquement */
-  .back-btn {
-    display: none;
-    position: fixed;
-    bottom: 28px;
-    right: 28px;
-    z-index: 50;
-    background: #000000;
-    color: #ffffff;
-    border: 0.5px solid #444;
-    padding: 10px 16px;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    align-items: center;
-    gap: 7px;
-    font-family: var(--font);
-    box-shadow: 0 2px 12px rgba(0,0,0,.25);
-    text-decoration: none;
-  }
-  .back-btn:hover { background: #1a1a1a; border-color: #F5C400; color: #F5C400; }
-  @media (min-width: 768px) { .back-btn { display: flex; } }
+  /* back-btn supprimé — remplacé par lien dans header */
 
   /* Mode single-modèle : carte unique pleine largeur */
   .model-grid.single { grid-template-columns: 1fr; }
@@ -1262,6 +1242,50 @@
     #dt-s1 .mc-price { font-size: 12px; color: #666; display: block; margin-top: 4px; }
     #dt-s1 .model-card.sel .mc-price { color: #F5C400; }
   }
+
+  @media (min-width: 768px) {
+    #dt-s1 .model-card {
+      background: #111 !important;
+      border-color: #2a2a2a !important;
+    }
+    #dt-s1 .model-card:hover { border-color: #555 !important; }
+    #dt-s1 .model-card.sel {
+      background: #1a1500 !important;
+      border: 2px solid #F5C400 !important;
+    }
+    #dt-s1 .mc-photo { background: #0d0d0d; }
+    #dt-s1 .mc-badge { color: #666 !important; }
+    #dt-s1 .mc-name { color: #f2f2f2 !important; }
+    #dt-s1 .model-card.sel .mc-name { color: #FFF8D6 !important; }
+    #dt-s1 .mc-desc { color: #888 !important; }
+    #dt-s1 .mc-price { color: #666 !important; }
+    #dt-s1 .model-card.sel .mc-price { color: #F5C400 !important; }
+  }
+
+  @media (min-width: 768px) {
+    #dt-s2-left .mc-photo {
+      width: 100% !important; height: 220px !important;
+      object-fit: cover !important; display: block;
+    }
+    #dt-s2-left .mc-text {
+      padding: 14px 0 0 !important;
+      background: none !important;
+      border: none !important;
+    }
+    #dt-s2-left .mc-badge { font-size: 10px; color: #666; text-transform: uppercase; letter-spacing: .08em; display: block; margin-bottom: 4px; }
+    #dt-s2-left .mc-name { font-size: 18px; font-weight: 500; color: #f2f2f2; display: block; margin-bottom: 4px; }
+    #dt-s2-left .mc-desc { font-size: 12px; color: #888; line-height: 1.5; display: block; margin-bottom: 8px; }
+    #dt-s2-left .mc-price { font-size: 12px; color: #666; display: block; }
+    /* Bordure jaune autour de la carte vélo sélectionnée */
+    #dt-s2-left {
+      border: 1.5px solid #F5C400 !important;
+      background: #1a1500 !important;
+      padding: 0 !important;
+      overflow: hidden;
+    }
+    #dt-s2-left .mc-text { padding: 14px 16px 0 16px !important; }
+    #dt-s2-left .preset-bar { padding: 10px 16px 16px !important; }
+  }
 </style>
   <!-- Google Analytics GA4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-KGZDWLZ7JZ"></script>
@@ -1276,10 +1300,8 @@
 
 <header>
   <div class="logo" style="display:flex;align-items:center;gap:10px;">
-    <a href="https://www.obviouscycles.com/velos-titane/" title="Retour au site" class="back-link" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit;">
-      <img src="https://www.obviouscycles.com/wp-content/uploads/2023/04/favicon-512.png" alt="Obvious Cycles" style="height:32px;width:32px;object-fit:contain;">
-      <span>OBVIOUS-ON-DEMAND</span>
-    </a>
+    <img src="https://www.obviouscycles.com/wp-content/uploads/2023/04/favicon-512.png" alt="Obvious Cycles" style="height:32px;width:32px;object-fit:contain;">
+    <span>OBVIOUS-ON-DEMAND</span>
   </div>
   <div style="display:flex;align-items:center;gap:8px;">
     <button id="header-contact-btn" onclick="openContactDrawer()" style="display:none;align-items:center;gap:6px;background:#F5C400;border:none;color:#1a1a00;padding:7px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font);">
@@ -1829,16 +1851,18 @@
     <div class="dt-step-content" id="dt-s3">
       <div id="dt-s3-inner">
         <div id="dt-s3-left">
-          <!-- Laissez-vous guider -->
           <p class="section-title" style="color:#f2f2f2;margin-bottom:1rem;">Laissez-vous guider</p>
           <div id="dt-s3-guide"></div>
         </div>
         <div id="dt-s3-right">
-          <!-- Je connais mes dimensions -->
           <p class="section-title" style="color:#f2f2f2;margin-bottom:1rem;">Je connais mes dimensions</p>
           <div id="dt-s3-manual"></div>
         </div>
       </div>
+      <p style="font-size:13px;color:#666;margin:1rem 2rem 0;line-height:1.6;font-style:italic;">
+        Vous n'avez pas toutes les informations ? Nous vous recontacterons de toute façon pour affiner et valider vos cotes.
+      </p>
+      <div id="dt-s3-result" style="display:none;margin:1rem 2rem 0;padding:1rem;background:#1a1500;border:0.5px solid #F5C400;font-size:13px;color:#f2f2f2;line-height:1.8;"></div>
       <div class="dt-step-footer">
         <button class="dt-btn-back" onclick="dtGo(2)"><i class="ti ti-chevron-left"></i> Retour</button>
         <button class="dt-btn-next" id="dt-next-3" onclick="dtGo(4)">
@@ -1874,6 +1898,7 @@
     <div class="dtr-actions">
       <button class="dtr-btn-main" onclick="openOrderModal()"><i class="ti ti-send"></i> Demander votre devis</button>
       <button class="dtr-btn-sec" onclick="dtQuickSave()"><i class="ti ti-bookmark"></i> Sauvegarder</button>
+      <button class="dtr-btn-sec" onclick="dtShowSaved()"><i class="ti ti-list"></i> Mes configurations</button>
       <button class="dtr-btn-sec" onclick="dtReset()"><i class="ti ti-refresh"></i> Nouvelle configuration</button>
 
     </div>
@@ -3151,6 +3176,34 @@ function dtLoadPreset(decl) {
   dtRender();
 }
 
+
+function dtShowSaved() {
+  // Afficher view-saved dans dt-s4-inner (réutiliser l'étape 4)
+  dtStep = 4;
+  document.body.classList.add('dt-step-4');
+  const inner = document.getElementById('dt-s4-inner');
+  if (!inner) return;
+  const saved = document.getElementById('view-saved');
+  if (saved) {
+    const clone = saved.cloneNode(true);
+    clone.style.display = 'block';
+    inner.innerHTML = '';
+    inner.appendChild(clone);
+    // Rafraîchir le rendu des configs sauvegardées
+    if (typeof renderSaved === 'function') renderSaved();
+  }
+  // Mettre à jour stepper
+  for (let i = 1; i <= 4; i++) {
+    const s = document.getElementById('dts-' + i);
+    const d = document.getElementById('dts-dot-' + i);
+    if (!s || !d) continue;
+    s.className = 'dts-step' + (i === 4 ? ' active' : i < 4 ? ' done' : '');
+    d.innerHTML = i < 4 ? '<i class="ti ti-check" style="font-size:9px;"></i>' : '→';
+  }
+  const main = document.getElementById('dt-main');
+  if (main) main.scrollTop = 0;
+}
+
 function dtShowAllModels() {
   window._singleModel = null; window._activePreset = null;
   selModel = null; selOpts = {}; openPost = null;
@@ -3250,7 +3303,7 @@ function dtRenderPosts() {
 function dtSelectOpt(postId, optId) {
   const opt = optionsFor(postId, selModel).find(o => o.id === optId);
   if (!opt) return;
-  if (isLocked(opt, selModel)) return;
+  // Ne pas bloquer les options locked — elles sont sélectionnables
   selOpts[postId] = optId;
   // FORCE_SELECT
   FORCE_SELECT.forEach(rule => {
@@ -3333,6 +3386,76 @@ function dtRenderS3() {
     right.appendChild(manualPanelClone);
   }
 
+  // Hook sur les boutons calculer/valider pour afficher le résultat desktop
+  setTimeout(() => {
+    // Bouton "Calculer" dans le guide
+    const calcBtn = document.querySelector('#dt-s3-left .size-btn, #dt-s3-left button[onclick*="Calc"], #dt-s3-left button[onclick*="calc"]');
+    // Bouton "Valider ces dimensions" dans le manuel
+    const validBtn = document.querySelector('#dt-s3-right .validate-btn, #dt-s3-right button[onclick*="Dims"]');
+    
+    // Observer les résultats existants dans view-size via MutationObserver
+    const guideResult = document.getElementById('size-result');
+    const dimsResult  = document.getElementById('dims-summary');
+    
+    function onSizeValidated() {
+      // Lire le résultat depuis les éléments originaux
+      const resultEl = document.getElementById('dt-s3-result');
+      if (!resultEl) return;
+      let html = '';
+      if (window.sizeValidated) {
+        // Construire un résumé depuis selSize
+        const parts = [];
+        if (selSize.taille)        parts.push('<strong>Taille cadre :</strong> ' + selSize.taille);
+        if (selSize.manivelle)     parts.push('<strong>Manivelle :</strong> ' + selSize.manivelle + ' mm');
+        if (selSize.potence)       parts.push('<strong>Potence :</strong> ' + selSize.potence + ' mm');
+        if (selSize.cintre)        parts.push('<strong>Cintre :</strong> ' + selSize.cintre + ' mm');
+        if (selSize.plateaux)      parts.push('<strong>Plateau(x) :</strong> ' + selSize.plateaux);
+        if (selSize.section)       parts.push('<strong>Section pneu :</strong> ' + selSize.section);
+        if (selSize.debattement)   parts.push('<strong>Débattement :</strong> ' + selSize.debattement + ' mm');
+        if (selSize.largeur_selle) parts.push('<strong>Largeur selle :</strong> ' + selSize.largeur_selle + ' mm');
+        if (parts.length > 0) {
+          html = '✅ <strong style="color:#F5C400;">Dimensions enregistrées</strong><br>' + parts.join(' &nbsp;·&nbsp; ');
+        }
+      }
+      if (html) {
+        resultEl.innerHTML = html;
+        resultEl.style.display = 'block';
+        // Changer le bouton next
+        const lbl = document.getElementById('dt-next-3-lbl');
+        if (lbl) lbl.textContent = 'Votre configuration →';
+      }
+    }
+    
+    // Observer sizeValidated via selSize changes
+    const origValidateDims = window.p11ValidateDims;
+    window.p11ValidateDims = function() {
+      if (origValidateDims) origValidateDims();
+      window.sizeValidated = true;
+      setTimeout(onSizeValidated, 100);
+    };
+    
+    const origCalcSize = window.p11CalcSize;
+    window.p11CalcSize = function() {
+      if (origCalcSize) origCalcSize();
+      window.sizeValidated = true;
+      setTimeout(onSizeValidated, 300);
+    };
+
+    const origValidate = window.validateDims;
+    window.validateDims = function() {
+      if (origValidate) origValidate();
+      window.sizeValidated = true;
+      setTimeout(onSizeValidated, 100);
+    };
+    
+    const origCalc = window.calcSize;
+    window.calcSize = function() {
+      if (origCalc) origCalc();
+      window.sizeValidated = true;
+      setTimeout(onSizeValidated, 300);
+    };
+  }, 200);
+  
   // Fallback si aucun élément trouvé : afficher view-size directement dans le split
   if (!guideCardClone && !manualCardClone) {
     const clone = vsize.cloneNode(true);
@@ -3407,7 +3530,26 @@ function dtRenderS4() {
           '</div>';
         }).join('') +
       '</div>' +
-    '</div>';
+    '</div>' +
+    // Dimensions si validées
+    (window.sizeValidated && Object.keys(selSize).some(k => selSize[k]) ?
+      '<div style="margin-top:1.5rem;padding:1rem;background:#1a1500;border:0.5px solid #F5C400;">' +
+        '<div style="font-size:11px;color:#666;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Dimensions</div>' +
+        (() => {
+          const parts = [];
+          if (selSize.taille)        parts.push('<span><strong>Taille :</strong> ' + selSize.taille + '</span>');
+          if (selSize.manivelle)     parts.push('<span><strong>Manivelle :</strong> ' + selSize.manivelle + ' mm</span>');
+          if (selSize.potence)       parts.push('<span><strong>Potence :</strong> ' + selSize.potence + ' mm</span>');
+          if (selSize.cintre)        parts.push('<span><strong>Cintre :</strong> ' + selSize.cintre + ' mm</span>');
+          if (selSize.plateaux)      parts.push('<span><strong>Plateau(x) :</strong> ' + selSize.plateaux + '</span>');
+          if (selSize.section)       parts.push('<span><strong>Section pneu :</strong> ' + selSize.section + '</span>');
+          if (selSize.debattement)   parts.push('<span><strong>Débattement :</strong> ' + selSize.debattement + ' mm</span>');
+          if (selSize.largeur_selle) parts.push('<span><strong>Largeur selle :</strong> ' + selSize.largeur_selle + ' mm</span>');
+          return '<div style="font-size:13px;color:#f2f2f2;line-height:2;display:flex;flex-wrap:wrap;gap:8px 24px;">' + parts.join('') + '</div>';
+        })() +
+      '</div>'
+    : '') +
+    '';
 }
 
 // ── Récap droit ──
@@ -3639,7 +3781,6 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 // ─── LIEN RETOUR AU SITE ─────────────────────────────────────────────────────
-document.querySelectorAll('.back-link').forEach(el => el.href = 'https://www.obviouscycles.com/velos-titane/');
 if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 window.addEventListener('beforeunload', () => window.scrollTo(0, 0));
 
@@ -5149,7 +5290,6 @@ window.addEventListener('resize', () => {
 });
 </script>
 
-<a class="back-btn back-link" href="https://www.obviouscycles.com/velos-titane/" title="Retour au site"><i class="ti ti-arrow-left"></i> Retour au site</a>
 
   <!-- Fenêtre prix flottante -->
   <div id="floating-price" class="hidden" style="cursor:pointer">
