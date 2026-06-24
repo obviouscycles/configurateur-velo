@@ -1151,7 +1151,7 @@
 
   /* ── Étape 2 : split 50/50 modèle|composants ── */
   #dt-s2-inner {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+    display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 0;
     height: 100%; min-height: 0;
   }
   #dt-s2-left {
@@ -1865,8 +1865,9 @@
     <div class="dt-step-content" id="dt-s3">
       <!-- Ligne 1 : 2 cartes de choix côte à côte -->
       <div id="dt-s3-cards" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;padding:2rem 2rem 0;"></div>
-      <!-- Ligne 2 : panel actif -->
-      <div id="dt-s3-panel" style="padding:0 2rem;margin-top:1rem;"></div>
+      <!-- Ligne 2 : panels (cachés par défaut, montrés par CSS) -->
+      <div id="dt-s3-panel-guide" style="padding:0 2rem;margin-top:1rem;display:none;"></div>
+      <div id="dt-s3-panel-manual" style="padding:0 2rem;margin-top:1rem;display:none;"></div>
       <p style="font-size:13px;color:#aaa;margin:1.25rem 2rem 0;line-height:1.6;text-align:center;">
         Vous n'avez pas toutes les informations ? Nous vous recontacterons de toute façon pour affiner et valider vos cotes.
       </p>
@@ -3234,6 +3235,10 @@ function dtShowSaved() {
         '</div>';
       }).join('');
   }
+  // Activer dt-s4 (afficher le contenu)
+  document.querySelectorAll('.dt-step-content').forEach(s => s.classList.remove('active'));
+  const s4el = document.getElementById('dt-s4');
+  if (s4el) s4el.classList.add('active');
   // Mettre à jour stepper
   for (let i = 1; i <= 4; i++) {
     const s = document.getElementById('dts-' + i);
@@ -3401,40 +3406,47 @@ function dtTogglePost(postId) {
 // ── Étape 3 : taille ──
 function dtRenderS3() {
   const cardsZone = document.getElementById('dt-s3-cards');
-  const panelZone = document.getElementById('dt-s3-panel');
-  if (!cardsZone || !panelZone) return;
+  if (!cardsZone) return;
 
-  // Déplacer les cartes dans la zone cartes
+  // Mettre les cartes dans la zone
   const cardGuide  = document.getElementById('card-guide');
   const cardManual = document.getElementById('card-manual');
   cardsZone.innerHTML = '';
   if (cardGuide)  { cardGuide.style.cursor='pointer'; cardGuide.onclick=()=>dtToggleSizeMode('guide');  cardsZone.appendChild(cardGuide); }
   if (cardManual) { cardManual.style.cursor='pointer'; cardManual.onclick=()=>dtToggleSizeMode('manual'); cardsZone.appendChild(cardManual); }
 
-  // Panel vide au départ
-  panelZone.innerHTML = '';
+  // Mettre le contenu des panels dans leurs zones dédiées (par innerHTML, pas move)
+  const guideZone  = document.getElementById('dt-s3-panel-guide');
+  const manualZone = document.getElementById('dt-s3-panel-manual');
+  const panelGuide  = document.getElementById('panel-guide');
+  const panelManual = document.getElementById('panel-manual');
 
-  // Hook sur calcSize pour capturer le résultat et mettre à jour le bouton
-  const _orig = window.calcSize;
-  window.calcSize = function() {
-    if (_orig) _orig();
-    setTimeout(dtCheckSizeResult, 400);
-  };
-  const _origChoose = window.chooseUsage;
-  window.chooseUsage = function(u) {
-    if (_origChoose) _origChoose(u);
-    setTimeout(dtCheckSizeResult, 200);
-  };
-  const _origBuild = window.buildDimsGrid;
-  window.buildDimsGrid = function() {
-    if (_origBuild) _origBuild();
-  };
-  const _origValidate = window.validateDims;
-  window.validateDims = function() {
-    if (_origValidate) _origValidate();
-    window.sizeValidated = true;
-    setTimeout(dtCheckSizeResult, 100);
-  };
+  if (guideZone && panelGuide && !guideZone._init) {
+    guideZone.appendChild(panelGuide);
+    panelGuide.classList.add('open');
+    guideZone._init = true;
+  }
+  if (manualZone && panelManual && !manualZone._init) {
+    if (typeof buildDimsGrid === 'function') buildDimsGrid();
+    manualZone.appendChild(panelManual);
+    panelManual.classList.add('open');
+    manualZone._init = true;
+  }
+
+  // Cacher les deux au départ
+  if (guideZone)  guideZone.style.display  = 'none';
+  if (manualZone) manualZone.style.display = 'none';
+
+  // Hooker les fonctions de calcul
+  if (!window._dtCalcHooked) {
+    window._dtCalcHooked = true;
+    const _calcSize = window.calcSize;
+    window.calcSize = function() { if (_calcSize) _calcSize(); setTimeout(dtCheckSizeResult, 400); };
+    const _chooseUsage = window.chooseUsage;
+    window.chooseUsage = function(u) { if (_chooseUsage) _chooseUsage(u); setTimeout(dtCheckSizeResult, 200); };
+    const _validateDims = window.validateDims;
+    window.validateDims = function() { if (_validateDims) _validateDims(); window.sizeValidated=true; setTimeout(dtCheckSizeResult, 100); };
+  }
 }
 
 function dtCheckSizeResult() {
@@ -3478,44 +3490,29 @@ function dtCheckSizeResult() {
 }
 
 function dtToggleSizeMode(mode) {
-  const panelZone = document.getElementById('dt-s3-panel');
+  const guideZone  = document.getElementById('dt-s3-panel-guide');
+  const manualZone = document.getElementById('dt-s3-panel-manual');
   const cardGuide  = document.getElementById('card-guide');
   const cardManual = document.getElementById('card-manual');
+
   if (cardGuide)  cardGuide.classList.toggle('active',  mode === 'guide');
   if (cardManual) cardManual.classList.toggle('active', mode === 'manual');
 
-  if (!panelZone) return;
-  panelZone.innerHTML = '';
+  if (guideZone)  guideZone.style.display  = mode === 'guide'  ? 'block' : 'none';
+  if (manualZone) manualZone.style.display = mode === 'manual' ? 'block' : 'none';
 
+  // Reset résultat pour permettre un nouveau calcul
+  const dtResult = document.getElementById('dt-s3-result');
+  if (dtResult) { dtResult.style.display = 'none'; dtResult.innerHTML = ''; }
+  const lbl = document.getElementById('dt-next-3-lbl');
+  if (lbl) lbl.textContent = 'Continuer sans taille';
+
+  // Reset résultats proto12 pour guide
   if (mode === 'guide') {
-    const panelGuide = document.getElementById('panel-guide');
-    if (panelGuide) {
-      // Réinitialiser le résultat pour permettre un nouveau calcul
-      const guideResult = document.getElementById('guide-result');
-      if (guideResult) guideResult.classList.remove('show');
-      const overlap = document.getElementById('size-overlap');
-      if (overlap) overlap.style.display = 'none';
-      // Vider le résultat desktop
-      const dtResult = document.getElementById('dt-s3-result');
-      if (dtResult) { dtResult.style.display = 'none'; dtResult.innerHTML = ''; }
-      // Réinitialiser le bouton
-      const lbl = document.getElementById('dt-next-3-lbl');
-      if (lbl && lbl.textContent !== 'Continuer sans taille') lbl.textContent = 'Continuer sans taille';
-      panelGuide.classList.add('open');
-      panelZone.appendChild(panelGuide);
-    }
-  } else {
-    const panelManual = document.getElementById('panel-manual');
-    if (panelManual) {
-      if (typeof buildDimsGrid === 'function') buildDimsGrid();
-      // Vider le résultat desktop
-      const dtResult = document.getElementById('dt-s3-result');
-      if (dtResult) { dtResult.style.display = 'none'; dtResult.innerHTML = ''; }
-      const lbl = document.getElementById('dt-next-3-lbl');
-      if (lbl) lbl.textContent = 'Continuer sans taille';
-      panelManual.classList.add('open');
-      panelZone.appendChild(panelManual);
-    }
+    const guideResult = document.getElementById('guide-result');
+    if (guideResult) guideResult.classList.remove('show');
+    const overlap = document.getElementById('size-overlap');
+    if (overlap) overlap.style.display = 'none';
   }
 }
 
