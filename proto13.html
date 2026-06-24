@@ -1082,9 +1082,12 @@
   }
   .dts-step {
     display: flex; align-items: flex-start; gap: 10px;
-    padding: 10px 0; cursor: pointer; position: relative;
-    user-select: none;
+    padding: 10px 8px; cursor: pointer; position: relative;
+    user-select: none; border-radius: 4px;
+    transition: background .15s;
   }
+  .dts-step:hover { background: #1a1a1a; }
+  .dts-step.active:hover { background: transparent; }
   .dts-step:not(:last-child)::after {
     content: ''; position: absolute; left: 10px; top: 30px;
     width: 1px; height: calc(100% - 10px); background: #1e1e1e;
@@ -1113,7 +1116,9 @@
     grid-column: 2;
     overflow-y: auto;
     display: flex; flex-direction: column;
-    background: #111;
+    background: #141414;
+    border-left: 0.5px solid #1e1e1e;
+    border-right: 0.5px solid #1e1e1e;
   }
   .dt-step-content { display: none; flex: 1; flex-direction: column; }
   .dt-step-content.active { display: flex; }
@@ -1265,7 +1270,7 @@
   @media (min-width: 768px) {
     #dt-s2-left .mc-photo {
       width: 100% !important; height: 220px !important;
-      object-fit: cover !important; display: block;
+      object-fit: contain !important; background: #0d0d0d; display: block;
     }
     #dt-s2-left .mc-text {
       padding: 14px 0 0 !important;
@@ -1298,6 +1303,68 @@
     #dt-s3-manual .dims-summary { background: #1e1e1e !important; border-color: #333 !important; }
     #dt-s3-guide .size-panel { background: transparent !important; border: none !important; }
     #dt-s3-manual .size-panel { background: transparent !important; border: none !important; }
+  }
+
+  @media (min-width: 768px) {
+    /* Modules composants : fond sombre */
+    #dt-s2-right .post-block { background: #1a1a1a !important; border-color: #2a2a2a !important; }
+    #dt-s2-right .post-hdr { background: #1a1a1a !important; color: #f2f2f2 !important; }
+    #dt-s2-right .post-hdr:hover { background: #222 !important; }
+    #dt-s2-right .ph-name { color: #f2f2f2 !important; }
+    #dt-s2-right .ph-sel { color: #aaa !important; }
+    #dt-s2-right .ph-chev { color: #666 !important; }
+    #dt-s2-right .post-opts { background: #111 !important; border-color: #2a2a2a !important; }
+    #dt-s2-right .opt-item { background: #1a1a1a !important; border-color: #2a2a2a !important; color: #f2f2f2 !important; }
+    #dt-s2-right .opt-item:hover { background: #222 !important; }
+    #dt-s2-right .opt-item.sel { background: #2a2200 !important; border-color: #F5C400 !important; }
+    #dt-s2-right .oi-name { color: #f2f2f2 !important; }
+    #dt-s2-right .oi-desc { color: #888 !important; }
+    #dt-s2-right .oi-price { color: #888 !important; }
+    #dt-s2-right .opt-photo-card { background: #1a1a1a !important; border-color: #2a2a2a !important; }
+    #dt-s2-right .opt-photo-card:hover { background: #222 !important; }
+    #dt-s2-right .opt-photo-card.sel { background: #2a2200 !important; border-color: #F5C400 !important; }
+    #dt-s2-right .opc-name { color: #f2f2f2 !important; }
+    #dt-s2-right .opc-desc { color: #888 !important; }
+    #dt-s2-right .opc-price { color: #888 !important; }
+    #dt-s2-right .opc-body { background: #1a1a1a !important; }
+  }
+
+  @media (min-width: 768px) {
+    #dt-s3-left .size-card, #dt-s3-right .size-card {
+      background: #1a1a1a !important;
+      border-color: #2a2a2a !important;
+    }
+    #dt-s3-left .size-card:hover, #dt-s3-right .size-card:hover { background: #222 !important; }
+    #dt-s3-left .size-card.active, #dt-s3-right .size-card.active {
+      background: #1e1e1e !important;
+      border-color: #F5C400 !important;
+    }
+    #dt-s3-left .size-card-title, #dt-s3-right .size-card-title { color: #f2f2f2 !important; }
+    #dt-s3-left .size-card-desc,  #dt-s3-right .size-card-desc  { color: #888 !important; }
+    #dt-s3-left .size-card.active .size-card-desc { color: #aaa !important; }
+    #dt-s3-left .size-panel, #dt-s3-right .size-panel {
+      background: #141414 !important; border-color: #2a2a2a !important;
+    }
+    #dt-s3-left .size-field label, #dt-s3-right .size-field label { color: #888 !important; }
+    #dt-s3-left .size-input, #dt-s3-right .size-input {
+      background: #1a1a1a !important; border-color: #333 !important; color: #f2f2f2 !important;
+    }
+    #dt-s3-left .size-result, #dt-s3-right .size-result {
+      background: #1e1e1e !important; border-color: #333 !important;
+    }
+    #dt-s3-right .dims-grid .dim-field select,
+    #dt-s3-right .size-select {
+      background: #1a1a1a !important; border-color: #333 !important; color: #f2f2f2 !important;
+    }
+  }
+
+  @media (min-width: 768px) {
+    #dt-s3-panel-guide, #dt-s3-panel-manual { display: flex; flex-direction: column; }
+    #dt-s3-panel-guide .size-panel,
+    #dt-s3-panel-manual .size-panel { flex: 1; }
+    /* Bouton Calculer et Valider — alignés en bas */
+    #dt-s3-panel-guide .size-btn-wrap,
+    #dt-s3-panel-manual .validate-btn { margin-top: auto; }
   }
 </style>
   <!-- Google Analytics GA4 -->
@@ -1495,7 +1562,7 @@
         <div style="display:flex;gap:6px;align-items:center;">
           <button onclick="p11QuickSave()" title="Sauvegarder" style="background:none;border:0.5px solid #444;color:#888;padding:7px 10px;cursor:pointer;font-size:13px;line-height:1;"><i class="ti ti-bookmark"></i></button>
           <button onclick="p11GoTo(1);p11Reset();" title="Nouvelle config" style="background:none;border:0.5px solid #444;color:#888;padding:7px 10px;cursor:pointer;font-size:13px;line-height:1;"><i class="ti ti-refresh"></i></button>
-          <button onclick="openOrderModal()" style="background:#F5C400;border:none;color:#1a1a00;padding:9px 14px;cursor:pointer;font-size:13px;font-weight:700;font-family:var(--font);display:flex;align-items:center;gap:6px;"><i class="ti ti-send"></i> Devis</button>
+
         </div>
       </div>
     </div>
@@ -1820,7 +1887,10 @@
       <div class="dts-dot" id="dts-dot-4">→</div>
       <div><div class="dts-label">Devis</div><div class="dts-detail" id="dts-d4"></div></div>
     </div>
-    <div style="margin-top:auto;padding-top:1.5rem;border-top:0.5px solid #1e1e1e;">
+    <div style="margin-top:auto;padding-top:1.5rem;border-top:0.5px solid #1e1e1e;display:flex;flex-direction:column;gap:6px;">
+      <button onclick="openContactDrawer()" style="width:100%;background:none;border:0.5px solid #333;color:#666;padding:8px;font-size:11px;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:6px;transition:border-color .15s,color .15s;" onmouseover="this.style.color='#aaa';this.style.borderColor='#555'" onmouseout="this.style.color='#666';this.style.borderColor='#333'">
+        <i class="ti ti-headset" style="font-size:13px;"></i> Aide - Contact
+      </button>
       <button id="dt-saved-btn" onclick="dtShowSaved()" style="width:100%;background:none;border:0.5px solid #333;color:#666;padding:8px;font-size:11px;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:6px;transition:border-color .15s,color .15s;" onmouseover="this.style.color='#aaa';this.style.borderColor='#555'" onmouseout="this.style.color='#666';this.style.borderColor='#333'">
         <i class="ti ti-bookmark" style="font-size:13px;"></i> Mes configurations <span id="dt-saved-count" style="background:#F5C400;color:#1a1a00;font-size:9px;font-weight:700;padding:1px 5px;border-radius:10px;display:none;"></span>
       </button>
@@ -1889,9 +1959,6 @@
       </div>
       <div class="dt-step-footer">
         <button class="dt-btn-back" onclick="dtGo(3)"><i class="ti ti-chevron-left"></i> Retour</button>
-        <button class="dt-btn-next" onclick="openOrderModal()">
-          <i class="ti ti-send"></i> Demander votre devis
-        </button>
       </div>
     </div>
 
@@ -1909,7 +1976,7 @@
     <div class="dtr-actions">
       <button class="dtr-btn-main" id="dtr-btn-devis" onclick="openOrderModal()" style="opacity:.3;pointer-events:none;"><i class="ti ti-send"></i> Demander votre devis</button>
       <button class="dtr-btn-sec" id="dtr-btn-save" onclick="dtQuickSave()" style="opacity:.3;pointer-events:none;"><i class="ti ti-bookmark"></i> Sauvegarder</button>
-      <button class="dtr-btn-sec" onclick="dtReset()"><i class="ti ti-refresh"></i> Nouvelle configuration</button>
+      <button class="dtr-btn-sec" id="dtr-btn-reset" onclick="dtReset()" style="opacity:.3;pointer-events:none;"><i class="ti ti-refresh"></i> Nouvelle configuration</button>
 
     </div>
   </aside>
@@ -3109,7 +3176,7 @@ function dtRender() {
   // Rendu spécifique
   if (n === 1) dtRenderS1();
   if (n === 2) dtRenderS2();
-  if (n === 3) dtRenderS3();
+  if (n === 3) { dtRenderS3(); setTimeout(() => dtToggleSizeMode('guide'), 50); }
   if (n === 4) dtRenderS4();
 
   // Récap droit (pas à l'étape 4)
@@ -3270,7 +3337,7 @@ function dtLoadSaved(id) {
   // Retirer dt-step-4 AVANT dtRender pour que dt-main soit visible
   document.body.classList.remove('dt-step-4');
   // Activer les boutons du récap
-  ['dtr-btn-devis','dtr-btn-save'].forEach(id2 => {
+  ['dtr-btn-devis','dtr-btn-save','dtr-btn-reset'].forEach(id2 => {
     const el = document.getElementById(id2);
     if (el) { el.style.opacity = '1'; el.style.pointerEvents = 'auto'; }
   });
@@ -3358,10 +3425,11 @@ function dtRenderPosts() {
     const optHtml = (hasPhotos ? '<div class="opt-photo-grid">' : '<div class="opt-list">') +
       opts.map(buildOpt).join('') + '</div>';
 
+    const _isModDt = !!(window._activePreset && PRESETS[selModel] && PRESETS[selModel][window._activePreset] && PRESETS[selModel][window._activePreset][p.id] !== selOpts[p.id]);
     return '<div class="post-block" data-post-id="' + p.id + '">' +
       '<div class="post-hdr" data-toggle="' + p.id + '">' +
         '<i class="ti ' + (icons[p.id]||'ti-point') + ' ph-icon"></i>' +
-        '<span class="ph-name">' + p.name + '</span>' +
+        '<span class="ph-name">' + p.name + (_isModDt ? '<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#F5C400;margin-left:6px;vertical-align:middle;"></span>' : '') + '</span>' +
         (selOpt?'<span class="ph-sel">'+selOpt.name+'</span>':'<span class="ph-pending">choisir →</span>') +
         '<i class="ti ti-chevron-down ph-chev' + (isOpen?' open':'') + '"></i>' +
       '</div>' +
@@ -3567,8 +3635,10 @@ function dtRenderS4() {
       '</div>' +
     '</div>' +
     // Dimensions si validées
-    (window.sizeValidated && Object.keys(selSize).some(k => selSize[k]) ?
-      '<div style="margin-top:1.5rem;padding:1rem;background:#1e1e1e;border:0.5px solid #333;">' +
+    '<div style="margin-top:1.5rem;padding:1rem;background:#1e1e1e;border:0.5px solid #333;">' +
+      '<div style="font-size:11px;color:#666;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Dimensions</div>' +
+      ((!window.sizeValidated || !Object.keys(selSize).some(k => selSize[k])) ?
+        '<div style="font-size:13px;color:#555;font-style:italic;">Non renseignées — nous vous contacterons pour affiner et valider vos cotes.</div>' :
         '<div style="font-size:11px;color:#666;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">Dimensions</div>' +
         (() => {
           const parts = [];
@@ -3582,8 +3652,8 @@ function dtRenderS4() {
           if (selSize.largeur_selle) parts.push('<span><strong>Largeur selle :</strong> ' + selSize.largeur_selle + ' mm</span>');
           return '<div style="font-size:13px;color:#f2f2f2;line-height:2;display:flex;flex-wrap:wrap;gap:8px 24px;">' + parts.join('') + '</div>';
         })() +
-      '</div>'
-    : '') +
+      '</div>') +
+    '</div>' +
     '';
 }
 
@@ -4931,11 +5001,11 @@ function p11UpdateTotal() {
     Object.keys(selOpts).forEach(postId => {
       if (selOpts[postId] && preset[postId] !== selOpts[postId]) count++;
     });
-    const modifText = count === 0 ? '' : '● ' + count + ' personnalisation' + (count > 1 ? 's' : '') + ' ↳ ' + window._activePreset;
+    const modifText = count === 0 ? '' : '<span style="color:#F5C400;">●</span> ' + count + ' personnalisation' + (count > 1 ? 's' : '') + ' ↳ ' + window._activePreset;
     const modifEl = document.getElementById('p11-modif-count');
     if (modifEl) { modifEl.textContent = modifText; modifEl.style.display = count > 0 ? 'block' : 'none'; }
     const stripModif = document.getElementById('p11-strip-modif');
-    if (stripModif) { stripModif.textContent = modifText; stripModif.style.display = count > 0 ? 'block' : 'none'; }
+    if (stripModif) { stripModif.innerHTML = modifText; stripModif.style.display = count > 0 ? 'block' : 'none'; }
   }
 }
 
