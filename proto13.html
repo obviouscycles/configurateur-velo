@@ -1403,15 +1403,60 @@
     #dt-s3-panel-guide #guide-secondary { margin-top: 0; }
     #dt-s3-panel-guide #guide-secondary select,
     #dt-s3-panel-manual #dims-grid select {
-      background: #1a1a1a !important;
-      border-color: #333 !important;
-      color: #f2f2f2 !important;
+      background: #1e1e1e !important;
+      border-color: #3a3a3a !important;
+      color: #ccc !important;
+    }
+    #dt-s3-panel-guide #guide-secondary select:focus,
+    #dt-s3-panel-manual #dims-grid select:focus {
+      border-color: #F5C400 !important;
+      outline: none;
     }
     #dt-s3-panel-guide #guide-secondary .dim-field label,
     #dt-s3-panel-manual #dims-grid .dim-field label {
       color: #888 !important;
+      font-size: 11px;
     }
     #dt-s3-panel-guide #guide-secondary hr { border-color: #333 !important; }
+    /* Panel fond cohérent avec le reste */
+    #dt-s3-panel-guide .size-panel,
+    #dt-s3-panel-manual .size-panel {
+      background: #181818 !important;
+      border-color: #2a2a2a !important;
+    }
+    /* Inputs guide : fond neutre */
+    #dt-s3-panel-guide .size-input {
+      background: #1e1e1e !important;
+      border-color: #3a3a3a !important;
+      color: #ccc !important;
+    }
+  }
+
+  @media (min-width: 768px) {
+    /* Manual : tout en colonne unique, séparés par un trait */
+    #dt-s3-panel-manual .dims-grid-primary,
+    #dt-s3-panel-manual .dims-grid-secondary {
+      grid-template-columns: 1fr !important;
+    }
+    /* Guide secondary : aligner avec les inputs (pas en horizontal) */
+    #dt-s3-panel-guide #guide-secondary > div {
+      grid-template-columns: 1fr !important;
+    }
+    /* Selects : fond neutre, lisible */
+    #dt-s3-panel-manual #dims-grid select,
+    #dt-s3-panel-guide #guide-secondary select {
+      background: #252525 !important;
+      border: 0.5px solid #444 !important;
+      color: #ccc !important;
+      padding: 8px 10px !important;
+    }
+    /* Trait séparateur identique dans les deux panels */
+    #dt-s3-panel-manual #dims-grid hr,
+    #dt-s3-panel-guide #guide-secondary hr {
+      border: none !important;
+      border-top: 0.5px solid #333 !important;
+      margin: 1.25rem 0 !important;
+    }
   }
 </style>
   <!-- Google Analytics GA4 -->
@@ -4543,7 +4588,7 @@ function buildDimsGrid() {
     });
   }
 
-  const SECONDARY_KEYS = ['plateaux', 'cassette', 'section'];
+  const SECONDARY_KEYS = ['plateaux', 'cassette', 'section', 'debattement'];
   const primaryFields   = fields.filter(f => !SECONDARY_KEYS.includes(f.key));
   const secondaryFields = fields.filter(f =>  SECONDARY_KEYS.includes(f.key));
 
@@ -4576,9 +4621,8 @@ function buildDimsGrid() {
   let html = '<div class="dims-grid-primary" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;">' +
     primaryFields.map(renderField).join('') + '</div>';
   if (secondaryFields.length > 0) {
-    html += '<hr style="border:none;border-top:0.5px solid var(--border);margin:1.25rem 0;">' +
-      '<div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.75rem;">Plateaux / Cassette / Pneus</div>' +
-      '<div class="dims-grid-secondary" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:1rem;">' +
+    html += '<hr style="border:none;border-top:0.5px solid #333;margin:1.25rem 0;">' +
+      '<div class="dims-grid-secondary" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;">' +
       secondaryFields.map(renderField).join('') + '</div>';
   }
   grid.innerHTML = html;
@@ -4587,9 +4631,8 @@ function buildDimsGrid() {
   const guideSec = document.getElementById('guide-secondary');
   if (guideSec) {
     if (secondaryFields.length > 0) {
-      guideSec.innerHTML = '<hr style="border:none;border-top:0.5px solid var(--border);margin:1.25rem 0;">' +
-        '<div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.75rem;">Plateaux / Cassette / Pneus</div>' +
-        '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:1rem;">' +
+      guideSec.innerHTML = '<hr style="border:none;border-top:0.5px solid #333;margin:1.25rem 0;">' +
+        '<div style="display:grid;grid-template-columns:1fr;gap:1rem;">' +
         secondaryFields.map(f => {
           const optHTML = f.options.map(o =>
             `<option value="${o}" ${selSize[f.key]==o?'selected':''}>${o}</option>`
