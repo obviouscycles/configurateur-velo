@@ -2050,7 +2050,7 @@
       <p style="font-size:13px;color:#aaa;margin:1.25rem 2rem 0;line-height:1.6;text-align:center;">
         Vous n'avez pas toutes les informations ? Nous vous recontacterons de toute façon pour affiner et valider vos cotes.
       </p>
-      <div id="dt-s3-result" style="display:none;margin:1rem 2rem 0;padding:1rem;background:#1e1e1e;border:0.5px solid #333;font-size:13px;color:#f2f2f2;line-height:1.8;"></div>
+      <!-- dt-s3-result supprimé : double récap retiré -->
       <div class="dt-step-footer">
         <button class="dt-btn-back" onclick="dtGo(2)"><i class="ti ti-chevron-left"></i> Retour</button>
         <button class="dt-btn-next" id="dt-next-3" onclick="dtGo(4)">
@@ -3677,8 +3677,7 @@ function dtCheckSizeResult() {
   }
 
   if (html) {
-    resultEl.innerHTML = html;
-    resultEl.style.display = 'block';
+    // dt-s3-result retiré — on met juste à jour le bouton
     const lbl = document.getElementById('dt-next-3-lbl');
     if (lbl) lbl.textContent = 'Votre configuration →';
   }
@@ -5355,7 +5354,11 @@ function p11BuildDimsGrid() {
     });
   }
 
-  grid.innerHTML = fields.map(f => {
+  const P11_SEC = ['plateaux','cassette','section','debattement'];
+  const p11Primary   = fields.filter(f => !P11_SEC.includes(f.key));
+  const p11Secondary = fields.filter(f =>  P11_SEC.includes(f.key));
+
+  function p11RenderField(f) {
     if (f.options.length === 1) {
       selSize[f.key] = String(f.options[0]);
       const unit = ['manivelle','potence','cintre','debattement','largeur_selle'].includes(f.key) ? ' mm' : '';
@@ -5374,7 +5377,15 @@ function p11BuildDimsGrid() {
       '<select class="size-select" id="' + f.id + '" onchange="' + onchangeFn + '">' +
       '<option value="">— choisir —</option>' + optHTML + '</select>' +
       (f.note ? '<span class="dim-note">' + f.note + '</span>' : '') + '</div>';
-  }).join('');
+  }
+
+  const gridStyle = 'display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.75rem;';
+  let p11Html = '<div style="' + gridStyle + '">' + p11Primary.map(p11RenderField).join('') + '</div>';
+  if (p11Secondary.length > 0) {
+    p11Html += '<hr style="border:none;border-top:0.5px solid #444;margin:1.25rem 0;">' +
+      '<div style="' + gridStyle + '">' + p11Secondary.map(p11RenderField).join('') + '</div>';
+  }
+  grid.innerHTML = '<div style="display:flex;flex-direction:column;width:100%;">' + p11Html + '</div>';
 }
 
 function p11ValidateDims() {
