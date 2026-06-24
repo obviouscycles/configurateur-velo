@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <link rel="icon" type="image/webp" href="https://www.obviouscycles.com/wp-content/uploads/2023/04/favicon-512-light.webp">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OBVIOUS-ON-DEMAND — Montage à la carte [PROTO13]</title>
+<title>OBVIOUS ON DEMAND — Montage à la carte [PROTO13]</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1486,7 +1486,7 @@
 <header>
   <div class="logo" style="display:flex;align-items:center;gap:10px;">
     <img src="https://www.obviouscycles.com/wp-content/uploads/2023/04/favicon-512.png" alt="Obvious Cycles" style="height:32px;width:32px;object-fit:contain;">
-    <span>OBVIOUS-ON-DEMAND</span>
+    <span>OBVIOUS ON DEMAND</span>
   </div>
   <div style="display:flex;align-items:center;gap:8px;">
     <button id="header-contact-btn" onclick="openContactDrawer()" style="display:none;align-items:center;gap:6px;background:#F5C400;border:none;color:#1a1a00;padding:7px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font);">
@@ -1951,8 +1951,8 @@
       <div style="background:#1a1a1a;border:0.5px solid #333;padding:1rem;">
         <div style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem;">Aller plus loin</div>
         <p style="font-size:13px;color:#f2f2f2;line-height:1.6;margin-bottom:.5rem;font-weight:500;">Géométrie personnalisée, adaptations cadre, sur-mesure total.</p>
-        <p style="font-size:12px;color:#888;line-height:1.5;margin-bottom:.75rem;">Obvious On Demand propose 3 niveaux supplémentaires de personnalisation.</p>
-        <a href="https://www.obviouscycles.com/velos-titane/velo-titane-sur-mesure/" target="_blank" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#1a1a00;text-decoration:none;font-weight:700;background:#F5C400;padding:10px 12px;width:100%;box-sizing:border-box;justify-content:center;"><i class="ti ti-external-link" style="font-size:13px;"></i> Découvrir Obvious On Demand</a>
+        <p style="font-size:12px;color:#888;line-height:1.5;margin-bottom:.75rem;">OBVIOUS ON DEMAND propose 3 niveaux supplémentaires de personnalisation.</p>
+        <a href="https://www.obviouscycles.com/velos-titane/velo-titane-sur-mesure/" target="_blank" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#1a1a00;text-decoration:none;font-weight:700;background:#F5C400;padding:10px 12px;width:100%;box-sizing:border-box;justify-content:center;"><i class="ti ti-external-link" style="font-size:13px;"></i> Découvrir OBVIOUS ON DEMAND</a>
       </div>
 
     </div><!-- /contact-hint -->
@@ -1996,7 +1996,7 @@
 
       <!-- Bouton OOD -->
       <div style="margin-bottom:.75rem;">
-        <button id="dt-ood-btn" onclick="dtToggleOOD()" style="width:100%;background:none;border:1px solid #F5C400;color:#F5C400;padding:10px 8px;font-size:10px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.5;letter-spacing:.05em;transition:background .15s;" onmouseover="this.style.background='rgba(245,196,0,.08)'" onmouseout="this.style.background='none'">
+        <button id="dt-ood-btn" onclick="dtToggleOOD()" style="width:100%;background:none;border:0.5px solid #333;color:#bbb;padding:8px;font-size:11px;font-weight:600;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.5;transition:border-color .15s,color .15s;" onmouseover="this.style.color='#eee';this.style.borderColor='#555'" onmouseout="this.style.color='#bbb';this.style.borderColor='#333'">
           OBVIOUS ON DEMAND<br>Pour aller plus loin
         </button>
       </div>
@@ -3082,7 +3082,7 @@ async function sendOrder() {
         dimensions: buildSizeText(),
         message: msg || '—',
         _replyto: email,
-        _subject: 'Demande de devis OBVIOUS-ON-DEMAND — ' + name,
+        _subject: 'Demande de devis OBVIOUS ON DEMAND — ' + name,
       })
     });
 
@@ -3407,11 +3407,11 @@ function dtToggleOOD() {
     popup.style.cssText = 'display:none;position:fixed;width:280px;background:#1a1a1a;border:0.5px solid #444;padding:1.5rem;z-index:2000;box-shadow:0 8px 40px rgba(0,0,0,.7);';
     popup.innerHTML =
       '<button onclick="dtToggleOOD()" style="position:absolute;top:10px;right:12px;background:none;border:none;color:#666;font-size:18px;cursor:pointer;line-height:1;padding:0;">×</button>' +
-      '<div style="font-size:10px;color:#F5C400;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;">Obvious On Demand — Pour aller plus loin</div>' +
+      '<div style="font-size:10px;color:#F5C400;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.75rem;">OBVIOUS ON DEMAND — Pour aller plus loin</div>' +
       '<p style="font-size:13px;color:#f2f2f2;line-height:1.6;margin-bottom:.5rem;font-weight:500;">Géométrie personnalisée, adaptations cadre, sur-mesure total.</p>' +
-      '<p style="font-size:12px;color:#888;line-height:1.5;margin-bottom:1.25rem;">Obvious On Demand propose 3 niveaux supplémentaires de personnalisation.</p>' +
+      '<p style="font-size:12px;color:#888;line-height:1.5;margin-bottom:1.25rem;">OBVIOUS ON DEMAND propose 3 niveaux supplémentaires de personnalisation.</p>' +
       '<a href="https://www.obviouscycles.com/velos-titane/velo-titane-sur-mesure/" target="_blank" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#1a1a00;text-decoration:none;font-weight:700;background:#F5C400;padding:10px 14px;width:100%;box-sizing:border-box;justify-content:center;">' +
-        '<i class="ti ti-external-link" style="font-size:13px;"></i> Découvrir Obvious On Demand' +
+        '<i class="ti ti-external-link" style="font-size:13px;"></i> Découvrir OBVIOUS ON DEMAND' +
       '</a>';
     document.body.appendChild(popup);
   }
@@ -5733,8 +5733,8 @@ window.addEventListener('resize', () => {
       <div style="background:#1a1a1a;border:0.5px solid #333;padding:1rem;">
         <div style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem;">Aller plus loin</div>
         <p style="font-size:13px;color:#f2f2f2;line-height:1.6;margin-bottom:.5rem;font-weight:500;">Géométrie personnalisée, adaptations cadre, sur-mesure total.</p>
-        <p style="font-size:12px;color:#888;line-height:1.5;margin-bottom:.75rem;">Obvious On Demand propose 3 niveaux supplémentaires de personnalisation.</p>
-        <a href="https://www.obviouscycles.com/velos-titane/velo-titane-sur-mesure/" target="_blank" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#1a1a00;text-decoration:none;font-weight:700;background:#F5C400;padding:10px 12px;width:100%;box-sizing:border-box;justify-content:center;"><i class="ti ti-external-link" style="font-size:13px;"></i> Découvrir Obvious On Demand</a>
+        <p style="font-size:12px;color:#888;line-height:1.5;margin-bottom:.75rem;">OBVIOUS ON DEMAND propose 3 niveaux supplémentaires de personnalisation.</p>
+        <a href="https://www.obviouscycles.com/velos-titane/velo-titane-sur-mesure/" target="_blank" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#1a1a00;text-decoration:none;font-weight:700;background:#F5C400;padding:10px 12px;width:100%;box-sizing:border-box;justify-content:center;"><i class="ti ti-external-link" style="font-size:13px;"></i> Découvrir OBVIOUS ON DEMAND</a>
       </div>
     </div>
   </div>
@@ -5744,7 +5744,7 @@ window.addEventListener('resize', () => {
     <div style="max-width:720px;margin:3rem auto;background:#1a1a1a;border:0.5px solid #333;padding:2rem;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
         <div>
-          <div style="font-size:11px;color:#666;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">Obvious On Demand</div>
+          <div style="font-size:11px;color:#666;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">OBVIOUS ON DEMAND</div>
           <h2 style="font-size:20px;font-weight:500;color:#f2f2f2;">Choisir un autre modèle</h2>
         </div>
         <button onclick="closeChangeModelModal()" style="background:none;border:none;color:#666;font-size:24px;cursor:pointer;line-height:1;"><i class="ti ti-x"></i></button>
