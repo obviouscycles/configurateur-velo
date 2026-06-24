@@ -801,19 +801,24 @@
   #contact-drawer {
     display: none;
     position: fixed;
-    bottom: 0; left: 0; right: 0;
+    bottom: 0; left: 50%; right: auto;
+    transform: translateX(-50%) translateY(100%);
+    width: 50%;
+    max-width: 600px;
+    min-width: 320px;
     background: #111111;
-    border-top: 1.5px solid #333;
+    border: 1.5px solid #333;
+    border-bottom: none;
     padding: 1.25rem 1.5rem 2rem;
     z-index: 1001;
     max-height: 80vh;
     overflow-y: auto;
-    transform: translateY(100%);
     transition: transform .3s ease;
+    box-shadow: 0 -8px 32px rgba(0,0,0,.5);
   }
   #contact-drawer.open {
     display: block;
-    transform: translateY(0);
+    transform: translateX(-50%) translateY(0);
   }
   #contact-drawer-overlay {
     display: none;
@@ -1269,8 +1274,9 @@
 
   @media (min-width: 768px) {
     #dt-s2-left .mc-photo {
-      width: 100% !important; height: 220px !important;
+      width: 100% !important; height: 260px !important;
       object-fit: contain !important; background: #0d0d0d; display: block;
+      padding: 8px; box-sizing: border-box;
     }
     #dt-s2-left .mc-text {
       padding: 14px 0 0 !important;
@@ -1331,16 +1337,16 @@
 
   @media (min-width: 768px) {
     #dt-s3-left .size-card, #dt-s3-right .size-card {
-      background: #1a1a1a !important;
-      border-color: #2a2a2a !important;
+      background: #1e1e1e !important;
+      border-color: #333 !important;
     }
-    #dt-s3-left .size-card:hover, #dt-s3-right .size-card:hover { background: #222 !important; }
+    #dt-s3-left .size-card:hover, #dt-s3-right .size-card:hover { background: #252525 !important; }
     #dt-s3-left .size-card.active, #dt-s3-right .size-card.active {
       background: #1e1e1e !important;
       border-color: #F5C400 !important;
     }
     #dt-s3-left .size-card-title, #dt-s3-right .size-card-title { color: #f2f2f2 !important; }
-    #dt-s3-left .size-card-desc,  #dt-s3-right .size-card-desc  { color: #888 !important; }
+    #dt-s3-left .size-card-desc,  #dt-s3-right .size-card-desc  { color: #aaa !important; }
     #dt-s3-left .size-card.active .size-card-desc { color: #aaa !important; }
     #dt-s3-left .size-panel, #dt-s3-right .size-panel {
       background: #141414 !important; border-color: #2a2a2a !important;
@@ -1365,6 +1371,36 @@
     /* Bouton Calculer et Valider — alignés en bas */
     #dt-s3-panel-guide .size-btn-wrap,
     #dt-s3-panel-manual .validate-btn { margin-top: auto; }
+  }
+
+  @media (min-width: 768px) {
+    #dt-s2-right .opc-img-wrap {
+      aspect-ratio: 4/3;
+      background: #111 !important;
+    }
+    #dt-s2-right .opc-img-wrap img {
+      object-fit: contain !important;
+      padding: 6px;
+      background: #111;
+    }
+    #dt-s2-right .opt-photo-card.sel .opc-img-wrap { background: #1a1200 !important; }
+  }
+
+  @media (min-width: 768px) {
+    /* Bouton Calculer aligné en bas à gauche dans le panel guide */
+    #dt-s3-panel-guide .size-panel { display: flex; flex-direction: column; }
+    #dt-s3-panel-guide .size-form-row { flex: 1; }
+    #dt-s3-panel-guide .size-btn {
+      align-self: flex-start;
+      margin-top: 1rem;
+    }
+    /* Bouton Valider aligné en bas à gauche */
+    #dt-s3-panel-manual .size-panel { display: flex; flex-direction: column; }
+    #dt-s3-panel-manual .validate-btn,
+    #dt-s3-panel-manual .size-validate-btn {
+      align-self: flex-start;
+      margin-top: 1rem;
+    }
   }
 </style>
   <!-- Google Analytics GA4 -->
@@ -3137,6 +3173,12 @@ function dtGo(n) {
 function dtRender() {
   if (window.innerWidth < 768) return;
   const n = dtStep;
+  // Activer "Nouvelle configuration" dès qu'un modèle est sélectionné
+  const resetBtn = document.getElementById('dtr-btn-reset');
+  if (resetBtn) {
+    if (selModel) { resetBtn.style.opacity='1'; resetBtn.style.pointerEvents='auto'; }
+    else { resetBtn.style.opacity='.3'; resetBtn.style.pointerEvents='none'; }
+  }
 
   // Stepper
   for (let i = 1; i <= 4; i++) {
