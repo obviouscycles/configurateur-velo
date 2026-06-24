@@ -1398,6 +1398,21 @@
     }
     #dt-s3-panel-guide .size-form-row { margin-bottom: 0.5rem; }
   }
+
+  @media (min-width: 768px) {
+    #dt-s3-panel-guide #guide-secondary { margin-top: 0; }
+    #dt-s3-panel-guide #guide-secondary select,
+    #dt-s3-panel-manual #dims-grid select {
+      background: #1a1a1a !important;
+      border-color: #333 !important;
+      color: #f2f2f2 !important;
+    }
+    #dt-s3-panel-guide #guide-secondary .dim-field label,
+    #dt-s3-panel-manual #dims-grid .dim-field label {
+      color: #888 !important;
+    }
+    #dt-s3-panel-guide #guide-secondary hr { border-color: #333 !important; }
+  }
 </style>
   <!-- Google Analytics GA4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-KGZDWLZ7JZ"></script>
@@ -1767,6 +1782,7 @@
           </div>
         </div>
         <button class="size-btn" onclick="calcSize()" style="margin-bottom:1rem;"><i class="ti ti-calculator"></i> Calculer</button>
+        <div id="guide-secondary"></div>
         <div class="size-result" id="guide-result">
           <div class="size-result-main" id="guide-result-main"></div>
           <div class="size-result-sub" id="guide-result-sub"></div>
@@ -4475,7 +4491,8 @@ function buildDimsGrid() {
   const pneuOpt = selOpts.pneus ? ALL_OPTIONS.pneus.find(o => o.id === selOpts.pneus) : null;
   if (pneuOpt && pneuOpt.dims && pneuOpt.dims.section && pneuOpt.dims.section.length > 1)
     fields.push({id:'dim-section', label:'Section pneu', options: pneuOpt.dims.section, key:'section',
-      note: selModel === 'vtt_enduro' ? 'en pouces' : 'en mm'});
+      note: selModel === 'vtt_enduro' ? 'en pouces' : null,
+      unit: selModel === 'vtt_enduro' ? '"' : null});
 
   // Fourche VTT
   const fourcheOpt = selOpts.fourche ? ALL_OPTIONS.fourche.find(o => o.id === selOpts.fourche) : null;
@@ -4526,11 +4543,14 @@ function buildDimsGrid() {
     });
   }
 
-  grid.innerHTML = fields.map(f => {
-    // Valeur unique : enregistrer dans selSize et afficher sans select
+  const SECONDARY_KEYS = ['plateaux', 'cassette', 'section'];
+  const primaryFields   = fields.filter(f => !SECONDARY_KEYS.includes(f.key));
+  const secondaryFields = fields.filter(f =>  SECONDARY_KEYS.includes(f.key));
+
+  function renderField(f) {
     if (f.options.length === 1) {
       selSize[f.key] = String(f.options[0]);
-      const unit = f.key==='manivelle'||f.key==='potence'||f.key==='cintre'||f.key==='debattement'||f.key==='largeur_selle' ? ' mm' : '';
+      const unit = ['manivelle','potence','cintre','debattement','largeur_selle'].includes(f.key) ? ' mm' : '';
       return `<div class="dim-field">
         <label>${f.label}</label>
         <div class="dim-single">${f.options[0]}${unit}</div>
@@ -4538,9 +4558,7 @@ function buildDimsGrid() {
       </div>`;
     }
     const optHTML = f.options.map(o =>
-      `<option value="${o}" ${selSize[f.key]==o?'selected':''}>` + o + (
-        f.key==='manivelle'?' mm':f.key==='potence'?' mm':''
-      ) + `</option>`
+      `<option value="${o}" ${selSize[f.key]==o?'selected':''}>${o}${f.key==='manivelle'||f.key==='potence'?' mm':''}</option>`
     ).join('');
     const onchangeFn = f.key === 'taille'
       ? `selSize['${f.key}']=this.value; selSize.manivelle=null; selSize.cintre=null; selSize.potence=null; selSize.debattement=null; buildDimsGrid();`
@@ -4553,7 +4571,41 @@ function buildDimsGrid() {
       </select>
       ${f.note ? `<span class="dim-note">${f.note}</span>` : ''}
     </div>`;
-  }).join('');
+  }
+
+  let html = '<div class="dims-grid-primary" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;">' +
+    primaryFields.map(renderField).join('') + '</div>';
+  if (secondaryFields.length > 0) {
+    html += '<hr style="border:none;border-top:0.5px solid var(--border);margin:1.25rem 0;">' +
+      '<div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.75rem;">Plateaux / Cassette / Pneus</div>' +
+      '<div class="dims-grid-secondary" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:1rem;">' +
+      secondaryFields.map(renderField).join('') + '</div>';
+  }
+  grid.innerHTML = html;
+
+  // Si on est en mode "guidé" (panel-guide visible), copier les champs secondaires là-dedans
+  const guideSec = document.getElementById('guide-secondary');
+  if (guideSec) {
+    if (secondaryFields.length > 0) {
+      guideSec.innerHTML = '<hr style="border:none;border-top:0.5px solid var(--border);margin:1.25rem 0;">' +
+        '<div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.75rem;">Plateaux / Cassette / Pneus</div>' +
+        '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:1rem;">' +
+        secondaryFields.map(f => {
+          const optHTML = f.options.map(o =>
+            `<option value="${o}" ${selSize[f.key]==o?'selected':''}>${o}</option>`
+          ).join('');
+          return `<div class="dim-field">
+            <label>${f.label}</label>
+            <select class="size-select" id="guide-${f.id}" onchange="selSize['${f.key}']=this.value">
+              <option value="">— choisir —</option>${optHTML}
+            </select>
+            ${f.note ? `<span class="dim-note" style="font-size:11px;color:var(--text3);margin-top:3px;display:block;">${f.note}</span>` : ''}
+          </div>`;
+        }).join('') + '</div>';
+    } else {
+      guideSec.innerHTML = '';
+    }
+  }
 }
 
 function saveConfigFromSize() {
@@ -5163,7 +5215,7 @@ function p11BuildDimsGrid() {
   const pneuOpt = selOpts.pneus ? ALL_OPTIONS.pneus.find(o=>o.id===selOpts.pneus) : null;
   if (pneuOpt && pneuOpt.dims && pneuOpt.dims.section && pneuOpt.dims.section.length > 1)
     fields.push({id:'p11-dim-section', label:'Section pneu', options:pneuOpt.dims.section, key:'section',
-      note: selModel==='vtt_enduro' ? 'en pouces' : 'en mm'});
+      note: selModel==='vtt_enduro' ? 'en pouces' : null});
 
   // Fourche VTT
   const fourcheOpt = selOpts.fourche ? ALL_OPTIONS.fourche.find(o=>o.id===selOpts.fourche) : null;
