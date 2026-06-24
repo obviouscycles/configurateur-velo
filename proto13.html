@@ -1471,6 +1471,19 @@
       margin-top: auto;
     }
   }
+
+  /* Drawer : OOD en premier sur mobile, contact en premier sur desktop */
+  @media (max-width: 767px) {
+    .drawer-ood-section { order: -1; }
+    .drawer-ood-section > div:first-child { display: none; } /* masquer trait sur mobile */
+    .drawer-contact-section { order: 0; }
+  }
+  @media (min-width: 768px) {
+    .drawer-contact-section { order: 0; }
+    .drawer-ood-section { order: 1; }
+    /* Popup OOD desktop : plus large (x4/3 ≈ 373px) */
+    #dt-ood-popup { width: 373px !important; }
+  }
 </style>
   <!-- Google Analytics GA4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-KGZDWLZ7JZ"></script>
@@ -5710,38 +5723,42 @@ window.addEventListener('resize', () => {
       <button class="drawer-close" onclick="closeContactDrawer()"><i class="ti ti-x"></i></button>
     </div>
 
-    <!-- ── OBVIOUS ON DEMAND — en premier, mis en valeur ── -->
-    <div style="background:#1e1e1e;border:0.5px solid #333;padding:1.25rem;margin-bottom:1.5rem;">
-      <div style="font-size:10px;color:#F5C400;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem;">Pour aller plus loin</div>
-      <div style="font-size:17px;font-weight:700;color:#f2f2f2;margin-bottom:.5rem;">OBVIOUS ON DEMAND</div>
-      <p style="font-size:13px;color:#f2f2f2;line-height:1.6;margin-bottom:.4rem;font-weight:500;">Géométrie personnalisée, adaptations cadre, sur-mesure total.</p>
-      <p style="font-size:12px;color:#888;line-height:1.5;margin-bottom:1rem;">3 niveaux supplémentaires de personnalisation pour un vélo vraiment unique.</p>
-      <a href="https://www.obviouscycles.com/velos-titane/velo-titane-sur-mesure/" target="_blank" style="display:inline-flex;align-items:center;justify-content:center;gap:7px;font-size:13px;color:#1a1a00;text-decoration:none;font-weight:700;background:#F5C400;padding:12px 14px;width:100%;box-sizing:border-box;"><i class="ti ti-external-link" style="font-size:13px;"></i> Découvrir OBVIOUS ON DEMAND</a>
-    </div>
+    <!-- Wrapper flex pour réordonner desktop vs mobile -->
+    <div id="drawer-inner" style="display:flex;flex-direction:column;">
 
-    <!-- ── Séparateur ── -->
-    <div style="border-top:0.5px solid #2a2a2a;margin:0 0 1.25rem;"></div>
+      <!-- Section contact (order:1 mobile, order:0 desktop) -->
+      <div class="drawer-contact-section">
+        <div class="contact-col-title" style="color:#f2f2f2;text-transform:none;font-size:16px;font-weight:500;letter-spacing:0;margin-bottom:.5rem;">Contacter Obvious</div>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:.75rem;line-height:1.5;">Un autre montage, une question sur les tailles, besoin d'aide.</p>
+        <div class="contact-btns" style="margin-bottom:1.25rem;">
+          <a href="tel:+33695582935" class="contact-btn contact-btn-tel"><i class="ti ti-phone"></i> 06 95 58 29 35</a>
+          <a href="https://www.obviouscycles.com/contact/#ancragemail" target="_blank" class="contact-btn contact-btn-msg"><i class="ti ti-message"></i> Message</a>
+          <a href="https://www.obviouscycles.com/contact/#ancragerdv" target="_blank" class="contact-btn contact-btn-rdv"><i class="ti ti-calendar"></i> Prendre rdv</a>
+        </div>
+        <div style="border-top:0.5px solid #2a2a2a;margin:0 0 1.25rem;"></div>
+        <div class="contact-col-title" style="color:#f2f2f2;text-transform:none;font-size:16px;font-weight:500;letter-spacing:0;margin-bottom:.5rem;">Être rappelé</div>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:.75rem;line-height:1.5;">Nous vous contacterons pour vous aider à finaliser votre vélo.</p>
+        <div class="contact-form">
+          <input type="tel" id="cf-phone-d" placeholder="Téléphone" class="contact-input" />
+          <input type="email" id="cf-email-d" placeholder="E-mail" class="contact-input" />
+          <button class="contact-btn contact-btn-send" onclick="sendCallbackDrawer()"><i class="ti ti-send"></i> Envoyer</button>
+          <div id="cf-toast-d" class="cf-toast" style="display:none"><i class="ti ti-check"></i> Message envoyé !</div>
+          <div id="cf-error-d" class="cf-error" style="display:none">Merci de renseigner au moins un contact.</div>
+        </div>
+      </div>
 
-    <!-- ── Contact ── -->
-    <div class="contact-col-title" style="color:#f2f2f2;text-transform:none;font-size:16px;font-weight:500;letter-spacing:0;margin-bottom:.5rem;">Contacter Obvious</div>
-    <p style="font-size:13px;color:var(--text2);margin-bottom:.75rem;line-height:1.5;">Un autre montage, une question sur les tailles, besoin d'aide.</p>
-    <div class="contact-btns" style="margin-bottom:1.25rem;">
-      <a href="tel:+33695582935" class="contact-btn contact-btn-tel"><i class="ti ti-phone"></i> 06 95 58 29 35</a>
-      <a href="https://www.obviouscycles.com/contact/#ancragemail" target="_blank" class="contact-btn contact-btn-msg"><i class="ti ti-message"></i> Message</a>
-      <a href="https://www.obviouscycles.com/contact/#ancragerdv" target="_blank" class="contact-btn contact-btn-rdv"><i class="ti ti-calendar"></i> Prendre rdv</a>
-    </div>
+      <!-- Section OOD (order:0 mobile = en premier, order:1 desktop = en bas) -->
+      <div class="drawer-ood-section">
+        <div style="border-top:0.5px solid #2a2a2a;margin:0 0 1.25rem;"></div>
+        <div style="background:#1e1e1e;border:0.5px solid #333;padding:1.25rem;">
+          <div style="font-size:10px;color:#F5C400;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem;">Pour aller plus loin</div>
+          <div style="font-size:17px;font-weight:700;color:#f2f2f2;margin-bottom:.5rem;">OBVIOUS ON DEMAND</div>
+          <p style="font-size:13px;color:#f2f2f2;line-height:1.6;margin-bottom:.4rem;font-weight:500;">Géométrie personnalisée, adaptations cadre, sur-mesure total.</p>
+          <p style="font-size:12px;color:#888;line-height:1.5;margin-bottom:1rem;">3 niveaux supplémentaires de personnalisation pour un vélo vraiment unique.</p>
+          <a href="https://www.obviouscycles.com/velos-titane/velo-titane-sur-mesure/" target="_blank" style="display:inline-flex;align-items:center;justify-content:center;gap:7px;font-size:13px;color:#1a1a00;text-decoration:none;font-weight:700;background:#F5C400;padding:12px 14px;width:100%;box-sizing:border-box;"><i class="ti ti-external-link" style="font-size:13px;"></i> Découvrir OBVIOUS ON DEMAND</a>
+        </div>
+      </div>
 
-    <div style="border-top:0.5px solid #2a2a2a;margin:0 0 1.25rem;"></div>
-
-    <!-- ── Être rappelé ── -->
-    <div class="contact-col-title" style="color:#f2f2f2;text-transform:none;font-size:16px;font-weight:500;letter-spacing:0;margin-bottom:.5rem;">Être rappelé</div>
-    <p style="font-size:13px;color:var(--text2);margin-bottom:.75rem;line-height:1.5;">Nous vous contacterons pour vous aider à finaliser votre vélo.</p>
-    <div class="contact-form">
-      <input type="tel" id="cf-phone-d" placeholder="Téléphone" class="contact-input" />
-      <input type="email" id="cf-email-d" placeholder="E-mail" class="contact-input" />
-      <button class="contact-btn contact-btn-send" onclick="sendCallbackDrawer()"><i class="ti ti-send"></i> Envoyer</button>
-      <div id="cf-toast-d" class="cf-toast" style="display:none"><i class="ti ti-check"></i> Message envoyé !</div>
-      <div id="cf-error-d" class="cf-error" style="display:none">Merci de renseigner au moins un contact.</div>
     </div>
   </div>
 
