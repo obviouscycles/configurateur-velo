@@ -3253,7 +3253,9 @@ function dtShowSaved() {
 
 
 function dtLoadSaved(id) {
-  const cfg = savedConfigs.find(c => c.id === id);
+  // Chercher par id, ou par index si l'id est numérique (ancien format)
+  let cfg = savedConfigs.find(c => c.id === id || c.id === String(id));
+  if (!cfg) cfg = savedConfigs[parseInt(id)] || null; // fallback index
   if (!cfg) return;
   selModel = cfg.selModel || cfg.model;
   selOpts = {...(cfg.selOpts || cfg.opts || {})};
