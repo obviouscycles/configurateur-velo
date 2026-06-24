@@ -1429,6 +1429,18 @@
     #dt-s3-panel-guide  select.size-select:focus {
       border-color: #F5C400; outline: none;
     }
+    /* dims-grid : block (pas grid) pour que les grilles internes s'étalent */
+    #dt-s3-panel-manual #dims-grid {
+      display: block !important;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    /* Grilles internes pleine largeur */
+    #dt-s3-panel-manual .dims-grid-primary,
+    #dt-s3-panel-manual .dims-grid-secondary {
+      width: 100%;
+      display: grid !important;
+    }
     /* Labels dim-field */
     #dt-s3-panel-manual .dim-field label,
     #dt-s3-panel-guide  .dim-field label { color: #888; font-size: 11px; }
@@ -5176,7 +5188,7 @@ function p11ToggleSizeMode(mode) {
   document.getElementById('p11-choice-manual').classList.toggle('active', mode==='manual');
   document.getElementById('p11-panel-guide').classList.toggle('open', mode==='guide');
   document.getElementById('p11-panel-manual').classList.toggle('open', mode==='manual');
-  if (mode==='manual') p11BuildDimsGrid();
+  p11BuildDimsGrid(); // remplit dims-grid (manual) ET p11-guide-secondary (guide)
 }
 
 function p11CalcSize() {
@@ -5354,6 +5366,28 @@ function p11BuildDimsGrid() {
       '<div style="' + gridStyle + '">' + p11Secondary.map(p11RenderField).join('') + '</div>';
   }
   grid.innerHTML = '<div style="display:flex;flex-direction:column;width:100%;">' + p11Html + '</div>';
+
+  // Remplir p11-guide-secondary (panel guide mobile) avec les champs secondaires
+  const p11Sec = document.getElementById('p11-guide-secondary');
+  if (p11Sec) {
+    if (p11Secondary.length > 0) {
+      const gs = 'display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.75rem;';
+      p11Sec.innerHTML = '<hr style="border:none;border-top:0.5px solid #444;margin:1.25rem 0;">' +
+        '<div style="' + gs + '">' +
+        p11Secondary.map(f => {
+          const optHTML = f.options.map(o =>
+            '<option value="' + o + '"' + (selSize[f.key]==o?' selected':'') + '>' + o + '</option>'
+          ).join('');
+          const onchangeFn = "selSize['" + f.key + "']=this.value";
+          return '<div class="dim-field"><label>' + f.label + '</label>' +
+            '<select class="size-select" onchange="' + onchangeFn + '">' +
+            '<option value="">— choisir —</option>' + optHTML + '</select>' +
+            (f.note ? '<span class="dim-note">' + f.note + '</span>' : '') + '</div>';
+        }).join('') + '</div>';
+    } else {
+      p11Sec.innerHTML = '';
+    }
+  }
 }
 
 function p11ValidateDims() {
