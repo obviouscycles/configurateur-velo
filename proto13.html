@@ -1642,7 +1642,7 @@
         <p class="section-title" style="color:#f2f2f2;margin-bottom:1rem;">Votre configuration</p>
         <div id="p11-final-recap"></div>
         <div class="p11-final-btns">
-          <button class="btn primary" onclick="openOrderModal()" style="width:100%;"><i class="ti ti-send"></i> Demander votre devis</button>
+          <button class="btn primary" onclick="openOrderModal()" style="width:100%;"><i class="ti ti-send"></i> Recevoir mon étude personnalisée</button>
           <button class="btn success" onclick="p11ToggleSaveFinal()" style="width:100%;"><i class="ti ti-bookmark"></i> Sauvegarder cette configuration</button>
           <div class="save-form" id="p11-save-form-final">
             <div class="save-label">Donnez un nom :</div>
@@ -1754,7 +1754,7 @@
         <div id="btns-tab2" style="display:none">
           <div class="btn-row">
             <button class="btn primary" onclick="openOrderModalFromSize()">
-              <i class="ti ti-send"></i> Demander votre devis
+              <i class="ti ti-send"></i> Recevoir mon étude personnalisée
             </button>
             <button class="btn success" onclick="toggleSaveForm2()">
               <i class="ti ti-bookmark"></i> Sauvegarder cette configuration
@@ -1992,7 +1992,15 @@
       <div class="dts-dot" id="dts-dot-4">→</div>
       <div><div class="dts-label">Devis</div><div class="dts-detail" id="dts-d4"></div></div>
     </div>
-    <div style="margin-top:auto;padding-top:1.5rem;border-top:0.5px solid #1e1e1e;display:flex;flex-direction:column;gap:6px;">
+    <div style="margin-top:auto;display:flex;flex-direction:column;gap:0;">
+      <!-- Bloc Obvious On-Demand -->
+      <div style="background:#1a1a1a;border:0.5px solid #2a2a2a;padding:1rem;margin-bottom:1rem;">
+        <div style="font-size:10px;color:#666;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem;">Aller plus loin</div>
+        <p style="font-size:12px;color:#f2f2f2;line-height:1.5;margin-bottom:.4rem;font-weight:500;">Géométrie personnalisée, adaptations cadre, sur-mesure total.</p>
+        <p style="font-size:11px;color:#888;line-height:1.4;margin-bottom:.75rem;">Obvious On-Demand propose 3 niveaux supplémentaires de personnalisation.</p>
+        <a href="https://www.obviouscycles.com/velos-titane/velo-titane-sur-mesure/" target="_blank" style="display:inline-flex;align-items:center;gap:6px;font-size:11px;color:#f2f2f2;text-decoration:none;font-weight:600;border:0.5px solid #444;padding:7px 10px;width:100%;box-sizing:border-box;justify-content:center;"><i class="ti ti-external-link" style="font-size:12px;"></i> Découvrir Obvious On-Demand</a>
+      </div>
+      <div style="padding-top:1rem;border-top:0.5px solid #1e1e1e;display:flex;flex-direction:column;gap:6px;">
       <button onclick="openContactDrawer()" style="width:100%;background:none;border:0.5px solid #333;color:#666;padding:8px;font-size:11px;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:6px;transition:border-color .15s,color .15s;" onmouseover="this.style.color='#aaa';this.style.borderColor='#555'" onmouseout="this.style.color='#666';this.style.borderColor='#333'">
         <i class="ti ti-headset" style="font-size:13px;"></i> Aide - Contact
       </button>
@@ -2079,7 +2087,7 @@
     <hr class="dtr-sep" id="dtr-sep" style="display:none;">
     <div class="dtr-rows" id="dtr-rows"></div>
     <div class="dtr-actions">
-      <button class="dtr-btn-main" id="dtr-btn-devis" onclick="openOrderModal()" style="opacity:.3;pointer-events:none;"><i class="ti ti-send"></i> Demander votre devis</button>
+      <button class="dtr-btn-main" id="dtr-btn-devis" onclick="openOrderModal()" style="opacity:.3;pointer-events:none;"><i class="ti ti-send"></i> Recevoir mon étude personnalisée</button>
       <button class="dtr-btn-sec" id="dtr-btn-save" onclick="dtQuickSave()" style="opacity:.3;pointer-events:none;"><i class="ti ti-bookmark"></i> Sauvegarder</button>
       <button class="dtr-btn-sec" id="dtr-btn-reset" onclick="dtReset()" style="opacity:.3;pointer-events:none;"><i class="ti ti-refresh"></i> Nouvelle configuration</button>
 
@@ -2102,7 +2110,7 @@
     </p>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeSizeAlert()">Annuler</button>
-      <button class="btn-send" onclick="closeSizeAlert(); openOrderModal();"><i class="ti ti-send"></i> Demander votre devis</button>
+      <button class="btn-send" onclick="closeSizeAlert(); openOrderModal();"><i class="ti ti-send"></i> Recevoir mon étude personnalisée</button>
     </div>
   </div>
 </div>
@@ -3729,7 +3737,7 @@ function dtRenderS4() {
         '<div style="font-size:28px;font-weight:700;color:#F5C400;margin-bottom:.5rem;">'+price.toLocaleString('fr-FR')+' €</div>' +
         (mc > 0 ? '<div style="font-size:13px;color:#F5C400;display:flex;align-items:center;gap:6px;margin-bottom:1rem;font-weight:500;"><span style="width:7px;height:7px;border-radius:50%;background:#F5C400;display:inline-block;flex-shrink:0;"></span>'+mc+' personnalisation'+(mc>1?'s':'')+' · '+window._activePreset+'</div>' : '') +
         '<div style="display:flex;flex-direction:column;gap:8px;margin-top:1rem;">' +
-          '<button class="dtr-btn-main" onclick="openOrderModal()"><i class="ti ti-send"></i> Demander votre devis</button>' +
+          '<button class="dtr-btn-main" onclick="openOrderModal()"><i class="ti ti-send"></i> Recevoir mon étude personnalisée</button>' +
           '<button class="dtr-btn-sec" onclick="dtQuickSave()"><i class="ti ti-bookmark"></i> Sauvegarder</button>' +
           '<button class="dtr-btn-sec" onclick="dtReset()"><i class="ti ti-refresh"></i> Nouvelle configuration</button>' +
         '</div>' +
