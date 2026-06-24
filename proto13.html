@@ -1433,14 +1433,16 @@
   }
 
   @media (min-width: 768px) {
-    /* Manual : tout en colonne unique, séparés par un trait */
+    /* Manual : grid auto-fill horizontal */
     #dt-s3-panel-manual .dims-grid-primary,
     #dt-s3-panel-manual .dims-grid-secondary {
-      grid-template-columns: 1fr !important;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)) !important;
     }
-    /* Guide secondary : aligner avec les inputs (pas en horizontal) */
+    /* Guide secondary : horizontal */
     #dt-s3-panel-guide #guide-secondary > div {
-      grid-template-columns: 1fr !important;
+      display: grid !important;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)) !important;
+      gap: 1rem !important;
     }
     /* Selects : fond neutre, lisible */
     #dt-s3-panel-manual #dims-grid select,
@@ -1460,16 +1462,16 @@
   }
 
   @media (min-width: 768px) {
-    /* Guide : inputs en vertical comme le panel manual */
+    /* Guide : inputs en horizontal (flex-wrap pour petits écrans) */
     #dt-s3-panel-guide .size-form-row {
-      flex-direction: column !important;
-      gap: 0.75rem !important;
-      align-items: flex-start !important;
+      flex-direction: row !important;
+      flex-wrap: wrap !important;
+      gap: 1rem !important;
+      align-items: flex-end !important;
     }
     #dt-s3-panel-guide .size-field {
-      min-width: 0 !important;
-      flex: none !important;
-      max-width: 320px;
+      flex: 1 1 180px !important;
+      min-width: 160px !important;
     }
   }
 </style>
@@ -4645,21 +4647,44 @@ function buildDimsGrid() {
     </div>`;
   }
 
-  let html = '<div class="dims-grid-primary" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;">' +
+  let html = '<div class="dims-grid-primary" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem;">' +
     primaryFields.map(renderField).join('') + '</div>';
   if (secondaryFields.length > 0) {
-    html += '<hr style="border:none;border-top:0.5px solid #333;margin:1.25rem 0;">' +
-      '<div class="dims-grid-secondary" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;">' +
+    html += '<hr style="border:none;border-top:0.5px solid #444;margin:1.5rem 0 1.25rem;">' +
+      '<div class="dims-grid-secondary" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem;">' +
       secondaryFields.map(renderField).join('') + '</div>';
   }
-  grid.innerHTML = html;
+  // Envelopper dans un flex column pour garantir l'empilement vertical
+  grid.innerHTML = '<div style="display:flex;flex-direction:column;width:100%;">' + html + '</div>';
+
+  // Même rendu pour le grid mobile (p11-dims-grid)
+  const mobileGrid = document.getElementById('p11-dims-grid');
+  if (mobileGrid && mobileGrid !== grid) {
+    // Adapter les IDs pour éviter les doublons
+    mobileGrid.innerHTML = html.replace(/id="dim-/g, 'id="p11-dim-')
+      .replace(/id="guide-dim-/g, 'id="p11-guide-dim-');
+    // Synchroniser les selects mobile avec selSize
+    mobileGrid.querySelectorAll('select[id^="p11-dim-"]').forEach(sel => {
+      const origId = sel.id.replace('p11-dim-', 'dim-');
+      const key = origId.replace('dim-', '').replace(/-[a-z]+$/, '');
+      sel.addEventListener('change', function() {
+        // Trouver la clé via le onchange de l'original
+        const orig = document.getElementById(origId);
+        if (orig) { orig.value = this.value; orig.dispatchEvent(new Event('change')); }
+        else {
+          // Fallback : trouver la clé depuis les fields
+          if (this.id === 'p11-dim-taille') { selSize.taille = this.value; selSize.manivelle=null; selSize.cintre=null; selSize.potence=null; selSize.debattement=null; buildDimsGrid(); }
+        }
+      });
+    });
+  }
 
   // Si on est en mode "guidé" (panel-guide visible), copier les champs secondaires là-dedans
   const guideSec = document.getElementById('guide-secondary');
   if (guideSec) {
     if (secondaryFields.length > 0) {
-      guideSec.innerHTML = '<hr style="border:none;border-top:0.5px solid #333;margin:1.25rem 0;">' +
-        '<div style="display:grid;grid-template-columns:1fr;gap:1rem;">' +
+      guideSec.innerHTML = '<hr style="border:none;border-top:0.5px solid #444;margin:1.5rem 0 1.25rem;">' +
+        '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem;">' +
         secondaryFields.map(f => {
           const optHTML = f.options.map(o =>
             `<option value="${o}" ${selSize[f.key]==o?'selected':''}>${o}</option>`
@@ -4676,6 +4701,9 @@ function buildDimsGrid() {
       guideSec.innerHTML = '';
     }
   }
+  // Miroir pour mobile guide-secondary
+  const p11GuideSec = document.getElementById('p11-guide-secondary');
+  if (p11GuideSec && guideSec) p11GuideSec.innerHTML = guideSec.innerHTML.replace(/id="guide-dim-/g, 'id="p11-guide-dim-');
 }
 
 function saveConfigFromSize() {
