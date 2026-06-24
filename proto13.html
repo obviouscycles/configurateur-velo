@@ -1399,80 +1399,47 @@
     #dt-s3-panel-guide .size-form-row { margin-bottom: 0.5rem; }
   }
 
+  /* [merged into dt-s3 block] */
+
+  /* [merged into dt-s3 block] */
+
+  /* [merged into dt-s3 block] */
+
+  /* ══ STEP 3 TAILLE — CSS unique desktop ════════════════════════ */
   @media (min-width: 768px) {
-    #dt-s3-panel-guide #guide-secondary { margin-top: 0; }
-    #dt-s3-panel-guide #guide-secondary select,
-    #dt-s3-panel-manual #dims-grid select {
-      background: #1e1e1e !important;
-      border-color: #3a3a3a !important;
-      color: #ccc !important;
-    }
-    #dt-s3-panel-guide #guide-secondary select:focus,
-    #dt-s3-panel-manual #dims-grid select:focus {
-      border-color: #F5C400 !important;
-      outline: none;
-    }
-    #dt-s3-panel-guide #guide-secondary .dim-field label,
-    #dt-s3-panel-manual #dims-grid .dim-field label {
-      color: #888 !important;
-      font-size: 11px;
-    }
-    #dt-s3-panel-guide #guide-secondary hr { border-color: #333 !important; }
-    /* Panel fond cohérent avec le reste */
+    /* Panels fond */
     #dt-s3-panel-guide .size-panel,
     #dt-s3-panel-manual .size-panel {
-      background: #181818 !important;
-      border-color: #2a2a2a !important;
+      background: #181818; border-color: #2a2a2a;
     }
-    /* Inputs guide : fond neutre */
-    #dt-s3-panel-guide .size-input {
-      background: #1e1e1e !important;
-      border-color: #3a3a3a !important;
-      color: #ccc !important;
-    }
-  }
-
-  @media (min-width: 768px) {
-    /* Manual : grid auto-fill horizontal */
-    #dt-s3-panel-manual .dims-grid-primary,
-    #dt-s3-panel-manual .dims-grid-secondary {
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)) !important;
-    }
-    /* Guide secondary : horizontal */
-    #dt-s3-panel-guide #guide-secondary > div {
-      display: grid !important;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)) !important;
-      gap: 1rem !important;
-    }
-    /* Selects : fond neutre, lisible */
-    #dt-s3-panel-manual #dims-grid select,
-    #dt-s3-panel-guide #guide-secondary select {
-      background: #252525 !important;
-      border: 0.5px solid #444 !important;
-      color: #ccc !important;
-      padding: 8px 10px !important;
-    }
-    /* Trait séparateur identique dans les deux panels */
-    #dt-s3-panel-manual #dims-grid hr,
-    #dt-s3-panel-guide #guide-secondary hr {
-      border: none !important;
-      border-top: 0.5px solid #333 !important;
-      margin: 1.25rem 0 !important;
-    }
-  }
-
-  @media (min-width: 768px) {
-    /* Guide : inputs en horizontal (flex-wrap pour petits écrans) */
+    /* Guide : 3 inputs en ligne */
     #dt-s3-panel-guide .size-form-row {
-      flex-direction: row !important;
-      flex-wrap: wrap !important;
-      gap: 1rem !important;
-      align-items: flex-end !important;
+      flex-direction: row; flex-wrap: wrap; gap: 1rem; align-items: flex-end;
     }
-    #dt-s3-panel-guide .size-field {
-      flex: 1 1 180px !important;
-      min-width: 160px !important;
+    #dt-s3-panel-guide .size-field { flex: 1 1 160px; min-width: 140px; }
+    #dt-s3-panel-guide .size-input {
+      background: #1e1e1e; border-color: #3a3a3a; color: #ccc;
     }
+    /* Selects (manual + guide secondary) */
+    #dt-s3-panel-manual select.size-select,
+    #dt-s3-panel-guide  select.size-select {
+      background: #1e1e1e; border: 0.5px solid #3a3a3a; color: #ccc;
+    }
+    #dt-s3-panel-manual select.size-select:focus,
+    #dt-s3-panel-guide  select.size-select:focus {
+      border-color: #F5C400; outline: none;
+    }
+    /* Labels dim-field */
+    #dt-s3-panel-manual .dim-field label,
+    #dt-s3-panel-guide  .dim-field label { color: #888; font-size: 11px; }
+    /* Trait séparateur */
+    #dt-s3-panel-manual #dims-grid hr,
+    #dt-s3-panel-guide  #guide-secondary hr {
+      border: none; border-top: 0.5px solid #444; margin: 1.25rem 0;
+    }
+    /* Boutons en bas à gauche */
+    #dt-s3-panel-guide  .size-btn      { display: inline-flex; }
+    #dt-s3-panel-manual .size-validate-btn { display: inline-flex; }
   }
 </style>
   <!-- Google Analytics GA4 -->
@@ -4655,7 +4622,7 @@ function buildDimsGrid() {
       secondaryFields.map(renderField).join('') + '</div>';
   }
   // Envelopper dans un flex column pour garantir l'empilement vertical
-  grid.innerHTML = '<div style="display:flex;flex-direction:column;width:100%;">' + html + '</div>';
+  grid.innerHTML = html;
 
   // Même rendu pour le grid mobile (p11-dims-grid)
   const mobileGrid = document.getElementById('p11-dims-grid');
