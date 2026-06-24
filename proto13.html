@@ -1151,7 +1151,7 @@
 
   /* ── Étape 2 : split 50/50 modèle|composants ── */
   #dt-s2-inner {
-    display: grid; grid-template-columns: 280px 1fr; gap: 0;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0;
     height: 100%; min-height: 0;
   }
   #dt-s2-left {
@@ -3255,8 +3255,15 @@ function dtLoadSaved(id) {
   selSize = {...(cfg.selSize || cfg.size || {})};
   window._activePreset = cfg.preset || null;
   window._singleModel = selModel;
-  window.sizeValidated = !!(cfg.selSize && Object.keys(cfg.selSize).length);
-  dtStep = 1; dtRender();
+  window.sizeValidated = !!(cfg.selSize && Object.keys(cfg.selSize || {}).length > 0);
+  // Retirer dt-step-4 AVANT dtRender pour que dt-main soit visible
+  document.body.classList.remove('dt-step-4');
+  // Activer les boutons du récap
+  ['dtr-btn-devis','dtr-btn-save'].forEach(id2 => {
+    const el = document.getElementById(id2);
+    if (el) { el.style.opacity = '1'; el.style.pointerEvents = 'auto'; }
+  });
+  dtStep = 2; dtRender();
 }
 
 function dtDeleteSaved(id) {
@@ -3482,12 +3489,32 @@ function dtToggleSizeMode(mode) {
 
   if (mode === 'guide') {
     const panelGuide = document.getElementById('panel-guide');
-    if (panelGuide) { panelGuide.classList.add('open'); panelZone.appendChild(panelGuide); }
+    if (panelGuide) {
+      // Réinitialiser le résultat pour permettre un nouveau calcul
+      const guideResult = document.getElementById('guide-result');
+      if (guideResult) guideResult.classList.remove('show');
+      const overlap = document.getElementById('size-overlap');
+      if (overlap) overlap.style.display = 'none';
+      // Vider le résultat desktop
+      const dtResult = document.getElementById('dt-s3-result');
+      if (dtResult) { dtResult.style.display = 'none'; dtResult.innerHTML = ''; }
+      // Réinitialiser le bouton
+      const lbl = document.getElementById('dt-next-3-lbl');
+      if (lbl && lbl.textContent !== 'Continuer sans taille') lbl.textContent = 'Continuer sans taille';
+      panelGuide.classList.add('open');
+      panelZone.appendChild(panelGuide);
+    }
   } else {
     const panelManual = document.getElementById('panel-manual');
     if (panelManual) {
       if (typeof buildDimsGrid === 'function') buildDimsGrid();
-      panelManual.classList.add('open'); panelZone.appendChild(panelManual);
+      // Vider le résultat desktop
+      const dtResult = document.getElementById('dt-s3-result');
+      if (dtResult) { dtResult.style.display = 'none'; dtResult.innerHTML = ''; }
+      const lbl = document.getElementById('dt-next-3-lbl');
+      if (lbl) lbl.textContent = 'Continuer sans taille';
+      panelManual.classList.add('open');
+      panelZone.appendChild(panelManual);
     }
   }
 }
