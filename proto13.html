@@ -1459,13 +1459,16 @@
     .dim-field {
       display: flex !important;
       flex-direction: column !important;
-      justify-content: flex-end !important;
+      justify-content: space-between !important;
     }
     .dim-field label {
-      flex: 1;
-      display: flex;
-      align-items: flex-end;
+      align-self: flex-start;
       padding-bottom: 4px;
+      line-height: 1.3;
+    }
+    .dim-field select,
+    .dim-field .dim-single {
+      margin-top: auto;
     }
   }
 </style>
@@ -4641,11 +4644,11 @@ function buildDimsGrid() {
     </div>`;
   }
 
-  let html = '<div class="dims-grid-primary" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:1rem;align-items:end;">' +
+  let html = '<div class="dims-grid-primary" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:1rem;">' +
     primaryFields.map(renderField).join('') + '</div>';
   if (secondaryFields.length > 0) {
     html += '<hr style="border:none;border-top:0.5px solid #444;margin:1.5rem 0 1.25rem;">' +
-      '<div class="dims-grid-secondary" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:1rem;align-items:end;">' +
+      '<div class="dims-grid-secondary" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:1rem;">' +
       secondaryFields.map(renderField).join('') + '</div>';
   }
   // Envelopper dans un flex column pour garantir l'empilement vertical
@@ -4678,7 +4681,7 @@ function buildDimsGrid() {
   if (guideSec) {
     if (secondaryFields.length > 0) {
       guideSec.innerHTML = '<hr style="border:none;border-top:0.5px solid #444;margin:1.5rem 0 1.25rem;">' +
-        '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:1rem;align-items:end;">' +
+        '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:1rem;">' +
         secondaryFields.map(f => {
           const optHTML = f.options.map(o =>
             `<option value="${o}" ${selSize[f.key]==o?'selected':''}>${o}</option>`
@@ -5374,7 +5377,7 @@ function p11BuildDimsGrid() {
       (f.note ? '<span class="dim-note">' + f.note + '</span>' : '') + '</div>';
   }
 
-  const gridStyle = 'display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.75rem;align-items:end;';
+  const gridStyle = 'display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.75rem;';
   let p11Html = '<div style="' + gridStyle + '">' + p11Primary.map(p11RenderField).join('') + '</div>';
   if (p11Secondary.length > 0) {
     p11Html += '<hr style="border:none;border-top:0.5px solid #444;margin:1.25rem 0;">' +
@@ -5386,7 +5389,7 @@ function p11BuildDimsGrid() {
   const p11Sec = document.getElementById('p11-guide-secondary');
   if (p11Sec) {
     if (p11Secondary.length > 0) {
-      const gs = 'display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.75rem;align-items:end;';
+      const gs = 'display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.75rem;';
       p11Sec.innerHTML = '<hr style="border:none;border-top:0.5px solid #444;margin:1.25rem 0;">' +
         '<div style="' + gs + '">' +
         p11Secondary.map(f => {
