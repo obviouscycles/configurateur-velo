@@ -1155,7 +1155,7 @@
     gap: 16px !important; max-width: 100% !important;
   }
   #dt-s1 .model-card { cursor: pointer; }
-  #dt-s1 .mc-photo { height: 200px !important; object-fit: cover !important; }
+  #dt-s1 .mc-photo { width: 100% !important; height: auto !important; aspect-ratio: 655/460; object-fit: contain !important; background: #0d0d0d; padding: 12px; box-sizing: border-box; display: block; }
   #dt-s1 .mc-name { font-size: 16px !important; }
   #dt-s1 .preset-bar { background: #0d0d0d !important; border: 0.5px solid #222 !important; border-top: none !important; padding: 10px 12px !important; margin: 0 !important; }
 
@@ -1456,6 +1456,20 @@
       border: none !important;
       border-top: 0.5px solid #333 !important;
       margin: 1.25rem 0 !important;
+    }
+  }
+
+  @media (min-width: 768px) {
+    /* Guide : inputs en vertical comme le panel manual */
+    #dt-s3-panel-guide .size-form-row {
+      flex-direction: column !important;
+      gap: 0.75rem !important;
+      align-items: flex-start !important;
+    }
+    #dt-s3-panel-guide .size-field {
+      min-width: 0 !important;
+      flex: none !important;
+      max-width: 320px;
     }
   }
 </style>
@@ -3331,6 +3345,13 @@ function toggleDtPresetInfo(id) {
 }
 
 function dtSelectModel(id) {
+  // Réinitialiser le _init des panels step 3 si on change de modèle
+  if (id !== selModel) {
+    const gz = document.getElementById('dt-s3-panel-guide');
+    const mz = document.getElementById('dt-s3-panel-manual');
+    if (gz) gz._init = false;
+    if (mz) mz._init = false;
+  }
   selModel = id; selOpts = {}; openPost = null;
   window._singleModel = id; window._activePreset = null;
   const preset = PRESETS[id] && PRESETS[id]['Ti1'];
@@ -3598,11 +3619,12 @@ function dtRenderS3() {
     guideZone._init = true;
   }
   if (manualZone && panelManual && !manualZone._init) {
-    if (typeof buildDimsGrid === 'function') buildDimsGrid();
     manualZone.appendChild(panelManual);
     panelManual.classList.add('open');
     manualZone._init = true;
   }
+  // Toujours reconstruire la grille dims (modèle peut avoir changé)
+  if (typeof buildDimsGrid === 'function') buildDimsGrid();
 
   // Cacher les deux au départ
   if (guideZone)  guideZone.style.display  = 'none';
@@ -3831,6 +3853,11 @@ function dtQuickSave() {
 }
 
 function dtReset() {
+  // Réinitialiser le _init des panels step 3 pour forcer le re-rendu
+  const gz = document.getElementById('dt-s3-panel-guide');
+  const mz = document.getElementById('dt-s3-panel-manual');
+  if (gz) gz._init = false;
+  if (mz) mz._init = false;
   // Garder le modèle ET _singleModel — réinitialiser uniquement les options
   const keptModel = selModel;
   selOpts = {}; selSize = {}; window.sizeValidated = false; openPost = null;
