@@ -1274,9 +1274,10 @@
 
   @media (min-width: 768px) {
     #dt-s2-left .mc-photo {
-      width: 100% !important; height: 260px !important;
+      width: 100% !important; height: auto !important;
+      aspect-ratio: 655/460;
       object-fit: contain !important; background: #0d0d0d; display: block;
-      padding: 8px; box-sizing: border-box;
+      padding: 12px; box-sizing: border-box;
     }
     #dt-s2-left .mc-text {
       padding: 14px 0 0 !important;
@@ -1336,18 +1337,20 @@
   }
 
   @media (min-width: 768px) {
-    #dt-s3-left .size-card, #dt-s3-right .size-card {
+    #dt-s3-cards .size-card {
       background: #1e1e1e !important;
       border-color: #333 !important;
     }
-    #dt-s3-left .size-card:hover, #dt-s3-right .size-card:hover { background: #252525 !important; }
-    #dt-s3-left .size-card.active, #dt-s3-right .size-card.active {
+    #dt-s3-cards .size-card:hover { background: #252525 !important; }
+    #dt-s3-cards .size-card.active {
       background: #1e1e1e !important;
       border-color: #F5C400 !important;
     }
-    #dt-s3-left .size-card-title, #dt-s3-right .size-card-title { color: #f2f2f2 !important; }
-    #dt-s3-left .size-card-desc,  #dt-s3-right .size-card-desc  { color: #aaa !important; }
-    #dt-s3-left .size-card.active .size-card-desc { color: #aaa !important; }
+    #dt-s3-cards .size-card-icon { color: #F5C400 !important; }
+    #dt-s3-cards .size-card-title { color: #f2f2f2 !important; }
+    #dt-s3-cards .size-card-desc  { color: #aaa !important; }
+    #dt-s3-cards .size-card ul { color: #aaa !important; }
+    #dt-s3-cards .size-card ul li { color: #aaa !important; }
     #dt-s3-left .size-panel, #dt-s3-right .size-panel {
       background: #141414 !important; border-color: #2a2a2a !important;
     }
@@ -1387,20 +1390,13 @@
   }
 
   @media (min-width: 768px) {
-    /* Bouton Calculer aligné en bas à gauche dans le panel guide */
-    #dt-s3-panel-guide .size-panel { display: flex; flex-direction: column; }
-    #dt-s3-panel-guide .size-form-row { flex: 1; }
-    #dt-s3-panel-guide .size-btn {
-      align-self: flex-start;
-      margin-top: 1rem;
-    }
-    /* Bouton Valider aligné en bas à gauche */
-    #dt-s3-panel-manual .size-panel { display: flex; flex-direction: column; }
-    #dt-s3-panel-manual .validate-btn,
+    /* Boutons bas gauche dans les deux panels */
+    #dt-s3-panel-guide .size-btn,
     #dt-s3-panel-manual .size-validate-btn {
+      display: inline-flex;
       align-self: flex-start;
-      margin-top: 1rem;
     }
+    #dt-s3-panel-guide .size-form-row { margin-bottom: 0.5rem; }
   }
 </style>
   <!-- Google Analytics GA4 -->
@@ -1769,10 +1765,8 @@
             </div>
             <input type="text" inputmode="decimal" class="size-input" id="guide-acro" placeholder="Ex : 40" min="25" max="60" step="0.5">
           </div>
-          <div style="display:flex;align-items:flex-end;">
-            <button class="size-btn" onclick="calcSize()"><i class="ti ti-calculator"></i> Calculer</button>
-          </div>
         </div>
+        <button class="size-btn" onclick="calcSize()" style="margin-bottom:1rem;"><i class="ti ti-calculator"></i> Calculer</button>
         <div class="size-result" id="guide-result">
           <div class="size-result-main" id="guide-result-main"></div>
           <div class="size-result-sub" id="guide-result-sub"></div>
